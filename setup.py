@@ -7,5 +7,5 @@ setup(name='f5cloudcli',
       author='F5 Ecosystems Group',
       author_email='solutionsfeedback@f5.com',
       license='MIT',
-      packages=['f5cloudcli'],
+      packages=['f5cloudcli', 'f5cloudcli.commands', 'f5cloudcli.shared'],
       zip_safe=False)
