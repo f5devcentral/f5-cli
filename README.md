@@ -11,3 +11,6 @@ pip3 install -r requirements.txt
 pip3 install .
 bin/f5cloudcli
 ```
+
+Package is also currently hosted at TestPyPi:
+pip3 install --no-cache-dir -i https://test.pypi.org/simple/ f5-cloud-cli

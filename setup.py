@@ -1,7 +1,7 @@
 from setuptools import setup
 
-setup(name='f5cloudcli',
-      version='0.1.3',
+setup(name='f5-cloud-cli',
+      version='0.0.1',
       description='F5 Cloud CLI',
       url='http://github.com/F5Networks/f5-cloud-cli',
       author='F5 Ecosystems Group',
@@ -10,7 +10,7 @@ setup(name='f5cloudcli',
       packages=['f5cloudcli', 'f5cloudcli.commands', 'f5cloudcli.shared'],
       entry_points={
           'console_scripts': [
-              'f5cloudcli = f5cloudcli.cli:cli'
+              'f5 = f5cloudcli.cli:cli'
           ]
       },
       zip_safe=False)

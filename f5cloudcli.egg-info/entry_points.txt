@@ -1,3 +1,0 @@
-[console_scripts]
-f5cloudcli = f5cloudcli.cli:cli
-
