@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='f5-cloud-cli',
-      version='0.0.1',
+      version='0.0.2',
       description='F5 Cloud CLI',
       url='http://github.com/F5Networks/f5-cloud-cli',
       author='F5 Ecosystems Group',
