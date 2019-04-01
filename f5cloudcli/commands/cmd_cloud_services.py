@@ -15,7 +15,7 @@ class AliasedGroup(click.Group):
             return click.Group.get_command(self, ctx, matches[0])
         ctx.fail('Too many matches: %s' % ', '.join(sorted(matches)))
 
-@click.group('cloud_services', short_help='F5 Cloud Services', cls=AliasedGroup)
+@click.group('cloud_services', short_help='F5 Cloud Services (aaS, placeholder)', cls=AliasedGroup)
 @pass_context
 def cli(ctx):
     """Cloud Services CLI sub-command"""

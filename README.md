@@ -1,7 +1,5 @@
 # F5 Cloud CLI
 
-F5 Cloud CLI
-
 ## Quick Start
 
 This is still a work in progress (no venv, etc.), however below are the current steps to use the cli.
@@ -9,8 +7,7 @@ This is still a work in progress (no venv, etc.), however below are the current 
 ```bash
 pip3 install -r requirements.txt
 pip3 install .
-bin/f5cloudcli
+f5 --help
 ```
 
-Can also be installed from Gitlab:
-pip3 install git+https://***REMOVED***/cloudsolutions/f5-cloud-cli.git@develop
+Note: Alternatively install from GitLab - ```pip3 install git+https://***REMOVED***/cloudsolutions/f5-cloud-cli.git@develop```

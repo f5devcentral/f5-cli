@@ -1,0 +1,20 @@
+image: python:3.7
+
+stages:
+    - test
+
+test_unit:
+    stage: test
+    script:
+        # install packages
+        - pip3 install -r requirements.txt
+        # install package
+        - pip3 install .
+        - make unit_test
+    tags:
+        - cm-official-docker-executor
+    artifacts:
+        name: f5-unit-test-$CI_BUILD_REF
+        paths:
+            - dist
+        expire_in: 1 month
