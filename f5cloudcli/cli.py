@@ -21,6 +21,20 @@ class Context(object):
         if self.verbose:
             self.log(msg, *args)
 
+class AliasedGroup(click.Group):
+
+    def get_command(self, ctx, cmd_name):
+        rv = click.Group.get_command(self, ctx, cmd_name)
+        if rv is not None:
+            return rv
+        matches = [x for x in self.list_commands(ctx)
+                   if x.startswith(cmd_name)]
+        if not matches:
+            return None
+        elif len(matches) == 1:
+            return click.Group.get_command(self, ctx, matches[0])
+        ctx.fail('Too many matches: %s' % ', '.join(sorted(matches)))
+
 pass_context = click.make_pass_decorator(Context, ensure=True)
 cmd_folder = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                           'commands'))
@@ -37,11 +51,11 @@ class F5CloudCLI(click.MultiCommand):
         rv.sort()
         return rv
 
-    def get_command(self, ctx, name):
+    def get_command(self, ctx, cmd_name):
         try:
             if sys.version_info[0] == 2:
-                name = name.encode('ascii', 'replace')
-            mod = __import__('f5cloudcli.commands.cmd_' + name,
+                cmd_name = cmd_name.encode('ascii', 'replace')
+            mod = __import__('f5cloudcli.commands.cmd_' + cmd_name,
                              None, None, ['cli'])
         except ImportError as error:
             print(error)

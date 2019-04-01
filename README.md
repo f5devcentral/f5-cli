@@ -10,4 +10,8 @@ pip3 install .
 f5 --help
 ```
 
-Note: Alternatively install from GitLab - ```pip3 install git+https://***REMOVED***/cloudsolutions/f5-cloud-cli.git@develop```
+Note: Alternatively install from GitLab
+
+```bash
+pip3 install git+https://***REMOVED***/cloudsolutions/f5-cloud-cli.git@develop
+```
