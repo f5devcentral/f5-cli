@@ -1,16 +1,18 @@
+""" This file provides the base implementation of the CLI. """
 import os
 import sys
 import click
 
 CONTEXT_SETTINGS = dict(auto_envvar_prefix='F5CloudCli')
 
-class Context(object):
+class Context():
+    """ Context class for click. """
 
     def __init__(self):
         self.verbose = False
         self.home = os.getcwd()
 
-    def log(self, msg, *args):
+    def log(self, msg, *args): # pylint: disable=no-self-use
         """Logs a message to stderr."""
         if args:
             msg %= args
@@ -22,34 +24,35 @@ class Context(object):
             self.log(msg, *args)
 
 class AliasedGroup(click.Group):
+    """ Alias group class for click. """
 
     def get_command(self, ctx, cmd_name):
-        rv = click.Group.get_command(self, ctx, cmd_name)
-        if rv is not None:
-            return rv
+        ret = click.Group.get_command(self, ctx, cmd_name)
+        if ret is not None:
+            return ret
         matches = [x for x in self.list_commands(ctx)
                    if x.startswith(cmd_name)]
         if not matches:
             return None
-        elif len(matches) == 1:
+        if len(matches) == 1:
             return click.Group.get_command(self, ctx, matches[0])
         ctx.fail('Too many matches: %s' % ', '.join(sorted(matches)))
 
-pass_context = click.make_pass_decorator(Context, ensure=True)
-cmd_folder = os.path.abspath(os.path.join(os.path.dirname(__file__),
+PASS_CONTEXT = click.make_pass_decorator(Context, ensure=True)
+CMD_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                           'commands'))
 
-
 class F5CloudCLI(click.MultiCommand):
+    """ Base click class for the CLI. """
 
     def list_commands(self, ctx):
-        rv = []
-        for filename in os.listdir(cmd_folder):
+        ret = []
+        for filename in os.listdir(CMD_FOLDER):
             if filename.endswith('.py') and \
                filename.startswith('cmd_'):
-                rv.append(filename[4:-3])
-        rv.sort()
-        return rv
+                ret.append(filename[4:-3])
+        ret.sort()
+        return ret
 
     def get_command(self, ctx, cmd_name):
         try:
@@ -64,8 +67,9 @@ class F5CloudCLI(click.MultiCommand):
 
 
 @click.command(cls=F5CloudCLI, context_settings=CONTEXT_SETTINGS)
-@click.option('-v', '--verbose', is_flag=True, help='Enables verbose mode')
-@pass_context
+@click.version_option('0.9.0')
+@click.option('--verbose', is_flag=True, help='Enables verbose mode')
+@PASS_CONTEXT
 def cli(ctx='', verbose='', home=''):
     """F5 Cloud command line interface."""
     ctx.verbose = verbose

@@ -1,8 +1,9 @@
+""" This file provides the 'cloud_services' implementation of the CLI. """
 import click
-from f5cloudcli.cli import pass_context, AliasedGroup
+from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
 
 @click.group('cloud_services', short_help='F5 Cloud Services (!!placeholder!!)', cls=AliasedGroup)
-@pass_context
-def cli(ctx):
-    """Cloud Services CLI sub-command"""
-    pass
+@PASS_CONTEXT
+def cli(ctx): # pylint: disable=unused-argument
+    """ F5 Cloud Services CLI sub-command """
+    # pass
