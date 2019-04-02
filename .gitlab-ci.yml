@@ -2,6 +2,7 @@ image: python:3.7
 
 stages:
     - test
+    - publish
 
 # unit tests: python 3.x (preferred)
 test_unit:
@@ -29,3 +30,20 @@ test_unit_python_2_x:
         - make unit_test
     tags:
         - cm-official-docker-executor
+
+# publish docs to internal pages: - this job MUST be named 'pages'
+pages:
+    stage: publish
+    environment:
+        name: staging
+        url: https://${CI_PROJECT_NAMESPACE}.${PAGES_DOMAIN}/${CI_PROJECT_NAME}
+    tags:
+        - cm-official-docker-executor
+    script:
+        - mkdir -p ./public
+        # place code coverage artifacts under /coverage
+        - cp -R html_coverage/* ./public/coverage
+        # etc...
+    artifacts:
+        paths:
+            - public

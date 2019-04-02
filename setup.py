@@ -1,3 +1,4 @@
+""" setup.py: see public setuptools docs for more detail """
 from setuptools import setup, find_packages
 
 setup(name='f5-cloud-cli',
