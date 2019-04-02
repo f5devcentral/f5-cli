@@ -42,7 +42,7 @@ pages:
     script:
         - mkdir -p ./public
         # place code coverage artifacts under /coverage
-        - cp -R html_coverage/* ./public/coverage
+        - cp -R coverage_html/* ./public/coverage
         # etc...
     artifacts:
         paths:
