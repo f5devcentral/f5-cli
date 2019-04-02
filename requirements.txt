@@ -1,5 +1,8 @@
 # required packages
+click==7.0
+# required dev packages
 pytest==4.3.1
 pytest-cov==2.6.1
 click==7.0
+pylint==2.3.1 ; python_version > '3.0'
 -e ../f5-cloud-sdk
