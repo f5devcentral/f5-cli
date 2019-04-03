@@ -65,8 +65,9 @@ pages:
         - cm-official-docker-executor
     script:
         - PUBLIC_DIR='./public'
+        - mkdir -p ${PUBLIC_DIR}
         # place index.html in public dir
-        - cp docs/index.html ${PUBLIC_DIR}
+        - cp docs/index.html ${PUBLIC_DIR}/index.html
         # place code coverage artifacts under /coverage
         - mkdir -p ${PUBLIC_DIR}/coverage
         - cp -R code_coverage/* ${PUBLIC_DIR}/coverage
