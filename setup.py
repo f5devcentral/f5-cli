@@ -1,7 +1,7 @@
 """ setup.py: see public setuptools docs for more detail """
 from setuptools import setup, find_packages
 
-# This should be a list of dependencies required for production use only
+# list of dependencies required for production use
 DEPENDENCIES = [
     'click==7.0'
 ]
