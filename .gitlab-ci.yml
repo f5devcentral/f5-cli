@@ -2,9 +2,8 @@ image: python:3.7
 
 stages:
     - test
-    - build
+    - docs
     - publish
-    - clean
 
 # unit tests: python 3.x (preferred)
 test_unit:
@@ -19,10 +18,6 @@ test_unit:
         - make lint
     tags:
         - cm-official-docker-executor
-    artifacts:
-        name: ${CI_COMMIT_REF_NAME}_unit_test
-        paths:
-            - code_coverage
 
 # unit tests: python 2.x
 test_unit_python_2_x:
@@ -37,20 +32,26 @@ test_unit_python_2_x:
     tags:
         - cm-official-docker-executor
 
-# create package artifacts
-build:
-    stage: build
-    only:
-        - tags
-    tags:
-        - docker-executor
+# generate code coverage docs
+docs_code_coverage:
+    stage: docs
     script:
-        - make build
+        # install packages
+        - pip3 install -r requirements.txt
+        - pip3 install .
+        # generate coverage
+        - make coverage
+    tags:
+        - cm-official-docker-executor
+    artifacts:
+        name: ${CI_COMMIT_REF_NAME}_code_coverage
+        paths:
+            - code_coverage
+        expire_in: 1 month
 
 # Publish to internal artifactory
-# Note: Will push eggs when new tags are pushed and use the current build in dist directory
-# with the assumption being the package has been updated. However even if it hasn't the upload
-# will simply update the existing rpm version/release in artifactory
+# Note: Will build and push eggs when new tags are pushed with the assumption being the package
+# version has been updated. However even if it hasn't it will simply update the existing version
 publish_egg_to_artifactory:
     stage: publish
     only:
@@ -88,11 +89,3 @@ pages:
     artifacts:
         paths:
             - public
-
-# clean up
-clean:
-    stage: clean
-    tags:
-        - docker-executor
-    script:
-        - make clean

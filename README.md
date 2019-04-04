@@ -9,10 +9,10 @@
 
 ## Quick Start
 
-Note: Currently pulling from the develop branch
+Note: Published on artifactory pypi repo.
 
 ```bash
-pip3 install git+https://***REMOVED***/cloudsolutions/f5-cloud-cli.git@develop
+pip3 install f5-cloud-cli --extra-index-url https://***REMOVED***/artifactory/api/pypi/f5-cloud-solutions-pypi/simple
 f5 --help
 ```
 

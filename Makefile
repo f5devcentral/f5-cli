@@ -1,10 +1,10 @@
 BUILD_DIR := build
+COVERAGE_DIR := ./code_coverage
+COVERAGE_FILE := .coverage
 DIST_DIR := dist
 EGG_DIR := f5_cloud_cli.egg-info
 PACKAGE_DIR := f5cloudcli
 TEST_DIR := tests
-COVERAGE_DIR := ./code_coverage
-COVERAGE_FILE := .coverage
 
 build:
 	echo "Creating package artifacts"
@@ -12,10 +12,12 @@ build:
 unit_test:
 	echo "Running unit tests (incl code coverage)";
 	pytest --cov=${PACKAGE_DIR} ${TEST_DIR}/;
-	coverage html
 lint:
 	echo "Running linter (any error will result in non-zero exit code)";
 	pylint ${PACKAGE_DIR}/;
+coverage: unit_test
+	echo "Generating code coverage documentation"
+	coverage html
 clean:
 	echo "Removing artifacts"
 	rm -rf ${BUILD_DIR}
