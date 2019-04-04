@@ -43,4 +43,5 @@ This project uses `Make` as a build automation tool... check out the Makefile fo
 
 ## Artifacts
 
+- Index: https://cloudsolutions.pages.***REMOVED***/f5-cloud-cli
 - Code coverage report: https://cloudsolutions.pages.***REMOVED***/f5-cloud-cli/coverage/
