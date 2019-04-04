@@ -3,7 +3,8 @@ from setuptools import setup, find_packages
 
 # list of dependencies required for production use
 DEPENDENCIES = [
-    'click==7.0'
+    'click==7.0',
+    'f5-cloud-sdk==0.9.0'
 ]
 
 setup(
@@ -20,5 +21,8 @@ setup(
             'f5 = f5cloudcli.cli:cli'
         ]
     },
+    dependency_links=[
+        'https://***REMOVED***/artifactory/api/pypi/f5-cloud-solutions-pypi/simple'
+    ],
     install_requires=DEPENDENCIES
 )
