@@ -1,6 +1,6 @@
 # production packages
 click==7.0
-f5-cloud-sdk=0.9.0
+f5-cloud-sdk==0.9.0
 --extra-index-url https://***REMOVED***/artifactory/api/pypi/f5-cloud-solutions-pypi/simple
 # dev packages
 pytest==4.3.1
