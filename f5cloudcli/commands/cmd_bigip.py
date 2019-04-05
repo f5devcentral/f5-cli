@@ -3,19 +3,20 @@ import click
 import f5cloudcli.shared.help as helpfile
 from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
 
-@click.group('bigip', short_help='BIG-IP', cls=AliasedGroup)
+@click.group('bigip', short_help='BIG-IP', cls=AliasedGroup, chain=True)
 @PASS_CONTEXT
 def cli(ctx): # pylint: disable=unused-argument
     """ Click cli function """
-    # pass
 
 @cli.command('login', help=helpfile.BIGIP_LOGIN_HELP)
+@click.option('--host', help=helpfile.HOST_HELP, required=True, prompt=False)
 @click.option('--user', help=helpfile.USER_HELP, required=True, prompt=False)
-@click.argument('private-key', required=False, type=click.File('sshkey'))
+@click.option('--private-key', help=helpfile.SSH_KEY_HELP, required=True,
+              type=click.Path('sshkey'), prompt=False)
 @PASS_CONTEXT
-def login(ctx, user, private_key):
+def login(ctx, host, user, private_key):
     """ Click cli command """
-    ctx.log('Logging in to BIG-IP as %s with %s', user, private_key)
+    ctx.log('Logging in to BIG-IP %s as %s with %s', host, user, private_key)
 
 @cli.command('discover', help=helpfile.DISCOVER_HELP)
 @click.option('--provider', help=helpfile.CLOUD_HELP, required=True,
@@ -32,9 +33,9 @@ def discover(ctx, provider, tag):
 @click.argument('action', required=False,
                 type=click.Choice(['install', 'upgrade', 'verify', 'remove', 'create']))
 @click.option('--version', help='Package version', required=False, prompt=False)
-@click.argument('declaration', required=False, type=click.File('decl'))
+@click.option('--declaration', required=False, type=click.File('decl'))
 @PASS_CONTEXT
 def toolchain(ctx, component, context, action, version, declaration):
     #pylint: disable-msg=too-many-arguments
     """ Click cli command """
-    ctx.log('%s %s %s %s %s', action, component, context, version, declaration)
+    ctx.log('%sing %s %s %s %s', action, component, context, version, declaration)

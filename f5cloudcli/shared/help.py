@@ -1,6 +1,7 @@
 """ This file provides all help for the CLI. """
 # bigip
 BIGIP_LOGIN_HELP = 'Log into BIG-IP'
+HOST_HELP = 'Host or IP of the BIG-IP to log into'
 USER_HELP = 'Username for logging into the BIG-IP'
 SSH_KEY_HELP = 'SSH key for logging into the BIG-IP'
 
