@@ -1,21 +1,69 @@
+##cli
+CLI_HELP: |
+    Welcome to the F5 Cloud command line interface.
+
+    You can do the things here.
+VERBOSE_HELP: 'Enables verbose mode'
 ### bigip
 BIGIP_HELP: 'Authenticate to, discover, provision, and configure BIG-IP devices'
 # login
-BIGIP_LOGIN_HELP: 'Authenticate to BIG-IP devices using an ssh private key'
-HOST_HELP: 'Host or IP of the BIG-IP to log into'
-BIG_IP_USER_HELP: 'Username for logging into the BIG-IP'
-SSH_KEY_HELP: 'SSH key for logging into the BIG-IP'
+BIGIP_LOGIN_HELP: |4
+    Authenticate to BIG-IP devices using an SSH private key
+
+    <HOST>  Hostname or IP of the BIG-IP to log into
+
+    <USERNAME>  Username for logging into the BIG-IP
+
+    <SSH-KEY>  SSH key for logging into the BIG-IP
+
+    Example: f5 bigip login 1.2.3.4 admin /path/to/my/key
 # discover
-DISCOVER_HELP: 'Discover all BIG-IP devices with a specific key/value tag'
-CLOUD_HELP: 'Public cloud environment where the tagged BIG-IPs are running'
-TAG_HELP: 'Tag (key/value pair) for discovery'
+DISCOVER_HELP: |
+    Discover all BIG-IP devices with a specific key/value tag
+
+    <PROVIDER> Public cloud environment where the tagged BIG-IPs are running (aws, azure, gcp)
+
+    <TAG> Tag (key/value pair) for discovery
+
+    Example: f5 bigip discover azure my:tag
 # toolchain
-TOOLCHAIN_HELP: 'Create, verify, upgrade, configure Automation Toolchain packages and services'
+TOOLCHAIN_HELP: |
+    Create, verify, upgrade, configure Automation Toolchain packages and services
+
+    <COMPONENT> The Automation Toolchain component you want to manage (do, as3, ts, failover)
+
+    <CONTEXT>    Work with a component package or service (package, service)
+
+    <ACTION>    The action you wish to perform (install, upgrade, verify, remove)
+
+    <VERSION>   The version of the component
+
+    <DECLARATION>   The path to the declaration you wish to deploy
+
+    <TEMPLATE>  The path to the template you wish to deploy
+
+    Example 1: f5 bigip toolchain do package install 1.0.0
+
+    Example 2: f5 bigip toolchain as3 service install declaration /home/declaration.json
 ### cloud_services
-CLOUD_SERVICES_HELP: 'Manage resources in the provider environment'
-DNS_HELP: 'Create, update, and delete DNS records'
+CLOUD_SERVICES_HELP: |
+    Manage resources in the provider environment
+DNS_HELP: |
+    Create, update, and delete DNS records
+
+    <ACTION>    The action you wish to perform (create, update, delete)
+
+    <RECORD_TYPE>    The record type you wish to modify (a, cname)
+
+    <MEMBERS>   The list of members you with to add to the record
+
+    Example: f5 cloud_services dns a create members 1.2.3.4,2.3.4.5
 ### provider
 PROVIDER_HELP: 'Set and authenticate to the provider environment'
-PROVIDER_LOGIN_HELP: 'Log into the provider with a username and password'
-PROVIDER_USER_HELP: 'Username for logging into the provider'
+PROVIDER_LOGIN_HELP: |
+    Log into the provider with a username and password
+
+    <USERNAME>  Username for logging into the provider
+
+    Example: f5 provider login clouduser --password password
 PASSWORD_HELP: 'Password for logging into the provider'

@@ -2,6 +2,9 @@
 import os
 import sys
 import click
+from f5cloudcli.shared.util import getdoc
+
+DOC = getdoc()
 
 CONTEXT_SETTINGS = dict(auto_envvar_prefix='F5CloudCli')
 
@@ -66,15 +69,16 @@ class F5CloudCLI(click.MultiCommand):
         return mod.cli
 
 
-@click.command(cls=F5CloudCLI, context_settings=CONTEXT_SETTINGS)
+@click.command(cls=F5CloudCLI, context_settings=CONTEXT_SETTINGS,
+               help=DOC[('CLI_HELP')], no_args_is_help=True)
 @click.version_option('0.9.0')
-@click.option('--verbose', is_flag=True, help='Enables verbose mode')
+@click.option('--verbose', is_flag=True, help=DOC[('VERBOSE_HELP')])
 @PASS_CONTEXT
-def cli(ctx='', verbose='', home=''):
-    """F5 Cloud command line interface."""
+def cli(ctx='', verbose='', home='', prog_name=''): # pylint: disable=unused-argument
+    """ override """
     ctx.verbose = verbose
     if home is not None:
         ctx.home = home
 
 if __name__ == '__main__':
-    cli()
+    cli(prog_name='f5')

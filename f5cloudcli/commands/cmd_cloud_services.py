@@ -6,19 +6,29 @@ from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
 
 DOC = getdoc()
 
-@click.group('cloud_services', short_help='F5 Cloud Services',
-             help=DOC['CLOUD_SERVICES_HELP'], cls=AliasedGroup)
+@click.group('cloud_services',
+             short_help='F5 Cloud Services',
+             help=DOC['CLOUD_SERVICES_HELP'],
+             no_args_is_help=True,
+             cls=AliasedGroup)
 @PASS_CONTEXT
 def cli(ctx): # pylint: disable=unused-argument
     """ override """
     # pass
 
 @cli.command('dns', help=DOC['DNS_HELP'])
-@click.argument('item', required=True, type=click.Choice(['record']))
-@click.argument('action', required=True, type=click.Choice(['create', 'delete', 'update']))
-@click.argument('itype', required=True, type=click.Choice(['a', 'aaaa', 'cname']))
-@click.argument('members', required=False)
+@click.argument('action',
+                required=True,
+                type=click.Choice(['create', 'delete', 'update']),
+                metavar='<ACTION>')
+@click.argument('record_type',
+                required=True,
+                type=click.Choice(['a', 'aaaa', 'cname']),
+                metavar='<RECORD_TYPE>')
+@click.argument('members',
+                required=False,
+                metavar='<MEMBERS>')
 @PASS_CONTEXT
-def dns(ctx, item, action, itype, members):
+def dns(ctx, action, record_type, members):
     """ override """
-    ctx.log('%s DNS %s %s with members %s', action, itype, item, members)
+    ctx.log('%s DNS %s %s with members %s', action, record_type, members)
