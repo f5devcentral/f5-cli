@@ -18,6 +18,7 @@ setup(
     author_email='solutionsfeedback@f5.com',
     license='MIT',
     packages=find_packages(exclude=['tests']),
+    package_data={'f5cloudcli': ['shared/*.yaml']},
     entry_points={
         'console_scripts': [
             'f5 = f5cloudcli.cli:cli'
