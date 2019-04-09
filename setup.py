@@ -4,9 +4,9 @@ from setuptools import setup, find_packages
 # list of dependencies required for production use
 DEPENDENCIES = [
     'click==7.0',
-    'f5-cloud-sdk==0.9.0',
     'pyyaml==5.1',
-    'click-repl==0.1.6'
+    'click-repl==0.1.6',
+    'f5-cloud-sdk==0.9.0'
 ]
 
 setup(
