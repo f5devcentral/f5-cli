@@ -69,10 +69,14 @@ class F5CloudCLI(click.MultiCommand):
         return mod.cli
 
 
-@click.command(cls=F5CloudCLI, context_settings=CONTEXT_SETTINGS,
-               help=DOC[('CLI_HELP')], no_args_is_help=True)
+@click.command(cls=F5CloudCLI,
+               context_settings=CONTEXT_SETTINGS,
+               help=DOC[('CLI_HELP')],
+               no_args_is_help=True)
 @click.version_option('0.9.0')
-@click.option('--verbose', is_flag=True, help=DOC[('VERBOSE_HELP')])
+@click.option('--verbose',
+              is_flag=True,
+              help=DOC[('VERBOSE_HELP')])
 @PASS_CONTEXT
 def cli(ctx='', verbose='', home='', prog_name=''): # pylint: disable=unused-argument
     """ override """

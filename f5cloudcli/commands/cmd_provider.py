@@ -1,5 +1,7 @@
 """ This file provides the 'provider' implementation of the CLI. """
 import click
+from click_repl import register_repl
+
 from f5cloudcli.shared.util import getdoc
 from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
 
@@ -30,3 +32,5 @@ def cli(ctx): # pylint: disable=unused-argument
 def login(ctx, environment, user, password):
     """ override """
     ctx.log('Logging into %s as %s with %s', environment, user, password)
+
+register_repl(cli)

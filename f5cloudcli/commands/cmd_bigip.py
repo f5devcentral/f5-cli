@@ -1,5 +1,8 @@
 """ This file provides the 'bigip' implementation of the CLI. """
 import click
+
+from click_repl import register_repl
+
 from f5cloudcli.shared.util import getdoc
 from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
 
@@ -72,3 +75,5 @@ def toolchain(ctx, component, context, action, version, declaration, template):
     """ override """
     #pylint: disable-msg=too-many-arguments
     ctx.log('%sing %s %s %s %s', action, component, context, version, declaration, template)
+
+register_repl(cli)

@@ -7,7 +7,7 @@ VERBOSE_HELP: 'Enables verbose mode'
 ### bigip
 BIGIP_HELP: 'Authenticate to, discover, provision, and configure BIG-IP devices'
 # login
-BIGIP_LOGIN_HELP: |4
+BIGIP_LOGIN_HELP: |
     Authenticate to BIG-IP devices using an SSH private key
 
     <HOST>  Hostname or IP of the BIG-IP to log into

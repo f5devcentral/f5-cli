@@ -1,6 +1,7 @@
 """ This file provides the 'cloud_services' implementation of the CLI. """
 #pylint: disable-msg=unused-import
 import click
+from click_repl import register_repl
 from f5cloudcli.shared.util import getdoc
 from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
 
@@ -32,3 +33,5 @@ def cli(ctx): # pylint: disable=unused-argument
 def dns(ctx, action, record_type, members):
     """ override """
     ctx.log('%s DNS %s %s with members %s', action, record_type, members)
+
+register_repl(cli)

@@ -2,6 +2,7 @@
 click==7.0
 f5-cloud-sdk==0.9.0
 pyyaml==5.1
+click-repl==0.1.6
 --extra-index-url https://***REMOVED***/artifactory/api/pypi/f5-cloud-solutions-pypi/simple
 # dev packages
 pytest==4.3.1
