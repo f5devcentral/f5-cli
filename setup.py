@@ -23,7 +23,6 @@ setup(
             'f5 = f5cloudcli.cli:cli'
         ]
     },
-    include_package_data=True,
     dependency_links=[
         'https://***REMOVED***/artifactory/api/pypi/f5-cloud-solutions-pypi/simple'
     ],
