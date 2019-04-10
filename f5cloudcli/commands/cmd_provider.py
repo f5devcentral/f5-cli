@@ -27,7 +27,7 @@ def cli(ctx): # pylint: disable=unused-argument
                        help=DOC['PASSWORD_HELP'],
                        required=True,
                        prompt=True,
-                       metavar='<PASSWORD>')
+                       metavar='<PROVIDER_PASSWORD>')
 @PASS_CONTEXT
 def login(ctx, environment, user, password):
     """ override """

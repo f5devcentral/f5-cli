@@ -2,6 +2,8 @@
 import click
 
 from click_repl import register_repl
+from f5cloudsdk.bigip import ManagementClient
+from f5cloudsdk.bigip.toolchain import ToolChainClient
 
 from f5cloudcli.shared.util import getdoc
 from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
@@ -26,14 +28,19 @@ def cli(ctx): # pylint: disable=unused-argument
 @click.argument('user',
                 required=True,
                 metavar='<USERNAME>')
-@click.argument('private-key',
-                required=True,
-                type=click.Path('sshkey'),
-                metavar='<SSH_KEY>')
+@click.password_option('--password',
+                       help=DOC['BIGIP_PASSWORD_HELP'],
+                       required=False,
+                       prompt=True,
+                       confirmation_prompt=False,
+                       metavar='<BIGIP_PASSWORD>')
 @PASS_CONTEXT
-def login(ctx, host, user, private_key):
+def login(ctx, host, user, password):
     """ override """
-    ctx.log('Logging in to BIG-IP %s as %s with %s', host, user, private_key)
+    ctx.log('Logging in to BIG-IP %s as %s with %s', host, user, password)
+    device = ManagementClient(host, user=user, password=password)
+    ctx.log('BIG-IP %s is running version %s with stored token %s',
+            device.host, device.get_info(), device.token)
 
 @cli.command('discover', help=DOC['DISCOVER_HELP'])
 @click.argument('provider',
@@ -64,16 +71,18 @@ def discover(ctx, provider, tag):
                 required=False)
 @click.argument('declaration',
                 required=False,
-                type=click.File('decl'),
+                #type=click.File('decl'),
                 metavar='<DECLARATION>')
 @click.argument('template',
                 required=False,
-                type=click.File('tmpl'),
+                #type=click.File('tmpl'),
                 metavar='<TEMPLATE>')
 @PASS_CONTEXT
 def toolchain(ctx, component, context, action, version, declaration, template):
     """ override """
     #pylint: disable-msg=too-many-arguments
-    ctx.log('%sing %s %s %s %s', action, component, context, version, declaration, template)
+    ctx.log('%s %s %s %s %s %s', action, component, context, version, declaration, template)
+    installer = ToolChainClient(ctx.device, component)
+    installer.package.install()
 
 register_repl(cli)

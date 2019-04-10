@@ -17,6 +17,7 @@ BIGIP_LOGIN_HELP: |
     <SSH-KEY>  SSH key for logging into the BIG-IP
 
     Example: f5 bigip login 1.2.3.4 admin /path/to/my/key
+BIGIP_PASSWORD_HELP: 'Password for logging into the BIGIP'
 # discover
 DISCOVER_HELP: |
     Discover all BIG-IP devices with a specific key/value tag
