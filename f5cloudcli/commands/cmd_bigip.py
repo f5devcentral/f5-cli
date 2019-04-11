@@ -3,7 +3,7 @@ import click
 
 from click_repl import register_repl
 from f5cloudsdk.bigip import ManagementClient
-#from f5cloudsdk.bigip.toolchain import ToolChainClient
+from f5cloudsdk.bigip.toolchain import ToolChainClient
 
 from f5cloudcli.shared.util import getdoc
 from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
@@ -41,6 +41,7 @@ def login(ctx, host, user, password):
     device = ManagementClient(host, user=user, password=password)
     ctx.log('BIG-IP %s is running version %s with stored token %s',
             device.host, device.get_info(), device.token)
+    ctx.obj = device
 
 @cli.command('discover', help=DOC['DISCOVER_HELP'])
 @click.argument('provider',
@@ -82,5 +83,8 @@ def toolchain(ctx, component, context, action, version, declaration, template):
     """ override """
     #pylint: disable-msg=too-many-arguments
     ctx.log('%s %s %s %s %s %s', action, component, context, version, declaration, template)
+    installer = ToolChainClient(ctx.obj, component)
+    installer.package.install()
+    ctx.log('Success!')
 
 register_repl(cli)
