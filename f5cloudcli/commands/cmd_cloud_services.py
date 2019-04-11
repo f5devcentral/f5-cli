@@ -27,7 +27,7 @@ def cli(ctx): # pylint: disable=unused-argument
                 type=click.Choice(['a', 'aaaa', 'cname']),
                 metavar='<RECORD_TYPE>')
 @click.argument('members',
-                required=False,
+                required=True,
                 metavar='<MEMBERS>')
 @PASS_CONTEXT
 def dns(ctx, action, record_type, members):

@@ -3,7 +3,7 @@ import click
 
 from click_repl import register_repl
 from f5cloudsdk.bigip import ManagementClient
-from f5cloudsdk.bigip.toolchain import ToolChainClient
+#from f5cloudsdk.bigip.toolchain import ToolChainClient
 
 from f5cloudcli.shared.util import getdoc
 from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
@@ -67,22 +67,20 @@ def discover(ctx, provider, tag):
                 required=True,
                 type=click.Choice(['install', 'upgrade', 'verify', 'remove', 'create']),
                 metavar='<ACTION>')
-@click.argument('version',
-                required=False)
-@click.argument('declaration',
-                required=False,
-                #type=click.File('decl'),
-                metavar='<DECLARATION>')
-@click.argument('template',
-                required=False,
-                #type=click.File('tmpl'),
-                metavar='<TEMPLATE>')
+@click.option('--version',
+              type=click.Choice(['latest', 'lts']),
+              default='latest',
+              required=False)
+@click.option('--declaration',
+              required=False,
+              metavar='<DECLARATION>')
+@click.option('--template',
+              required=False,
+              metavar='<TEMPLATE>')
 @PASS_CONTEXT
 def toolchain(ctx, component, context, action, version, declaration, template):
     """ override """
     #pylint: disable-msg=too-many-arguments
     ctx.log('%s %s %s %s %s %s', action, component, context, version, declaration, template)
-    installer = ToolChainClient(ctx.device, component)
-    installer.package.install()
 
 register_repl(cli)
