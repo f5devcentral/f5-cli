@@ -4,6 +4,7 @@ stages:
     - test
     - docs
     - publish
+    - publish_test
 
 # unit tests: python 3.x (preferred)
 test_unit:
@@ -92,3 +93,13 @@ pages:
     artifacts:
         paths:
             - public
+
+# publish test: test internal (artifactory) install
+publish_test_internal_install:
+    stage: publish_test
+    script:
+        # install packages - first wait until it is available after a recent publish
+        - bash scripts/wait_for_resp.sh ${ARTIFACTORY_BASE_URL}/api/pypi/f5-cloud-solutions-pypi/simple/f5-cloud-cli/
+        - pip3 install f5-cloud-cli --extra-index-url ${ARTIFACTORY_BASE_URL}/api/pypi/f5-cloud-solutions-pypi/simple
+    tags:
+        - cm-official-docker-executor
