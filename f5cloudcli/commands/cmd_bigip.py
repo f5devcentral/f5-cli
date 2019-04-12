@@ -1,89 +1,15 @@
 """ This file provides the 'bigip' implementation of the CLI. """
-import os
-import pickle
 import click
 
 from click_repl import register_repl
 from f5cloudsdk.bigip import ManagementClient
 from f5cloudsdk.bigip.toolchain import ToolChainClient
 
+from f5cloudcli.config import ConfigClient
 from f5cloudcli.shared.util import getdoc
 from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
-import f5cloudcli.constants as constants
 
 DOC = getdoc()
-
-class Config():
-    """ A class used to pass BIG-IP authentication
-    tokens between CLI functions.
-
-    It will store the object returned by the
-    ManagementClient class.
-
-    It will retrieve the management client object from storage.
-
-    If a management client object is not present, it will return an error.
-
-    Attributes
-    ----------
-    client : obj
-        the BIG-IP management client object
-
-    Methods
-    -------
-    write_client()
-        Write management client object storage
-    read_client()
-        Read management client object from storage
-    """
-
-    def __init__(self, **kwargs):
-        """Class initialization
-
-        Parameters
-        ----------
-        **kwargs:
-            optional keyword arguments
-
-        Keyword Arguments
-        -----------------
-        client_obj : str
-            the client object returned from bigip login
-
-        Returns
-        -------
-        None
-        """
-
-        self.client_obj = kwargs.pop('client', '')
-
-    def write_client(self):
-        """ used by bigip login to write fresh token to local storage """
-
-        tmp_file = '%s' % constants.TMP_DIR
-        filename = tmp_file + '/auth.json'
-        client_obj = self.client_obj
-
-        with open(filename, 'wb') as file:
-            pickle.dump(client_obj, file)
-        return str(filename)
-
-    @staticmethod
-    def read_client():
-        """ used by cli commands to check if there is an
-        existing token
-        """
-
-        tmp_file = '%s' % constants.TMP_DIR
-        filename = tmp_file + '/auth.json'
-        exists = os.path.isfile(filename)
-
-        if exists:
-            with open(filename, 'rb') as file:
-                client_obj = pickle.load(file)
-            return client_obj
-
-        raise Exception('Command failed. You must login to BIG-IP!')
 
 @click.group('bigip',
              short_help='BIG-IP',
@@ -114,8 +40,10 @@ def login(ctx, host, user, password):
     """ override """
     ctx.log('Logging in to BIG-IP %s as %s with %s', host, user, password)
     client = ManagementClient(host, user=user, password=password)
-    ctx.obj = client
-    Config(client=client).write_client()
+    ctx.client = client
+    # write config state to disk
+    config_client = ConfigClient(client=client)
+    config_client.write_client()
 
 @cli.command('discover', help=DOC['DISCOVER_HELP'])
 @click.argument('provider',
@@ -140,11 +68,9 @@ def discover(ctx, provider, tag):
                 metavar='<CONTEXT>')
 @click.argument('action',
                 required=True,
-                type=click.Choice(['install', 'upgrade', 'verify', 'remove', 'create']),
+                type=click.Choice(['install', 'uninstall', 'upgrade', 'verify', 'remove']),
                 metavar='<ACTION>')
 @click.option('--version',
-              type=click.Choice(['latest', 'lts']),
-              default='latest',
               required=False)
 @click.option('--declaration',
               required=False,
@@ -158,10 +84,24 @@ def toolchain(ctx, component, context, action, version, declaration, template):
     #pylint: disable-msg=too-many-arguments
     ctx.log('%s %s %s %s %s %s', action, component, context, version, declaration, template)
 
-    client = ctx.obj if hasattr(ctx, 'obj') else Config().read_client()
+    client = ctx.client if hasattr(ctx, 'client') else ConfigClient().read_client()
 
-    installer = ToolChainClient(client, component)
-    installer.package.install()
-    ctx.log('Success!')
+    kwargs = {}
+    if version:
+        kwargs['version'] = version
+    toolchain_client = ToolChainClient(client, component, **kwargs)
+
+    if action == 'verify':
+        installed = toolchain_client.package.is_installed()
+        ctx.log('Toolchain component package installed: %s', (installed))
+    elif action == 'install':
+        toolchain_client.package.install()
+        ctx.log('Toolchain component package installed')
+    elif action == 'uninstall':
+        toolchain_client.package.uninstall()
+        ctx.log('Toolchain component package uninstalled')
+    else:
+        raise click.ClickException('Action not implemented')
+
 
 register_repl(cli)
