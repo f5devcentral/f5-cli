@@ -1,4 +1,6 @@
 """ This file provides the 'bigip' implementation of the CLI. """
+import os
+import pickle
 import click
 
 from click_repl import register_repl
@@ -7,8 +9,81 @@ from f5cloudsdk.bigip.toolchain import ToolChainClient
 
 from f5cloudcli.shared.util import getdoc
 from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
+import f5cloudcli.constants as constants
 
 DOC = getdoc()
+
+class Config():
+    """ A class used to pass BIG-IP authentication
+    tokens between CLI functions.
+
+    It will store the object returned by the
+    ManagementClient class.
+
+    It will retrieve the management client object from storage.
+
+    If a management client object is not present, it will return an error.
+
+    Attributes
+    ----------
+    client : obj
+        the BIG-IP management client object
+
+    Methods
+    -------
+    write_client()
+        Write management client object storage
+    read_client()
+        Read management client object from storage
+    """
+
+    def __init__(self, **kwargs):
+        """Class initialization
+
+        Parameters
+        ----------
+        **kwargs:
+            optional keyword arguments
+
+        Keyword Arguments
+        -----------------
+        client_obj : str
+            the client object returned from bigip login
+
+        Returns
+        -------
+        None
+        """
+
+        self.client_obj = kwargs.pop('client', '')
+
+    def write_client(self):
+        """ used by bigip login to write fresh token to local storage """
+
+        tmp_file = '%s' % constants.TMP_DIR
+        filename = tmp_file + '/auth.json'
+        client_obj = self.client_obj
+
+        with open(filename, 'wb') as file:
+            pickle.dump(client_obj, file)
+        return str(filename)
+
+    @staticmethod
+    def read_client():
+        """ used by cli commands to check if there is an
+        existing token
+        """
+
+        tmp_file = '%s' % constants.TMP_DIR
+        filename = tmp_file + '/auth.json'
+        exists = os.path.isfile(filename)
+
+        if exists:
+            with open(filename, 'rb') as file:
+                client_obj = pickle.load(file)
+            return client_obj
+
+        raise Exception('Command failed. You must login to BIG-IP!')
 
 @click.group('bigip',
              short_help='BIG-IP',
@@ -38,10 +113,9 @@ def cli(ctx): # pylint: disable=unused-argument
 def login(ctx, host, user, password):
     """ override """
     ctx.log('Logging in to BIG-IP %s as %s with %s', host, user, password)
-    device = ManagementClient(host, user=user, password=password)
-    ctx.log('BIG-IP %s is running version %s with stored token %s',
-            device.host, device.get_info(), device.token)
-    ctx.obj = device
+    client = ManagementClient(host, user=user, password=password)
+    ctx.obj = client
+    Config(client=client).write_client()
 
 @cli.command('discover', help=DOC['DISCOVER_HELP'])
 @click.argument('provider',
@@ -83,7 +157,10 @@ def toolchain(ctx, component, context, action, version, declaration, template):
     """ override """
     #pylint: disable-msg=too-many-arguments
     ctx.log('%s %s %s %s %s %s', action, component, context, version, declaration, template)
-    installer = ToolChainClient(ctx.obj, component)
+
+    client = ctx.obj if hasattr(ctx, 'obj') else Config().read_client()
+
+    installer = ToolChainClient(client, component)
     installer.package.install()
     ctx.log('Success!')
 
