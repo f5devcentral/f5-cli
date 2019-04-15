@@ -40,7 +40,7 @@ def login(ctx, host, user, password):
     """ override """
     ctx.log('Logging in to BIG-IP %s as %s with %s', host, user, password)
     client = ManagementClient(host, user=user, password=password)
-    # delete sensitive attributes 
+    # delete sensitive attributes
     delattr(client, 'user')
     delattr(client, 'password')
     ctx.client = client
