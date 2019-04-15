@@ -40,6 +40,9 @@ def login(ctx, host, user, password):
     """ override """
     ctx.log('Logging in to BIG-IP %s as %s with %s', host, user, password)
     client = ManagementClient(host, user=user, password=password)
+    # delete sensitive attributes
+    delattr(client, 'user')
+    delattr(client, 'password')
     ctx.client = client
     # write config state to disk
     config_client = ConfigClient(client=client)
@@ -68,7 +71,7 @@ def discover(ctx, provider, tag):
                 metavar='<CONTEXT>')
 @click.argument('action',
                 required=True,
-                type=click.Choice(['install', 'uninstall', 'upgrade', 'verify', 'remove']),
+                type=click.Choice(['install', 'uninstall', 'upgrade', 'verify']),
                 metavar='<ACTION>')
 @click.option('--version',
               required=False)
@@ -95,11 +98,19 @@ def toolchain(ctx, component, context, action, version, declaration, template):
         installed = toolchain_client.package.is_installed()
         ctx.log('Toolchain component package installed: %s', (installed))
     elif action == 'install':
-        toolchain_client.package.install()
-        ctx.log('Toolchain component package installed')
+        installed = toolchain_client.package.is_installed()
+        if not installed:
+            toolchain_client.package.install()
+            ctx.log('Toolchain component package installed')
+        else:
+            ctx.log('Toolchain component is already installed')
     elif action == 'uninstall':
-        toolchain_client.package.uninstall()
-        ctx.log('Toolchain component package uninstalled')
+        installed = toolchain_client.package.is_installed()
+        if not installed:
+            ctx.log('Toolchain component package is already uninstalled')
+        else:
+            toolchain_client.package.uninstall()
+            ctx.log('Toolchain component package uninstalled')
     else:
         raise click.ClickException('Action not implemented')
 
