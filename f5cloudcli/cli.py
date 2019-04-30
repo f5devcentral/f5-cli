@@ -1,12 +1,14 @@
 """ This file provides the base implementation of the CLI. """
+
 import os
 import sys
 import click
-from f5cloudcli.shared.util import getdoc
+from f5cloudcli import docs
 
-DOC = getdoc()
+DOC = docs.get_docs()
 
 CONTEXT_SETTINGS = dict(auto_envvar_prefix='F5CloudCli')
+CMD_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), 'commands'))
 
 class Context():
     """ Context class for click. """
@@ -26,6 +28,8 @@ class Context():
         if self.verbose:
             self.log(msg, *args)
 
+PASS_CONTEXT = click.make_pass_decorator(Context, ensure=True)
+
 class AliasedGroup(click.Group):
     """ Alias group class for click. """
 
@@ -41,45 +45,39 @@ class AliasedGroup(click.Group):
             return click.Group.get_command(self, ctx, matches[0])
         ctx.fail('Too many matches: %s' % ', '.join(sorted(matches)))
 
-PASS_CONTEXT = click.make_pass_decorator(Context, ensure=True)
-CMD_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                          'commands'))
-
 class F5CloudCLI(click.MultiCommand):
     """ Base click class for the CLI. """
 
     def list_commands(self, ctx):
         ret = []
-        for filename in os.listdir(CMD_FOLDER):
-            if filename.endswith('.py') and \
-               filename.startswith('cmd_'):
-                ret.append(filename[4:-3])
-        ret.sort()
+        for _dir in os.listdir(CMD_FOLDER):
+            if os.path.isdir(os.path.join(CMD_FOLDER, _dir)) and _dir.startswith('cmd_'):
+                cmd = _dir[4:]
+                cmd = cmd.replace('_', '-') # multi-word commands: foo_bar -> foo-bar
+                ret.append(cmd)
         return ret
 
     def get_command(self, ctx, cmd_name):
         try:
             if sys.version_info[0] == 2:
                 cmd_name = cmd_name.encode('ascii', 'replace')
-            mod = __import__('f5cloudcli.commands.cmd_' + cmd_name,
-                             None, None, ['cli'])
+            cmd_name = cmd_name.replace('-', '_')
+            mod = __import__('f5cloudcli.commands.cmd_' + cmd_name, None, None, ['cli'])
         except ImportError as error:
             print(error)
             return
         return mod.cli
 
-
 @click.command(cls=F5CloudCLI,
                context_settings=CONTEXT_SETTINGS,
-               help=DOC[('CLI_HELP')],
-               no_args_is_help=True)
+               help=DOC[('CLI_HELP')])
 @click.version_option('0.9.0')
 @click.option('--verbose',
               is_flag=True,
               help=DOC[('VERBOSE_HELP')])
 @PASS_CONTEXT
 def cli(ctx='', verbose='', home='', prog_name=''): # pylint: disable=unused-argument
-    """ override """
+    """ main cli """
     ctx.verbose = verbose
     if home is not None:
         ctx.home = home
