@@ -1,23 +1,21 @@
-""" This file provides the 'cloud_services' implementation of the CLI. """
-#pylint: disable-msg=unused-import
+""" This file provides the 'cloud-services' implementation of the CLI. """
+
+import click_repl
 import click
-from click_repl import register_repl
-from f5cloudcli.shared.util import getdoc
+
+from f5cloudcli import docs
 from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
 
-DOC = getdoc()
+HELP = docs.get_docs()
 
-@click.group('cloud_services',
-             short_help='F5 Cloud Services',
-             help=DOC['CLOUD_SERVICES_HELP'],
-             no_args_is_help=True,
+@click.group('cloud-services',
+             help=HELP['CLOUD_SERVICES_HELP'],
              cls=AliasedGroup)
-@PASS_CONTEXT
-def cli(ctx): # pylint: disable=unused-argument
-    """ override """
-    # pass
+def cli():
+    """ group """
 
-@cli.command('dns', help=DOC['DNS_HELP'])
+@cli.command('dns',
+             help=HELP['CLOUD_SERVICES_DNS_HELP'],)
 @click.argument('action',
                 required=True,
                 type=click.Choice(['create', 'delete', 'update']),
@@ -31,7 +29,8 @@ def cli(ctx): # pylint: disable=unused-argument
                 metavar='<MEMBERS>')
 @PASS_CONTEXT
 def dns(ctx, action, record_type, members):
-    """ override """
+    """ command """
     ctx.log('%s DNS %s %s with members %s', action, record_type, members)
+    raise click.ClickException('Command not implemented')
 
-register_repl(cli)
+click_repl.register_repl(cli)

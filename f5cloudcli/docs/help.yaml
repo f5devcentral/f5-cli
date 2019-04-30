@@ -1,0 +1,19 @@
+## cli ##
+CLI_HELP: |
+    Welcome to the F5 Cloud command line interface.
+
+    You can do all the things here.
+VERBOSE_HELP: 'Enables verbose mode'
+### f5 bigip ###
+BIGIP_HELP: Configure BIG-IP
+BIGIP_LOGIN_HELP: Login to a BIG-IP
+BIGIP_DISCOVER_HELP: Discover BIG-IP's with a specific key/value tag
+BIGIP_TOOLCHAIN_HELP: Configure Automation Toolchain packages and services
+BIGIP_TOOLCHAIN_PACKAGE_HELP: Install, uninstall, upgrade and verify Automation Toolchain packages
+BIGIP_TOOLCHAIN_SERVICE_HELP: Create, delete and verify Automation Toolchain services
+### f5 cloud-services ###
+CLOUD_SERVICES_HELP: Configure F5 Cloud Services
+CLOUD_SERVICES_DNS_HELP: Create, update, and delete DNS records
+### f5 provider ###
+PROVIDER_HELP: Configure provider environment
+PROVIDER_LOGIN_HELP: Login to a provider environment
