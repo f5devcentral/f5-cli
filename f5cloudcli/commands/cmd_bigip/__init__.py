@@ -10,6 +10,7 @@ import click
 
 from f5cloudcli import docs
 from f5cloudcli.utils import clients
+from f5cloudcli.utils import core as utils_core
 from f5cloudcli.config import ConfigClient
 from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
 
@@ -88,8 +89,6 @@ def toolchain():
 @PASS_CONTEXT
 def package(ctx, action, component, version):
     """ command """
-    ctx.log('%s %s %s', component, version, action)
-
     client = ctx.client if hasattr(ctx, 'client') else ConfigClient().read_client()
 
     kwargs = {}
@@ -119,16 +118,35 @@ def package(ctx, action, component, version):
                    help=HELP['BIGIP_TOOLCHAIN_SERVICE_HELP'])
 @click.argument('action',
                 required=True,
-                type=click.Choice(['create', 'delete', 'verify']))
+                type=click.Choice(['create', 'delete', 'show']))
 @click.option('--component',
               required=True,
               type=click.Choice(TOOLCHAIN_COMPONENTS))
 @click.option('--version',
               required=False)
+@click.option('--declaration',
+              required=False)
 @PASS_CONTEXT
-def service(ctx, action, component, version):
+def service(ctx, action, component, version, declaration):
     """ command """
-    ctx.log('%s %s %s', component, version, action)
-    raise click.ClickException('Command not implemented')
+    client = ctx.client if hasattr(ctx, 'client') else ConfigClient().read_client()
+
+    kwargs = {}
+    if version:
+        kwargs['version'] = version
+    toolchain_client = ToolChainClient(client, component, **kwargs)
+
+    if action == 'show':
+        result = toolchain_client.service.show()
+        ctx.log('Toolchain component service show: %s', (result))
+    elif action == 'create':
+        decl_location = utils_core.convert_to_absolute(declaration)
+        result = toolchain_client.service.create(config_file=decl_location)
+        ctx.log('Toolchain component service create: %s', (result))
+    elif action == 'delete':
+        result = toolchain_client.service.delete()
+        ctx.log('Toolchain component service delete: %s', (result))
+    else:
+        raise click.ClickException('Action not implemented')
 
 click_repl.register_repl(cli)
