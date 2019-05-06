@@ -42,8 +42,8 @@ def login(ctx, host, user, password):
     ctx.log('Logging in to BIG-IP %s as %s with ******', host, user)
     client = ManagementClient(host, user=user, password=password)
     # delete sensitive attributes
-    delattr(client, 'user')
-    delattr(client, 'password')
+    delattr(client, '_user')
+    delattr(client, '_password')
     ctx.client = client
     # write config state to disk
     config_client = ConfigClient(client=client)
@@ -126,8 +126,11 @@ def package(ctx, action, component, version):
               required=False)
 @click.option('--declaration',
               required=False)
+@click.option('--install-component',
+              required=False,
+              is_flag=True)
 @PASS_CONTEXT
-def service(ctx, action, component, version, declaration):
+def service(ctx, action, component, version, declaration, install_component): # pylint: disable=too-many-arguments
     """ command """
     client = ctx.client if hasattr(ctx, 'client') else ConfigClient().read_client()
 
@@ -135,6 +138,13 @@ def service(ctx, action, component, version, declaration):
     if version:
         kwargs['version'] = version
     toolchain_client = ToolChainClient(client, component, **kwargs)
+
+    # intent based - support install in 'service' sub-command
+    # install toolchain component if requested (and not installed)
+    installed = toolchain_client.package.is_installed()
+    if install_component and not installed:
+        ctx.log('Installing toolchain component package')
+        toolchain_client.package.install()
 
     if action == 'show':
         result = toolchain_client.service.show()

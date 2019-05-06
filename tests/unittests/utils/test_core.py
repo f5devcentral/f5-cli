@@ -5,7 +5,7 @@ import sys
 
 from f5cloudcli.utils import core as core_utils
 
-sys.path.append(os.getcwd()) # TODO: fix this import process
+sys.path.append(os.getcwd())
 
 def test_multiply():
     """ Test case """

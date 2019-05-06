@@ -1,0 +1,98 @@
+- name: Create BIG-IP
+  hosts: localhost
+  connection: local
+  vars:
+    env_prefix: "{{ env_prefix }}"
+    rg_name: "{{ env_prefix }}"
+    vnet_name: "{{ env_prefix }}-vnet"
+    vnet_subnet_name: default
+    pub_ip_name: "{{ env_prefix }}-public-ip"
+    security_group_name: "{{ env_prefix }}-sg"
+    admin_username: azureuser
+    image_info:
+      publisher: f5-networks
+      offer: f5-big-ip-good
+      sku: f5-bigip-virtual-edition-25m-good-hourly
+      version: latest
+  tasks:
+  - name: Create resource group
+    azure_rm_resourcegroup:
+      name: "{{ rg_name }}"
+      location: westus
+  - name: Create virtual network
+    azure_rm_virtualnetwork:
+      resource_group: "{{ rg_name }}"
+      name: "{{ vnet_name }}"
+      address_prefixes: "10.0.0.0/16"
+  - name: Create virtual network subnet
+    azure_rm_subnet:
+      resource_group: "{{ rg_name }}"
+      name: "{{ vnet_subnet_name }}"
+      address_prefix: "10.0.0.0/24"
+      virtual_network: "{{ vnet_name }}"
+  - name: Create public IP address
+    azure_rm_publicipaddress:
+      resource_group: "{{ rg_name }}"
+      allocation_method: Static
+      name: "{{ pub_ip_name }}"
+    register: output_public_ip_address
+  - name: Create Network Security Group
+    azure_rm_securitygroup:
+      resource_group: "{{ rg_name }}"
+      name: "{{ security_group_name }}"
+      rules:
+        - name: SSH
+          protocol: Tcp
+          destination_port_range: 22
+          access: Allow
+          priority: 1001
+          direction: Inbound
+        - name: HTTPS
+          protocol: Tcp
+          destination_port_range: 8443
+          access: Allow
+          priority: 1002
+          direction: Inbound
+  - name: Create NIC
+    azure_rm_networkinterface:
+      resource_group: "{{ rg_name }}"
+      name: "{{ env_prefix }}-nic0"
+      virtual_network: "{{ vnet_name }}"
+      subnet: "{{ vnet_subnet_name }}"
+      public_ip_name: "{{ pub_ip_name }}"
+      security_group: "{{ security_group_name }}"
+  - name: Create VM
+    azure_rm_virtualmachine:
+      resource_group: "{{ rg_name }}"
+      name: "{{ env_prefix }}-vm0"
+      vm_size: Standard_DS2_v2
+      admin_username: "{{ admin_username }}"
+      admin_password: "{{ admin_password }}"
+      network_interfaces: "{{ env_prefix }}-nic0"
+      image:
+        publisher: "{{ image_info.publisher }}"
+        offer: "{{ image_info.offer }}"
+        sku: "{{ image_info.sku }}"
+        version: "{{ image_info.version }}"
+      plan:
+        publisher: "{{ image_info.publisher }}"
+        product: "{{ image_info.offer }}"
+        name: "{{ image_info.sku }}"
+      accept_terms: yes
+      managed_disk_type: Standard_LRS
+      tags:
+        devicetype: BIG-IP
+      append_tags: true
+  - name: Login to BIG-IP
+    command: f5 bigip login --host {{ output_public_ip_address.state.ip_address }} --user {{ admin_username }} --password {{ admin_password }}
+  - name: Install Declarative Onboarding on BIG-IP
+    command: f5 bigip toolchain package install --component do
+  - name: Install AS3 on BIG-IP
+    command: f5 bigip toolchain package install --component as3
+  - name: Configure BIG-IP
+    command: f5 bigip toolchain service create --component do --declaration {{ playbook_dir }}/declarations/do_decl.json
+  - name: Configure Application Services on BIG-IP
+    command: f5 bigip toolchain service create --component as3 --declaration {{ playbook_dir }}/declarations/as3_decl.json
+  - name: "Output: Public IP for VM"
+    debug:
+      msg: "{{ output_public_ip_address.state.ip_address }}"
