@@ -5,13 +5,14 @@ DIST_DIR := dist
 EGG_DIR := f5_cloud_cli.egg-info
 PACKAGE_DIR := f5cloudcli
 TEST_DIR := tests
+UNIT_TEST_DIR := ${TEST_DIR}/unittests
 
 build:
 	echo "Creating package artifacts"
 	python3 setup.py sdist bdist_wheel
 unit_test:
 	echo "Running unit tests (incl code coverage)";
-	pytest --cov=${PACKAGE_DIR} ${TEST_DIR}/;
+	pytest --cov=${PACKAGE_DIR} ${UNIT_TEST_DIR}/;
 lint:
 	echo "Running linter (any error will result in non-zero exit code)";
 	pylint ${PACKAGE_DIR}/;

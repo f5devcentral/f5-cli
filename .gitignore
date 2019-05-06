@@ -15,5 +15,9 @@ build/
 dist/
 *egg-info/
 
+# ansible
+*.retry
+ansible-env/
+
 # misc
 .DS_Store
