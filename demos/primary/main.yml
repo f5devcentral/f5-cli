@@ -1,6 +1,8 @@
 - name: Create BIG-IP
   hosts: localhost
   connection: local
+  vars_files:
+    - "{{ playbook_dir }}/vars/shared.yml"
   vars:
     env_prefix: "{{ env_prefix }}"
     rg_name: "{{ env_prefix }}"
@@ -18,7 +20,7 @@
   - name: Create resource group
     azure_rm_resourcegroup:
       name: "{{ rg_name }}"
-      location: westus
+      location: "{{ location }}"
   - name: Create virtual network
     azure_rm_virtualnetwork:
       resource_group: "{{ rg_name }}"
