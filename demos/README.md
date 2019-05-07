@@ -27,3 +27,9 @@ source ansible-env/bin/activate
 export ANSIBLE_PYTHON_INTERPRETER="$(realpath ansible-env)/bin/python"
 # add to playbook call: -e "ansible_python_interpreter=${ANSIBLE_PYTHON_INTERPRETER}"
 ```
+
+Ignore HTTP(s) warnings (not recommended):
+
+```bash
+export PYTHONWARNINGS="ignore:Unverified HTTPS request"
+```

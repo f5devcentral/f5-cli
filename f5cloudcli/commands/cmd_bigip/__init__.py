@@ -145,6 +145,8 @@ def service(ctx, action, component, version, declaration, install_component): # 
     if install_component and not installed:
         ctx.log('Installing toolchain component package')
         toolchain_client.package.install()
+        ctx.log('Checking toolchain component service is available')
+        toolchain_client.service.is_available()
 
     if action == 'show':
         result = toolchain_client.service.show()
