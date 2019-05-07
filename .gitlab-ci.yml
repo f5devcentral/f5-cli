@@ -2,6 +2,7 @@ image: python:3.7
 
 stages:
     - test
+    - test_functional
     - docs
     - publish
     - publish_test
@@ -32,6 +33,30 @@ test_unit_python_2_x:
         - make unit_test
     tags:
         - cm-official-docker-executor
+
+# functional tests: demo
+test_functional_demo:
+    stage: test_functional
+    script:
+        # install packages
+        - pip3 install -r requirements.txt
+        - pip3 install .
+        # install packages - ansible
+        - pip3 install -r demos/requirements.txt
+        # environment vars
+        - export PYTHONWARNINGS="ignore:Unverified HTTPS request"
+        - export ENV_PREFIX='f5cloudclitest'
+        - export ADMIN_PWD=$(openssl rand 12 | base64)
+        # run ansible playbook
+        - ansible-playbook demos/primary/main.yml -e "admin_password=${ADMIN_PWD}" -e "env_prefix=${ENV_PREFIX}" -v
+        # tear down environment
+        - ansible-playbook demos/primary/teardown.yml -e "env_prefix=${ENV_PREFIX}" -v
+    tags:
+        - cm-official-docker-executor
+    only:
+        variables:
+            # enable this job
+            - $RUN_FUNCTIONAL_TESTS == "true"
 
 # generate code coverage docs
 docs_code_coverage:
