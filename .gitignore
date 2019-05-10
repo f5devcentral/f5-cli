@@ -10,14 +10,17 @@ __pycache__/
 .coverage
 code_coverage/
 
-# build
+# Build
 build/
 dist/
 *egg-info/
 
-# ansible
+# Ansible
 *.retry
 ansible-env/
 
-# misc
+# Python env
+*.env
+
+# Misc
 .DS_Store

@@ -1,0 +1,3 @@
+--extra-index-url https://***REMOVED***/artifactory/api/pypi/f5-cloud-solutions-pypi/simple
+# production packages
+f5-cloud-sdk==0.9.0
