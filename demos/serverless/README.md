@@ -2,6 +2,12 @@
 
 Serverless demo using Azure Functions. Function provides microservice to allow for interaction with BIG-IP(s) around discovery and configuration.
 
+## Demo
+
+![Alt Text](demo.gif)
+
+## Usage
+
 POST `https://myfunctionapp.azurewebsites.net/api/config_mgmt?code=foo`
 
 ```json
@@ -67,5 +73,5 @@ Response:
 
 Helpful tutorial explains steps to get started: https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-function-python
 
-Publish: ```func azure functionapp publish <function app name> --build-native-deps```
-Changes: Make changes to `__init__.py` and re-publish.
+- Publish: ```func azure functionapp publish <function app name> --build-native-deps```
+- Changes: Make changes to `__init__.py` and re-publish.
