@@ -1,6 +1,6 @@
 # Introduction
 
-Serverless demo using Azure Functions. Function provides microservice to allow for interaction with BIG-IP(s) around discovery and configuration.
+Serverless demo using Azure Functions and F5 Cloud SDK.  The function provides a microservice for interaction with BIG-IP(s) around device info discovery and configuration.  See `config_mgmt/__init__.py` for the entirety of the code required.
 
 ## Demo
 
