@@ -3,9 +3,14 @@ image: python:3.7
 stages:
     - test
     - test_functional
+    - test_functional_teardown
     - docs
     - publish
     - publish_test
+
+variables:
+    FUNCTIONAL_TEST_PREFIX: 'f5cloudclitest'
+    PYTHONWARNINGS: 'ignore:Unverified HTTPS request'
 
 # unit tests: python 3.x (preferred)
 test_unit:
@@ -34,8 +39,8 @@ test_unit_python_2_x:
     tags:
         - cm-official-docker-executor
 
-# functional tests: demo
-test_functional_demo:
+# functional tests: demo (run)
+test_functional:
     stage: test_functional
     script:
         # install packages
@@ -44,15 +49,30 @@ test_functional_demo:
         # install packages - ansible
         - pip3 install -r demos/requirements.txt
         # environment vars
-        - export PYTHONWARNINGS="ignore:Unverified HTTPS request"
-        - export ENV_PREFIX='f5cloudclitest'
-        - export ADMIN_PWD=$(openssl rand 12 | base64)
+        - export ADMIN_PWD=$(openssl rand 12 | base64)'Ul!'
         # run ansible playbook
-        - ansible-playbook demos/primary/main.yml -e "admin_password=${ADMIN_PWD}" -e "env_prefix=${ENV_PREFIX}" -v
-        # tear down environment
-        - ansible-playbook demos/primary/teardown.yml -e "env_prefix=${ENV_PREFIX}" -v
+        - ansible-playbook demos/primary/main.yml -e "admin_password=${ADMIN_PWD}" -e "env_prefix=${FUNCTIONAL_TEST_PREFIX}" -v
     tags:
         - cm-official-docker-executor
+    only:
+        variables:
+            # enable this job
+            - $RUN_FUNCTIONAL_TESTS == "true"
+
+# functional tests: demo (teardown)
+test_functional_teardown:
+    stage: test_functional_teardown
+    script:
+        # install packages
+        - pip3 install -r requirements.txt
+        - pip3 install .
+        # install packages - ansible
+        - pip3 install -r demos/requirements.txt
+        # tear down environment
+        - ansible-playbook demos/primary/teardown.yml -e "env_prefix=${FUNCTIONAL_TEST_PREFIX}" -v
+    tags:
+        - cm-official-docker-executor
+    when: always
     only:
         variables:
             # enable this job
