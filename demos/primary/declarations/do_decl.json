@@ -5,7 +5,7 @@
     "label": "BIG-IP declaration for declarative onboarding",
     "Common": {
         "class": "Tenant",
-        "hostname": "bigip.demo.com",
+        "hostname": "f5cli.demo.com",
         "myDns": {
             "class": "DNS",
             "nameServers": [

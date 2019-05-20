@@ -1,7 +1,7 @@
 """ Core utility functions """
 
 import os
-
+import json
 from f5cloudsdk import provider
 import click
 
@@ -45,3 +45,12 @@ def get_provider_client(_provider):
         return provider.aws.ProviderClient(
             access_key=env_vars[0], secret_key=env_vars[1], region_name=env_vars[2]
         )
+
+def get_output_format(data, format):
+    """ Get JSON in pretty format """
+    formatted_data = ''
+    if format == 'json':
+        formatted_data = json.dumps(data, indent=4, sort_keys=True)
+    elif format == 'table':
+        formatted_data = ''
+    return formatted_data

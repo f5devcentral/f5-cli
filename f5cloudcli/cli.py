@@ -3,7 +3,10 @@
 import os
 import sys
 import click
+import json
 from f5cloudcli import docs
+from .constants import F5_CONFIG_FILE
+from .utils.clients import get_output_format
 
 DOC = docs.get_docs()
 
@@ -19,7 +22,12 @@ class Context():
 
     def log(self, msg, *args): # pylint: disable=no-self-use
         """Logs a message to stderr."""
+        output_format = 'json'
+        if os.path.isfile(F5_CONFIG_FILE):
+            with open(F5_CONFIG_FILE, 'r') as config_file:
+                output_format = json.load(config_file)['output']
         if args:
+            args = get_output_format(args, output_format)
             msg %= args
         click.echo(msg, file=sys.stderr)
 
