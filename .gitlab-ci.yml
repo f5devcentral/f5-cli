@@ -11,14 +11,22 @@ stages:
 variables:
     FUNCTIONAL_TEST_PREFIX: 'f5cloudclitest'
     PYTHONWARNINGS: 'ignore:Unverified HTTPS request'
+    TERRAFORM_PKG_URL: 'https://releases.hashicorp.com/terraform/0.11.14/terraform_0.11.14_linux_386.zip'
+    PRIMARY_DEMO_DIR: demos/primary
+    # normalize env var options between ansible and terraform
+    AZURE_TENANT: "$AZURE_TENANT_ID"
+    AZURE_SECRET: "$AZURE_CLIENT_SECRET"
+    ARM_CLIENT_ID: "$AZURE_CLIENT_ID"
+    ARM_CLIENT_SECRET: "$AZURE_CLIENT_SECRET"
+    ARM_SUBSCRIPTION_ID: "$AZURE_SUBSCRIPTION_ID"
+    ARM_TENANT_ID: "$AZURE_TENANT_ID"
 
 # unit tests: python 3.x (preferred)
 test_unit:
     stage: test
     script:
         # install packages
-        - pip3 install -r requirements.txt
-        - pip3 install .
+        - pip3 install -r requirements.txt && pip3 install .
         # run unit tests
         - make unit_test
         # run linter
@@ -32,26 +40,25 @@ test_unit_python_2_x:
     stage: test
     script:
         # install packages
-        - pip install -r requirements.txt
-        - pip install .
+        - pip install -r requirements.txt && pip install .
         # run unit tests
         - make unit_test
     tags:
         - cm-official-docker-executor
 
-# functional tests: demo (run)
+# functional tests: demo (ansible variation)
 test_functional:
     stage: test_functional
     script:
-        # install packages
-        - pip3 install -r requirements.txt
-        - pip3 install .
+        # install CLI
+        - pip3 install -r requirements.txt && pip3 install .
         # install packages - ansible
-        - pip3 install -r demos/requirements.txt
+        - cd ${PRIMARY_DEMO_DIR}/ansible
+        - pip3 install -r requirements.txt
         # environment vars
         - export ADMIN_PWD=$(openssl rand 12 | base64)'Ul!'
         # run ansible playbook
-        - ansible-playbook demos/primary/main.yml -e "admin_password=${ADMIN_PWD}" -e "env_prefix=${FUNCTIONAL_TEST_PREFIX}" -v
+        - ansible-playbook main.yml -e "admin_password=${ADMIN_PWD}" -e "env_prefix=${FUNCTIONAL_TEST_PREFIX}" -v
     tags:
         - cm-official-docker-executor
     only:
@@ -59,17 +66,58 @@ test_functional:
             # enable this job
             - $RUN_FUNCTIONAL_TESTS == "true"
 
-# functional tests: demo (teardown)
+# functional tests: demo (terraform variation)
+test_functional_tf:
+    stage: test_functional
+    script:
+        # install CLI
+        - pip3 install -r requirements.txt && pip3 install .
+        # install packages - terraform
+        - cd ${PRIMARY_DEMO_DIR}/terraform
+        - curl ${TERRAFORM_PKG_URL} -o terraform.zip -vvv && unzip terraform.zip && export PATH="$PATH:$(pwd)"
+        - terraform init
+        # environment vars
+        - export ADMIN_PWD=$(openssl rand 12 | base64)'Ul!'
+        # run terraform plan
+        - terraform apply -var="env_prefix=${FUNCTIONAL_TEST_PREFIX}tf" -var="admin_password=${ADMIN_PWD}" -auto-approve
+    tags:
+        - cm-official-docker-executor
+    only:
+        variables:
+            # enable this job
+            - $RUN_FUNCTIONAL_TESTS == "true"
+
+# functional tests: demo teardown (ansible variation)
 test_functional_teardown:
     stage: test_functional_teardown
     script:
-        # install packages
-        - pip3 install -r requirements.txt
-        - pip3 install .
+        # install CLI
+        - pip3 install -r requirements.txt && pip3 install .
         # install packages - ansible
-        - pip3 install -r demos/requirements.txt
+        - cd ${PRIMARY_DEMO_DIR}/ansible
+        - pip3 install -r requirements.txt
         # tear down environment
-        - ansible-playbook demos/primary/teardown.yml -e "env_prefix=${FUNCTIONAL_TEST_PREFIX}" -v
+        - ansible-playbook teardown.yml -e "env_prefix=${FUNCTIONAL_TEST_PREFIX}" -v
+    tags:
+        - cm-official-docker-executor
+    when: always
+    only:
+        variables:
+            # enable this job
+            - $RUN_FUNCTIONAL_TESTS == "true"
+
+# functional tests: demo teardown (terraform variation)
+test_functional_teardown_tf:
+    stage: test_functional_teardown
+    script:
+        # install CLI
+        - pip3 install -r requirements.txt && pip3 install .
+        # install packages - terraform
+        - cd ${PRIMARY_DEMO_DIR}/terraform
+        - curl ${TERRAFORM_PKG_URL} -o terraform.zip -vvv && unzip terraform.zip && export PATH="$PATH:$(pwd)"
+        - terraform init
+        # tear down environment
+        - terraform destroy -var="env_prefix=${FUNCTIONAL_TEST_PREFIX}tf" -var="admin_password=value" -auto-approve
     tags:
         - cm-official-docker-executor
     when: always
@@ -83,8 +131,7 @@ docs_code_coverage:
     stage: docs
     script:
         # install packages
-        - pip3 install -r requirements.txt
-        - pip3 install .
+        - pip3 install -r requirements.txt && pip3 install .
         # generate coverage
         - make coverage
     tags:
