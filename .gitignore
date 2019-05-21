@@ -19,5 +19,14 @@ dist/
 *.retry
 ansible-env/
 
+# terraform
+terraform.tfplan
+terraform.tfstate
+*.tfstate*
+.terraform/
+
+# Node
+node_modules/
+
 # misc
 .DS_Store
