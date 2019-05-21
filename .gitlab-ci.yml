@@ -86,6 +86,10 @@ test_functional_tf:
         variables:
             # enable this job
             - $RUN_FUNCTIONAL_TESTS == "true"
+    artifacts:
+        paths:
+            - "${PRIMARY_DEMO_DIR}/terraform/terraform.tfstate"
+        expire_in: 1 day
 
 # functional tests: demo teardown (ansible variation)
 test_functional_teardown:
