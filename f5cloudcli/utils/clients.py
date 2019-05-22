@@ -48,9 +48,28 @@ def get_provider_client(_provider):
 
 def get_output_format(data, format):
     """ Get JSON in pretty format """
-    formatted_data = ''
-    if format == 'json':
-        formatted_data = json.dumps(data, indent=4, sort_keys=True)
-    elif format == 'table':
-        formatted_data = ''
+    formatted_data = data
+    if len(data) > 0 and type(data[0]) is dict:
+        if format == 'json':
+            formatted_data = ',\n'.join(tuple([json.dumps(d, indent=4, sort_keys=True) for d in data]))
+        elif format == 'table':
+            # Get common keys
+            common_keys = {key for key,val in data[0].items() if type(val) is str}
+            for idx in range(1, len(data)):
+                common_keys = common_keys.intersection(set(data[idx].keys()))
+            # Construct output as table
+            column_width = {val:len(data[0][val]) + 4 for val in common_keys}
+            row_format = ''.join(['{:' + str(width) + '}\t\t' for _,width in column_width.items()])
+
+            title = row_format.format(*column_width.keys())
+
+            separator_column_width = ['-'*width for _,width in column_width.items()]
+            separator = row_format.format(*separator_column_width)
+            formatted_data = title + '\n' + separator
+
+            # Construct each row data
+            for d in data:
+                row_data = [d[key] for key in common_keys]
+                formatted_data += '\n' + row_format.format(*row_data)
+    
     return formatted_data
