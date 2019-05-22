@@ -47,7 +47,7 @@ def get_provider_client(_provider):
         )
 
 def get_output_format(data, format):
-    """ Get JSON in pretty format """
+    """ Get data in specified format """
     formatted_data = data
     if len(data) > 0 and type(data[0]) is dict:
         if format == 'json':
