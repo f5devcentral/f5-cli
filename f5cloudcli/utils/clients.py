@@ -57,6 +57,7 @@ def get_output_format(data, format):
             common_keys = {key for key,val in data[0].items() if type(val) is str}
             for idx in range(1, len(data)):
                 common_keys = common_keys.intersection(set(data[idx].keys()))
+            common_keys = sorted(common_keys)
             # Construct output as table
             column_width = {val:len(data[0][val]) + 4 for val in common_keys}
             row_format = ''.join(['{:' + str(width) + '}\t\t' for _,width in column_width.items()])

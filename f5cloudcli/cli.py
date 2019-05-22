@@ -12,6 +12,7 @@ DOC = docs.get_docs()
 
 CONTEXT_SETTINGS = dict(auto_envvar_prefix='F5CloudCli')
 CMD_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), 'commands'))
+F5_OUTPUT_FORMAT = 'F5_OUTPUT_FORMAT_ENV'
 
 class Context():
     """ Context class for click. """
@@ -22,10 +23,13 @@ class Context():
 
     def log(self, msg, *args): # pylint: disable=no-self-use
         """Logs a message to stderr."""
-        output_format = 'json'
-        if os.path.isfile(F5_CONFIG_FILE):
-            with open(F5_CONFIG_FILE, 'r') as config_file:
-                output_format = json.load(config_file)['output']
+        output_format = os.environ.get(F5_OUTPUT_FORMAT, '-1')
+        if output_format == '-1':
+            if os.path.isfile(F5_CONFIG_FILE):
+                with open(F5_CONFIG_FILE, 'r') as config_file:
+                    output_format = json.load(config_file)['output']
+            else:
+                output_format = 'json'
         msg = get_output_format(msg, output_format)
         if args:
             args = get_output_format(args, output_format)
@@ -84,12 +88,18 @@ class F5CloudCLI(click.MultiCommand):
 @click.option('--verbose',
               is_flag=True,
               help=DOC[('VERBOSE_HELP')])
+@click.option('--output',
+              default='json',
+              help=DOC['OUTPUT_HELP'],
+              show_default=True)
 @PASS_CONTEXT
-def cli(ctx='', verbose='', home='', prog_name=''): # pylint: disable=unused-argument
+def cli(ctx='', output='', verbose='', home='', prog_name=''): # pylint: disable=unused-argument
     """ main cli """
     ctx.verbose = verbose
     if home is not None:
         ctx.home = home
+    if output:
+        os.environ[F5_OUTPUT_FORMAT] = output
 
 if __name__ == '__main__':
     cli(prog_name='f5')
