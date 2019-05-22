@@ -25,3 +25,19 @@ In short this is a set of rules to ensure users of the CLI find it intuitive and
 - ```--output, -o```
   - purpose: output format
   - alternate options: --output-format
+
+## State
+
+This project maintains state...
+
+- `~/.f5cli/` - root state directory (inside user's home directory)
+    - `config.json`
+        - Purpose: Any stateful configuration settings for the CLI, such as default output format, telemetry choice, etc.
+    - `auth.json`
+        - Purpose: Authentication tokens, etc. derived from `login` command(s)
+
+### Login
+
+This flowchart describes the high-level decisions around login behavior.
+
+![diagram](../docs/diagrams/login_decision_tree.png)
