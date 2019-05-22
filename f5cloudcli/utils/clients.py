@@ -46,31 +46,31 @@ def get_provider_client(_provider):
             access_key=env_vars[0], secret_key=env_vars[1], region_name=env_vars[2]
         )
 
-def get_output_format(data, format):
+def get_output_format(data, output_format):
     """ Get data in specified format """
     formatted_data = data
-    if len(data) > 0 and type(data[0]) is dict:
-        if format == 'json':
-            formatted_data = ',\n'.join(tuple([json.dumps(d, indent=4, sort_keys=True) for d in data]))
-        elif format == 'table':
+    if data and isinstance(data[0], dict):
+        if output_format == 'json':
+            formatted_data = ',\n'.join(tuple([json.dumps(d, indent=4, sort_keys=True) \
+                for d in data]))
+        elif output_format == 'table':
             # Get common keys
-            common_keys = {key for key,val in data[0].items() if type(val) is str}
+            common_keys = {key for key, val in data[0].items() if isinstance(val, str)}
             for idx in range(1, len(data)):
                 common_keys = common_keys.intersection(set(data[idx].keys()))
             common_keys = sorted(common_keys)
             # Construct output as table
             column_width = {val:len(data[0][val]) + 4 for val in common_keys}
-            row_format = ''.join(['{:' + str(width) + '}\t\t' for _,width in column_width.items()])
+            row_format = ''.join(['{:' + str(width) + '}\t\t' for _, width in column_width.items()])
 
             title = row_format.format(*column_width.keys())
 
-            separator_column_width = ['-'*width for _,width in column_width.items()]
+            separator_column_width = ['-'*width for _, width in column_width.items()]
             separator = row_format.format(*separator_column_width)
             formatted_data = title + '\n' + separator
 
             # Construct each row data
-            for d in data:
-                row_data = [d[key] for key in common_keys]
+            for entry in data:
+                row_data = [entry[key] for key in common_keys]
                 formatted_data += '\n' + row_format.format(*row_data)
-    
     return formatted_data

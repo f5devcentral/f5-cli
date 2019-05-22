@@ -2,11 +2,11 @@
 
 import os
 import sys
-import click
 import json
+import click
 from f5cloudcli import docs
-from constants import F5_CONFIG_FILE
-from utils.clients import get_output_format
+from f5cloudcli.constants import F5_CONFIG_FILE
+from f5cloudcli.utils.clients import get_output_format
 
 DOC = docs.get_docs()
 

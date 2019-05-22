@@ -2,12 +2,12 @@
 
 import os
 
+import json
 import click_repl
 import click
-import json
 
 from f5cloudcli import docs
-from f5cloudcli.constants import F5_CLI_DIR,F5_CONFIG_FILE
+from f5cloudcli.constants import F5_CLI_DIR, F5_CONFIG_FILE
 from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
 
 HELP = docs.get_docs()
@@ -19,14 +19,14 @@ HELP = docs.get_docs()
 def cli():
     """ group """
 
-@cli.command('format',
+@cli.command('output_format',
              help=HELP['FORMAT_HELP'])
 @click.option('--output',
               default='json',
               help=HELP['OUTPUT_HELP'],
               show_default=True)
 @PASS_CONTEXT
-def format(ctx, output):
+def output_format(ctx, output):
     """ command """
     ctx.log('Configure client')
     # Create configuration directory if not exists

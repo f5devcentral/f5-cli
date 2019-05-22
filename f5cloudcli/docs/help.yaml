@@ -5,7 +5,7 @@ CLI_HELP: |
     You can do all the things here.
 VERBOSE_HELP: 'Enables verbose mode'
 CONFIG_CLI_HELP: 'Configure client'
-FORMAT_HELP: 'Configure format'
+FORMAT_HELP: 'Configure output format'
 OUTPUT_HELP: 'Specify output format. Allowed values: json, table.'
 ### f5 bigip ###
 BIGIP_HELP: Configure BIG-IP
