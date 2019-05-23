@@ -3,8 +3,8 @@
 import os
 import json
 from f5cloudsdk import provider
-from f5cloudcli.constants import JSON_FORMAT, TABLE_FORMAT
 import click
+from f5cloudcli.constants import JSON_FORMAT, TABLE_FORMAT
 
 def get_env_vars(env_vars):
     """ Get environment variables """
@@ -48,8 +48,8 @@ def get_provider_client(_provider):
         )
 
 def get_output_format(data, output_format):
-    """ Get data in specified format 
-    
+    """ Get data in specified format
+
         Parameters
         ----------
         data : list or tuple
@@ -65,7 +65,7 @@ def get_output_format(data, output_format):
             ----------------------------------------                ----------
             624d58f0-6875-469a-ba12-d0f1390f7464                    westus
             17cd4583-f63b-4f38-a890-4bdee3d99e98                    westus
-            
+
             If output_format is JSON, output will be pretty print JSON:
             {
                 "id": "624d58f0-6875-469a-ba12-d0f1390f7464",
