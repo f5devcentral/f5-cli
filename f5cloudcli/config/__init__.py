@@ -1,4 +1,4 @@
-"""Configuration module for ths CLI """
+"""Configuration module for the CLI """
 
 import os
 import pickle
