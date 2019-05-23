@@ -12,7 +12,7 @@ from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
 
 HELP = docs.get_docs()
 
-# group: config
+# group: configure
 @click.group('configure',
              help=HELP['CONFIG_CLI_HELP'],
              cls=AliasedGroup)
