@@ -5,7 +5,7 @@ import sys
 import json
 import click
 from f5cloudcli import docs
-from f5cloudcli.constants import F5_CONFIG_FILE
+from f5cloudcli.constants import F5_CONFIG_FILE, JSON_FORMAT
 from f5cloudcli.utils.clients import get_output_format
 
 DOC = docs.get_docs()
@@ -89,7 +89,7 @@ class F5CloudCLI(click.MultiCommand):
               is_flag=True,
               help=DOC[('VERBOSE_HELP')])
 @click.option('--output',
-              default='json',
+              default=JSON_FORMAT,
               help=DOC['OUTPUT_HELP'],
               show_default=True)
 @PASS_CONTEXT

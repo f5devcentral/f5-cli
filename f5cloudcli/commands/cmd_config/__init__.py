@@ -1,4 +1,4 @@
-""" This file provides the 'bigip' implementation of the CLI. """
+""" This file provides the 'config' implementation of the CLI. """
 
 import os
 
@@ -7,22 +7,22 @@ import click_repl
 import click
 
 from f5cloudcli import docs
-from f5cloudcli.constants import F5_CLI_DIR, F5_CONFIG_FILE
+from f5cloudcli.constants import F5_CLI_DIR, F5_CONFIG_FILE, JSON_FORMAT
 from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
 
 HELP = docs.get_docs()
 
-# group: bigip
+# group: config
 @click.group('config',
              help=HELP['CONFIG_CLI_HELP'],
              cls=AliasedGroup)
 def cli():
     """ group """
 
-@cli.command('output_format',
+@cli.command('output-format',
              help=HELP['FORMAT_HELP'])
 @click.option('--output',
-              default='json',
+              default=JSON_FORMAT,
               help=HELP['OUTPUT_HELP'],
               show_default=True)
 @PASS_CONTEXT
