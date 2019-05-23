@@ -29,7 +29,7 @@ class Context():
                 with open(F5_CONFIG_FILE, 'r') as config_file:
                     output_format = json.load(config_file)['output']
             else:
-                output_format = 'json'
+                output_format = JSON_FORMAT
         msg = get_output_format(msg, output_format)
         if args:
             args = get_output_format(args, output_format)
