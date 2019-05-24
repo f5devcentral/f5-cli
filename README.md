@@ -9,24 +9,18 @@
 
 ## Quick Start
 
-Note: Published on artifactory pypi repo.
+Pre-Release Note: Currently published in an artifactory repo.
 
 ```bash
 pip3 install f5-cloud-cli --extra-index-url https://***REMOVED***/artifactory/api/pypi/f5-cloud-solutions-pypi/simple
 f5 --help
 ```
 
-Note: Alternatively install from local repo (any branch)
-
-```bash
-pip3 install .
-```
-
 ## Developer Setup
 
 ### Installation
 
-This is still a work in progress (no venv, etc.), however below are the current steps.
+Note: A virtual environment should be created first.  See [python docs](https://docs.python.org/3/library/venv.html) for more details.
 
 ```bash
 pip3 install -r requirements.txt
@@ -45,3 +39,13 @@ This project uses `Make` as a build automation tool... check out the Makefile fo
 
 - Index: https://cloudsolutions.pages.***REMOVED***/f5-cloud-cli
 - Code coverage report: https://cloudsolutions.pages.***REMOVED***/f5-cloud-cli/coverage/
+
+## Supported Platforms
+
+The CLI provides support for the following platforms.
+
+- Linux (Ubuntu)
+- Mac OS
+- Windows
+
+Pre-Release Note: This list is the intended goal, the project needs to include automated testing for each platform.
