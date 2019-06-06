@@ -26,5 +26,7 @@ def login(ctx, environment):
     provider_client = clients.get_provider_client(environment)
     if provider_client.is_logged_in():
         ctx.log('Login successful')
+    else:
+        ctx.log('Login unsuccessful')    
 
 click_repl.register_repl(cli)

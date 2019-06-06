@@ -3,9 +3,9 @@
 import unittest
 import pytest
 try:
-    from unittest.mock import Mock, MagicMock, patch, call, PropertyMock
+    from unittest.mock import Mock, MagicMock, patch, call, PropertyMock, mock_open
 except ImportError: # python 2.x support
-    from mock import Mock, MagicMock, patch, call, PropertyMock
+    from mock import Mock, MagicMock, patch, call, PropertyMock, mock_open
 
 __all__ = [
     'unittest',
@@ -14,5 +14,6 @@ __all__ = [
     'MagicMock',
     'patch',
     'call',
-    'PropertyMock'
+    'PropertyMock',
+    'mock_open'
 ]
