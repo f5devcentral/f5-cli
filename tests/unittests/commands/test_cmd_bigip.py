@@ -1,5 +1,3 @@
-import sys
-sys.path.append("../../../../")
 import click
 from click.testing import CliRunner
 

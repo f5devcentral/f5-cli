@@ -112,7 +112,7 @@ def package(ctx, action, component, version):
             toolchain_client.package.uninstall()
             ctx.log('Toolchain component package %s uninstalled', component)
     else:
-        raise click.ClickException('Action %s not implemented', action)
+        raise click.ClickException('Action {} not implemented'.format(action))
 
 @toolchain.command('service',
                    help=HELP['BIGIP_TOOLCHAIN_SERVICE_HELP'])
