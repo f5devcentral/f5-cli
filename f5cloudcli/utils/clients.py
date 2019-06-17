@@ -6,6 +6,10 @@ from f5cloudsdk import provider
 import click
 from f5cloudcli.constants import JSON_FORMAT, TABLE_FORMAT
 
+# Constants
+AWS_PROVIDER = 'aws'
+AZURE_PROVIDER = 'azure'
+
 def get_env_vars(env_vars):
     """ Get environment variables """
 
@@ -19,33 +23,35 @@ def get_env_vars(env_vars):
 # TODO: put this somewhere better...
 def get_provider_client(_provider):
     """ Get provider client """
-
-    if _provider not in ['aws', 'azure']:
-        raise click.ClickException('Provider not implemented')
-
+    client = None
     # instantiate provider client
-    if _provider == 'azure':
+    if _provider == AZURE_PROVIDER:
         env_vars = get_env_vars([
             'F5_CLI_PROVIDER_TENANT_ID',
             'F5_CLI_PROVIDER_CLIENT_ID',
             'F5_CLI_PROVIDER_SECRET',
             'F5_CLI_PROVIDER_SUBSCRIPTION_ID'
         ])
-        return provider.azure.ProviderClient(
+        client = provider.azure.ProviderClient(
             tenant_id=env_vars[0],
             client_id=env_vars[1],
             secret=env_vars[2],
             subscription_id=env_vars[3]
         )
-    if _provider == 'aws':
+    elif _provider == AWS_PROVIDER:
         env_vars = get_env_vars([
             'F5_CLI_PROVIDER_ACCESS_KEY',
             'F5_CLI_PROVIDER_SECRET_KEY',
             'F5_CLI_PROVIDER_REGION_NAME'
         ])
-        return provider.aws.ProviderClient(
-            access_key=env_vars[0], secret_key=env_vars[1], region_name=env_vars[2]
+        client = provider.aws.ProviderClient(
+            access_key=env_vars[0],
+            secret_key=env_vars[1],
+            region_name=env_vars[2]
         )
+    else:
+        raise click.ClickException('Provider {} not implemented'.format(_provider))
+    return client
 
 def get_output_format(data, output_format):
     """ Get data in specified format
@@ -124,5 +130,5 @@ def get_output_format(data, output_format):
                 row_data = [entry[key] for key in common_keys]
                 formatted_data += '\n' + row_format.format(*row_data)
         else:
-            raise Exception("Unsupported format {}".format(output_format))
+            raise click.ClickException("Unsupported format {}".format(output_format))
     return formatted_data
