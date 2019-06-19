@@ -30,7 +30,7 @@ def cli():
 @PASS_CONTEXT
 def dns(ctx, action, record_type, members):
     """ command """
-    ctx.log('%s DNS %s %s with members %s', action, record_type, members)
+    ctx.log('%s DNS %s with members %s', action, record_type, members)
     raise click.ClickException('Command not implemented')
 
 click_repl.register_repl(cli)

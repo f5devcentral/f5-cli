@@ -102,17 +102,17 @@ def package(ctx, action, component, version):
     elif action == 'install':
         if not installed:
             toolchain_client.package.install()
-            ctx.log('Toolchain component package installed')
+            ctx.log('Toolchain component package %s installed', component)
         else:
-            ctx.log('Toolchain component is already installed')
+            ctx.log('Toolchain component package %s is already installed', component)
     elif action == 'uninstall':
         if not installed:
-            ctx.log('Toolchain component package is already uninstalled')
+            ctx.log('Toolchain component package %s is already uninstalled', component)
         else:
             toolchain_client.package.uninstall()
-            ctx.log('Toolchain component package uninstalled')
+            ctx.log('Toolchain component package %s uninstalled', component)
     else:
-        raise click.ClickException('Action not implemented')
+        raise click.ClickException('Action {} not implemented'.format(action))
 
 @toolchain.command('service',
                    help=HELP['BIGIP_TOOLCHAIN_SERVICE_HELP'])

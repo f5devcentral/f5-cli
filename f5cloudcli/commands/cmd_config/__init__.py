@@ -32,12 +32,11 @@ def output_format(ctx, output):
     # Create configuration directory if not exists
     if not os.path.exists(F5_CLI_DIR):
         os.makedirs(F5_CLI_DIR)
-    else:
-        # Create/overwrite F5 cli configuration file
-        config_content = {
-            'output': output
-        }
-        with open(F5_CONFIG_FILE, 'w') as outfile:
-            json.dump(config_content, outfile, indent=4, sort_keys=True)
+    # Create/overwrite F5 cli configuration file
+    config_content = {
+        'output': output
+    }
+    with open(F5_CONFIG_FILE, 'w') as outfile:
+        json.dump(config_content, outfile, indent=4, sort_keys=True)
 
 click_repl.register_repl(cli)
