@@ -12,3 +12,7 @@ F5_CONFIG_FILE = join(F5_CLI_DIR, "config.json")
 # Output data format
 JSON_FORMAT = 'json'
 TABLE_FORMAT = 'table'
+
+# Providers
+AWS_PROVIDER = 'aws'
+AZURE_PROVIDER = 'azure'

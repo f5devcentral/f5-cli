@@ -4,11 +4,7 @@ import os
 import json
 from f5cloudsdk import provider
 import click
-from f5cloudcli.constants import JSON_FORMAT, TABLE_FORMAT
-
-# Constants
-AWS_PROVIDER = 'aws'
-AZURE_PROVIDER = 'azure'
+from f5cloudcli.constants import JSON_FORMAT, TABLE_FORMAT, AWS_PROVIDER, AZURE_PROVIDER
 
 def get_env_vars(env_vars):
     """ Get environment variables """

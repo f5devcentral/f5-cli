@@ -5,6 +5,10 @@ source =
     f5cloudcli/
 
 [report]
+# precision percentage
+precision = 2
+# fail coverage under this percentage
+fail_under = 90
 # Regexes for lines to exclude from consideration
 exclude_lines =
     # Have to re-enable the standard pragma

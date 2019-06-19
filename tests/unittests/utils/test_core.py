@@ -10,3 +10,10 @@ sys.path.append(os.getcwd())
 def test_multiply():
     """ Test case """
     assert core_utils.multiply(2, 5) == 10
+
+def test_convert_absolute_path(mocker):
+    """ Test absolute path """
+    mock_getcwd = mocker.patch("f5cloudcli.utils.core.os.getcwd")
+    mock_getcwd.return_value = "/test/current/directory"
+    result = core_utils.convert_to_absolute("fake.txt")
+    assert result == "/test/current/directory/fake.txt"

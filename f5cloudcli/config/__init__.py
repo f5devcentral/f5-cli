@@ -6,7 +6,7 @@ import click
 
 import f5cloudcli.constants as constants
 
-CONFIG_DIR = '%s/%s'% (constants.TMP_DIR, 'f5_cloud_cli')
+CONFIG_DIR = '{0}/{1}'.format(constants.TMP_DIR, 'f5_cloud_cli')
 
 class ConfigClient(object):
     """ A class used to pass BIG-IP authentication

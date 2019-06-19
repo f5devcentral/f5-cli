@@ -224,7 +224,7 @@ class TestCommandBigIp(object):
         - BIG-IP is up
         - 'do' component is not installed
         When
-        - User attempts to perform 'remove' action on 'do' component
+        - User attempts to perform 'upgrade' action on 'do' component
         Then
         -  Non-implemented action exception is thrown
         """
@@ -237,9 +237,9 @@ class TestCommandBigIp(object):
         m = MagicMock()
         m.is_installed.return_value = False
         type(mock_toolchain_client.return_value).package = PropertyMock(return_value=m)
-        result = self.runner.invoke(toolchain, ['package', 'remove', '--component', 'do'])
-        assert "invalid choice: remove" in result.output
+        result = self.runner.invoke(toolchain, ['package', 'upgrade', '--component', 'do'])
         assert result.exception
+        assert result.output == "Error: Action upgrade not implemented\n"
     
     def test_cmd_service_show_installed_component(self, mocker):
         """ Command service show an already installed component
