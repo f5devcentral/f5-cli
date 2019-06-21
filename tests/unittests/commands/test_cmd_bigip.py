@@ -1,12 +1,9 @@
-import click
 from click.testing import CliRunner
 
-from ...global_test_imports import pytest, MagicMock, call, PropertyMock
+from ...global_test_imports import MagicMock, call, PropertyMock
 from f5cloudsdk.bigip import ManagementClient
-from f5cloudsdk.provider.azure import ProviderClient
-from f5cloudsdk.provider.azure.virtual_machines import OperationClient
 from f5cloudcli.config import ConfigClient
-from f5cloudcli.utils import clients, core
+from f5cloudcli.utils import clients
 
 # Module under test
 from f5cloudcli.commands.cmd_bigip import cli, toolchain
@@ -65,14 +62,8 @@ class TestCommandBigIp(object):
         """
         mock_clients = mocker.patch.object(clients, "get_provider_client")
         m = MagicMock()
-        m.list.return_value = [{
-            "id": "a1",
-            "name": "f5bigip1"
-        },
-        {
-            "id": "b2",
-            "name": "f5bigip2"
-        }]
+        m.list.return_value = [{"id": "a1", "name": "f5bigip1"},
+                               {"id": "b2", "name": "f5bigip2"}]
         type(mock_clients.return_value).virtual_machines = PropertyMock(return_value=m)
         result = self.runner.invoke(cli, ['discover', '--provider', 'azure',
                                           '--provider-tag', 'test_key:test_value'])
@@ -90,7 +81,7 @@ class TestCommandBigIp(object):
         """
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
-        mock_config_client_read = mocker.patch.object(ConfigClient, "read_client")
+        mocker.patch.object(ConfigClient, "read_client")
 
         mock_toolchain_client = mocker.patch("f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
@@ -113,7 +104,7 @@ class TestCommandBigIp(object):
         """
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
-        mock_config_client_read = mocker.patch.object(ConfigClient, "read_client")
+        mocker.patch.object(ConfigClient, "read_client")
 
         mock_toolchain_client = mocker.patch("f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
@@ -136,7 +127,7 @@ class TestCommandBigIp(object):
         """
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
-        mock_config_client_read = mocker.patch.object(ConfigClient, "read_client")
+        mocker.patch.object(ConfigClient, "read_client")
 
         mock_toolchain_client = mocker.patch("f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
@@ -159,7 +150,7 @@ class TestCommandBigIp(object):
         """
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
-        mock_config_client_read = mocker.patch.object(ConfigClient, "read_client")
+        mocker.patch.object(ConfigClient, "read_client")
 
         mock_toolchain_client = mocker.patch("f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
@@ -183,7 +174,7 @@ class TestCommandBigIp(object):
         """
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
-        mock_config_client_read = mocker.patch.object(ConfigClient, "read_client")
+        mocker.patch.object(ConfigClient, "read_client")
 
         mock_toolchain_client = mocker.patch("f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
@@ -207,7 +198,7 @@ class TestCommandBigIp(object):
         """
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
-        mock_config_client_read = mocker.patch.object(ConfigClient, "read_client")
+        mocker.patch.object(ConfigClient, "read_client")
 
         mock_toolchain_client = mocker.patch("f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
@@ -230,7 +221,7 @@ class TestCommandBigIp(object):
         """
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
-        mock_config_client_read = mocker.patch.object(ConfigClient, "read_client")
+        mocker.patch.object(ConfigClient, "read_client")
 
         mock_toolchain_client = mocker.patch("f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
@@ -240,7 +231,7 @@ class TestCommandBigIp(object):
         result = self.runner.invoke(toolchain, ['package', 'upgrade', '--component', 'do'])
         assert result.exception
         assert result.output == "Error: Action upgrade not implemented\n"
-    
+
     def test_cmd_service_show_installed_component(self, mocker):
         """ Command service show an already installed component
         Given
@@ -253,7 +244,7 @@ class TestCommandBigIp(object):
         """
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
-        mock_config_client_read = mocker.patch.object(ConfigClient, "read_client")
+        mocker.patch.object(ConfigClient, "read_client")
 
         mock_toolchain_client = mocker.patch("f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
@@ -281,7 +272,7 @@ class TestCommandBigIp(object):
         """
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
-        mock_config_client_read = mocker.patch.object(ConfigClient, "read_client")
+        mocker.patch.object(ConfigClient, "read_client")
 
         mock_toolchain_client = mocker.patch("f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
@@ -309,7 +300,7 @@ class TestCommandBigIp(object):
         """
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
-        mock_config_client_read = mocker.patch.object(ConfigClient, "read_client")
+        mocker.patch.object(ConfigClient, "read_client")
 
         mock_toolchain_client = mocker.patch("f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
@@ -323,7 +314,8 @@ class TestCommandBigIp(object):
         mock_utils_core_convert = mocker.patch("f5cloudcli.commands.cmd_bigip.utils_core.convert_to_absolute")
         mock_utils_core_convert.return_value = "fake location"
 
-        result = self.runner.invoke(toolchain, ['service', 'create', '--component', 'do', '--declaration', './test/fake_declaration.json'])
+        result = self.runner.invoke(toolchain, ['service', 'create', '--component', 'do',
+                                                '--declaration', './test/fake_declaration.json'])
         assert result.output == "Toolchain component service create: Test DO create status\n"
         mock_utils_core_convert.assert_has_calls([call('./test/fake_declaration.json')])
 
@@ -339,7 +331,7 @@ class TestCommandBigIp(object):
         """
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
-        mock_config_client_read = mocker.patch.object(ConfigClient, "read_client")
+        mocker.patch.object(ConfigClient, "read_client")
 
         mock_toolchain_client = mocker.patch("f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
@@ -365,7 +357,7 @@ class TestCommandBigIp(object):
         """
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
-        mock_config_client_read = mocker.patch.object(ConfigClient, "read_client")
+        mocker.patch.object(ConfigClient, "read_client")
 
         mock_toolchain_client = mocker.patch("f5cloudcli.commands.cmd_bigip.ToolChainClient")
 

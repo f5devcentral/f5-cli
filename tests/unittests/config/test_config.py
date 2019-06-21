@@ -1,7 +1,6 @@
 import click
-from click.testing import CliRunner
 
-from ...global_test_imports import pytest, MagicMock, call, PropertyMock
+from ...global_test_imports import pytest, MagicMock
 
 # Module under test
 from f5cloudcli.config import ConfigClient
@@ -28,7 +27,7 @@ class TestConfigClient(object):
         mock_path_is_file.return_value = True
         mock_pickle_load = mocker.patch("f5cloudcli.config.pickle.load")
         mock_pickle_load.return_value = mock_client_object
-        with mocker.patch('f5cloudcli.config.open', new_callable=mocker.mock_open()) as m:
+        with mocker.patch('f5cloudcli.config.open', new_callable=mocker.mock_open()):
             result = client.read_client()
         assert result == mock_client_object
         mock_pickle_load.assert_called_once()
@@ -51,7 +50,7 @@ class TestConfigClient(object):
         mock_path_is_file = mocker.patch("f5cloudcli.config.os.path.isfile")
         mock_path_is_file.return_value = False
         with pytest.raises(click.exceptions.ClickException) as e:
-            result = client.read_client()
+            client.read_client()
         assert e.value.args[0] == "Command failed. You must login to BIG-IP!"
 
     def test_write_exist_config_directory(self, mocker):
@@ -70,7 +69,7 @@ class TestConfigClient(object):
         mock_path_exist.return_value = True
         client = ConfigClient(client=mock_client_object)
         mock_pickle_dump = mocker.patch("f5cloudcli.config.pickle.dump")
-        with mocker.patch('f5cloudcli.config.open', new_callable=mocker.mock_open()) as m:
+        with mocker.patch('f5cloudcli.config.open', new_callable=mocker.mock_open()):
             result = client.write_client()
         mock_pickle_dump.assert_called_once()
         assert 'f5_cloud_cli/auth.file' in result
@@ -93,7 +92,7 @@ class TestConfigClient(object):
         mock_make_dir = mocker.patch("f5cloudcli.config.os.makedirs")
         client = ConfigClient(client=mock_client_object)
         mock_pickle_dump = mocker.patch("f5cloudcli.config.pickle.dump")
-        with mocker.patch('f5cloudcli.config.open', new_callable=mocker.mock_open()) as m:
+        with mocker.patch('f5cloudcli.config.open', new_callable=mocker.mock_open()):
             result = client.write_client()
         mock_pickle_dump.assert_called_once()
         assert 'f5_cloud_cli/auth.file' in result

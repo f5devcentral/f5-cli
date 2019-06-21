@@ -1,9 +1,9 @@
 import click
-from ...global_test_imports import pytest, MagicMock, call, PropertyMock
-from f5cloudsdk import provider
+from ...global_test_imports import pytest
 
 # Module under test
 from f5cloudcli.utils import clients
+
 
 class TestUtilsClients(object):
     """ Test Utils clients"""
@@ -46,8 +46,8 @@ class TestUtilsClients(object):
         Then
         - Values for FOO and BAR are returned
         """
-        mock_environ = mocker.patch.dict("f5cloudcli.utils.clients.os.environ",
-                                        {"FOO": "foo_value", "BAR": "bar_value", "CLIENT_ID": "test_client_id"})
+        mocker.patch.dict("f5cloudcli.utils.clients.os.environ",
+                          {"FOO": "foo_value", "BAR": "bar_value", "CLIENT_ID": "test_client_id"})
         results = clients.get_env_vars(["FOO", "BAR"])
         assert results == ["foo_value", "bar_value"]
 
@@ -85,7 +85,7 @@ class TestUtilsClients(object):
                              'F5_CLI_PROVIDER_SUBSCRIPTION_ID': '4'
                          })
         mock_azure_client = mocker.patch("f5cloudcli.utils.clients.provider.azure.ProviderClient")
-        result = clients.get_provider_client('azure')
+        clients.get_provider_client('azure')
         mock_azure_client.assert_called_once_with(tenant_id='1',
                                                   client_id='2',
                                                   secret='3',
@@ -109,7 +109,7 @@ class TestUtilsClients(object):
                             'F5_CLI_PROVIDER_REGION_NAME': '3'
                         })
         mock_aws_client = mocker.patch("f5cloudcli.utils.clients.provider.aws.ProviderClient")
-        result = clients.get_provider_client('aws')
+        clients.get_provider_client('aws')
         mock_aws_client.assert_called_once_with(access_key='1',
                                                 secret_key='2',
                                                 region_name='3')
@@ -136,17 +136,12 @@ class TestUtilsClients(object):
         Then
         - data is returned in pretty JSON format
         """
-        data = [
-            {"id": "624d58f0-6875-469a-ba12-d0f1390f7464",
-             "location": "westus",
-             "name": "f5bigiq01"
-            },
-            {
-             "id": "17cd4583-f63b-4f38-a890-4bdee3d99e98",
-             "location": "westus",
-             "name": "f5vm"
-            }
-        ]
+        data = [{"id": "624d58f0-6875-469a-ba12-d0f1390f7464",
+                 "location": "westus",
+                 "name": "f5bigiq01"},
+                {"id": "17cd4583-f63b-4f38-a890-4bdee3d99e98",
+                 "location": "westus",
+                 "name": "f5vm"}]
 
         expected_result = """{
     "id": "624d58f0-6875-469a-ba12-d0f1390f7464",
@@ -186,18 +181,14 @@ class TestUtilsClients(object):
         data = [
             {"id": "624d58f0-6875-469a-ba12-d0f1390f7464",
              "location": "westus",
-             "name": "f5bigiq01"
-            },
-            {
-             "id": "17cd4583-f63b-4f38-a890-4bdee3d99e98",
+             "name": "f5bigiq01"},
+            {"id": "17cd4583-f63b-4f38-a890-4bdee3d99e98",
              "location": "westus",
-             "name": "f5vm"
-            }
-        ]
-        expected_result = """id                                                      location                name         
-----------------------------------------                ----------              -------------
-624d58f0-6875-469a-ba12-d0f1390f7464                    westus                  f5bigiq01    
-17cd4583-f63b-4f38-a890-4bdee3d99e98                    westus                  f5vm         """
+             "name": "f5vm"}]
+        # expected_result = """id                                                      location                name
+# ----------------------------------------                ----------              -------------
+# 624d58f0-6875-469a-ba12-d0f1390f7464                    westus                  f5bigiq01
+# 17cd4583-f63b-4f38-a890-4bdee3d99e98                    westus                  f5vm         """
         result = clients.get_output_format(data, "table")
         # I found that it is so fragile to test the Table output format, as a result, visual inspection should be good enough
         print(result)
@@ -229,14 +220,10 @@ class TestUtilsClients(object):
         data = [
             {"id": "624d58f0-6875-469a-ba12-d0f1390f7464",
              "location": "westus",
-             "name": "f5bigiq01"
-            },
-            {
-             "id": "17cd4583-f63b-4f38-a890-4bdee3d99e98",
+             "name": "f5bigiq01"},
+            {"id": "17cd4583-f63b-4f38-a890-4bdee3d99e98",
              "location": "westus",
-             "name": "f5vm"
-            }
-        ]
+             "name": "f5vm"}]
         with pytest.raises(click.exceptions.ClickException) as e:
-            result = clients.get_output_format(data, "plot")
+            clients.get_output_format(data, "plot")
         assert e.value.args[0] == "Unsupported format plot"
