@@ -2,11 +2,10 @@ import click
 from click.testing import CliRunner
 import sys
 
-from ..global_test_imports import pytest, MagicMock, call, PropertyMock
 from f5cloudcli.constants import F5_CONFIG_FILE
 
 # Module under test
-from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup, F5CloudCLI
+from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
 from f5cloudcli import cli
 
 
@@ -82,7 +81,7 @@ class TestContext(object):
         mock_os_path_isfile.return_value = True
         mock_open_config_file = mocker.patch("f5cloudcli.cli.open", mocker.mock_open(read_data='json'))
         mock_json_load = mocker.patch("f5cloudcli.cli.json.load")
-        mock_json_load.return_value = {"output":"json"}
+        mock_json_load.return_value = {"output": "json"}
 
         mock_get_output_format = mocker.patch("f5cloudcli.cli.get_output_format")
         mock_get_output_format.side_effect = TestContext.get_output_format_side_effect
@@ -92,7 +91,7 @@ class TestContext(object):
         mock_open_config_file.assert_called_once_with(F5_CONFIG_FILE, 'r')
         mock_json_load.assert_called_once_with(mock_open_config_file.return_value)
 
-    def  test_log_message_no_argument_with_environment_variable_no_config_file(self, mocker):
+    def test_log_message_no_argument_with_environment_variable_no_config_file(self, mocker):
         """ Log a message, no argument, no output format env variable, config file does not exists
         Given
         - Environment variable of output format JSON does not exist
@@ -108,7 +107,7 @@ class TestContext(object):
         mock_output_format_env.return_value = "-1"
         mock_os_path_isfile = mocker.patch("f5cloudcli.cli.os.path.isfile")
         mock_os_path_isfile.return_value = False
-        mock_open_config_file = mocker.patch("f5cloudcli.cli.open", mocker.mock_open(read_data='json'))
+        mocker.patch("f5cloudcli.cli.open", mocker.mock_open(read_data='json'))
 
         mock_get_output_format = mocker.patch("f5cloudcli.cli.get_output_format")
         mock_get_output_format.side_effect = TestContext.get_output_format_side_effect
@@ -116,7 +115,7 @@ class TestContext(object):
         self.context.log("Test message")
         mock_click_echo.assert_called_once_with('Test message', file=sys.stderr)
 
-    def  test_vlog_message_no_argument_with_environment_variable_no_config_file(self, mocker):
+    def test_vlog_message_no_argument_with_environment_variable_no_config_file(self, mocker):
         """ Verbose log a message, no argument, no output format env variable, config file does not exists
         Given
         - Environment variable of output format JSON does not exist
@@ -132,7 +131,7 @@ class TestContext(object):
         mock_output_format_env.return_value = "-1"
         mock_os_path_isfile = mocker.patch("f5cloudcli.cli.os.path.isfile")
         mock_os_path_isfile.return_value = False
-        mock_open_config_file = mocker.patch("f5cloudcli.cli.open", mocker.mock_open(read_data='json'))
+        mocker.patch("f5cloudcli.cli.open", mocker.mock_open(read_data='json'))
 
         mock_get_output_format = mocker.patch("f5cloudcli.cli.get_output_format")
         mock_get_output_format.side_effect = TestContext.get_output_format_side_effect
@@ -140,6 +139,7 @@ class TestContext(object):
         self.context.verbose = True
         self.context.vlog("Test message")
         mock_click_echo.assert_called_once_with('Test message', file=sys.stderr)
+
 
 class TestAliasedGroup(object):
     """ Test Class: Aliased Group """
@@ -156,7 +156,7 @@ class TestAliasedGroup(object):
         """
         Given
         - foo command log a message
- 
+
         When
         - invoke foo command
 
@@ -182,7 +182,7 @@ class TestAliasedGroup(object):
         """
         Given
         - foo command log a message
- 
+
         When
         - invoke bar command
 
@@ -208,7 +208,7 @@ class TestAliasedGroup(object):
         """
         Given
         - foot command log a message
- 
+
         When
         - invoke  foo command
 
@@ -235,7 +235,7 @@ class TestAliasedGroup(object):
         Given
         - foot command log a message
         - food command log a message
- 
+
         When
         - invoke  foo command
 
@@ -258,7 +258,7 @@ class TestAliasedGroup(object):
         @PASS_CONTEXT
         def food(ctx):
             ctx.log("Test food command")
-        
+
         result = self.runner.invoke(cli, 'foo')
         assert result.exception
         assert "Error: Too many matches: food, foot" in result.output

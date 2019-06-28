@@ -1,8 +1,4 @@
-import click
 from click.testing import CliRunner
-
-from ...global_test_imports import pytest, MagicMock, call, PropertyMock
-from f5cloudcli.utils import clients
 
 # Module under test
 from f5cloudcli.commands.cmd_provider import cli
@@ -53,4 +49,3 @@ class TestCommandProvider(object):
 
         result = self.runner.invoke(cli, ['login', '--environment', 'azure'])
         assert result.output == "Login unsuccessful\n"
-    

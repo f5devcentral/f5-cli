@@ -1,7 +1,4 @@
-import click
 from click.testing import CliRunner
-
-from ...global_test_imports import pytest, MagicMock, call, PropertyMock
 
 # Module under test
 from f5cloudcli.commands.cmd_cloud_services import cli
