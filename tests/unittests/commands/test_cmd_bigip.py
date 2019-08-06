@@ -35,6 +35,7 @@ class TestCommandBigIp(object):
         - Host information is represented in output
         """
         mock_management_client = mocker.patch.object(ManagementClient, "_login_using_credentials")
+        mocker.patch.object(ManagementClient, "_is_ready")
 
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
