@@ -1,18 +1,45 @@
 """ This file provides the 'cloud-services' implementation of the CLI. """
 
+from f5cloudsdk.cloud_services import ManagementClient
+
 import click_repl
 import click
 
 from f5cloudcli import docs
 from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
+from f5cloudcli.config import ConfigClient
 
 HELP = docs.get_docs()
 
+# group: cloud-services
 @click.group('cloud-services',
              help=HELP['CLOUD_SERVICES_HELP'],
              cls=AliasedGroup)
 def cli():
     """ group """
+
+@cli.command('login',
+             help=HELP['CLOUD_SERVICES_LOGIN_HELP'])
+@click.option('--user',
+              required=True,
+              metavar='<USERNAME>')
+@click.password_option('--password',
+                       required=False,
+                       prompt=True,
+                       confirmation_prompt=False,
+                       metavar='<CLOUD_SERVICES_PASSWORD>')
+@PASS_CONTEXT
+def login(ctx, user, password):
+    """ command """
+    ctx.log('Logging in to F5 Cloud Services as %s with ******', user)
+    client = ManagementClient(user=user, password=password)
+    # delete sensitive attributes
+    delattr(client, '_user')
+    delattr(client, '_password')
+    ctx.client = client
+    # write config state to disk
+    config_client = ConfigClient(client=client)
+    config_client.write_client()
 
 @cli.command('dns',
              help=HELP['CLOUD_SERVICES_DNS_HELP'],)
