@@ -34,9 +34,9 @@ def configure_auth(ctx, user, password):
     """ command """
     ctx.log('Logging in to F5 Cloud Services as %s with ******', user)
     config_client = ConfigClient(
-        constants.CLOUD_SERVICES_GROUP_NAME,
-        {
-            'user': user,
+        group_name=constants.CLOUD_SERVICES_GROUP_NAME,
+        auth={
+            'username': user,
             'password': password
         })
     config_client.store_auth()

@@ -33,7 +33,7 @@ class ConfigClient():
         See method documentation for more details
     """
 
-    def __init__(self, group_name, auth, **kwargs):
+    def __init__(self, **kwargs):
         """Class initialization
 
         Parameters
@@ -50,8 +50,8 @@ class ConfigClient():
         -------
         None
         """
-        self.group_name = group_name
-        self.auth = auth
+        self.group_name = kwargs.pop('group_name', '')
+        self.auth = kwargs.pop('auth', '')
         self.client_obj = kwargs.pop('client', '')
 
         self.config_file = CONFIG_DIR + '/auth.file'
@@ -99,14 +99,26 @@ class ConfigClient():
         auth_contents = {}
         if os.path.isfile('/Users/dieckmann/.f5_cli/auth.json'):
             with open('/Users/dieckmann/.f5_cli/auth.json') as file:
-                auth_contents.update(json.load(file))
-        
+                try:
+                    auth_contents.update(json.load(file))
+                except json.decoder.JSONDecodeError:
+                    print('uh oh!')
+                    print('just catch error here - will overwrite below')
+
         auth_contents.update(
-            { self.group_name: self.auth }
+            {self.group_name: self.auth}
         )
 
         with open('/Users/dieckmann/.f5_cli/auth.json', 'w') as file:
             json.dump(auth_contents, file)
+
+    def read_auth(self, group_name):
+        """ func """
+        if os.path.isfile('/Users/dieckmann/.f5_cli/auth.json'):
+            with open('/Users/dieckmann/.f5_cli/auth.json') as file:
+                auth = json.load(file)
+                return auth[group_name]
+        raise click.ClickException('Command failed. You must login to BIG-IP!')
 
     def read_client(self):
         """Used by cli commands to check if there is an existing token
