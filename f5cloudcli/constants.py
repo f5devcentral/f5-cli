@@ -16,3 +16,7 @@ TABLE_FORMAT = 'table'
 # Providers
 AWS_PROVIDER = 'aws'
 AZURE_PROVIDER = 'azure'
+
+# Command Group names
+CLOUD_SERVICES_GROUP_NAME = 'CLOUD_SERVICES'
+BIGIP_GROUP_NAME = 'BIGIP'

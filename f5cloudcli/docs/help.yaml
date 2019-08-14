@@ -16,7 +16,7 @@ BIGIP_TOOLCHAIN_PACKAGE_HELP: Install, uninstall, upgrade and verify Automation 
 BIGIP_TOOLCHAIN_SERVICE_HELP: Create, delete and verify Automation Toolchain services
 ### f5 cloud-services ###
 CLOUD_SERVICES_HELP: Configure F5 Cloud Services
-CLOUD_SERVICES_LOGIN_HELP: Login to F5 Cloud Services
+CLOUD_SERVICES_CONFIGURE_AUTH_HELP: Login to F5 Cloud Services
 CLOUD_SERVICES_DNS_HELP: Create, update, and delete DNS records
 ### f5 provider ###
 PROVIDER_HELP: Configure provider environment

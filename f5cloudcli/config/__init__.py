@@ -3,12 +3,13 @@
 import os
 import pickle
 import click
+import json
 
 import f5cloudcli.constants as constants
 
 CONFIG_DIR = '{0}/{1}'.format(constants.TMP_DIR, 'f5_cloud_cli')
 
-class ConfigClient(object):
+class ConfigClient():
     """ A class used to pass BIG-IP authentication
     tokens between CLI functions.
 
@@ -32,7 +33,7 @@ class ConfigClient(object):
         See method documentation for more details
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, group_name, auth, **kwargs):
         """Class initialization
 
         Parameters
@@ -49,7 +50,8 @@ class ConfigClient(object):
         -------
         None
         """
-
+        self.group_name = group_name
+        self.auth = auth
         self.client_obj = kwargs.pop('client', '')
 
         self.config_file = CONFIG_DIR + '/auth.file'
@@ -91,6 +93,20 @@ class ConfigClient(object):
         with open(self.config_file, 'wb') as file:
             pickle.dump(client_obj, file)
         return str(self.config_file)
+
+    def store_auth(self):
+        """ func """
+        auth_contents = {}
+        if os.path.isfile('/Users/dieckmann/.f5_cli/auth.json'):
+            with open('/Users/dieckmann/.f5_cli/auth.json') as file:
+                auth_contents.update(json.load(file))
+        
+        auth_contents.update(
+            { self.group_name: self.auth }
+        )
+
+        with open('/Users/dieckmann/.f5_cli/auth.json', 'w') as file:
+            json.dump(auth_contents, file)
 
     def read_client(self):
         """Used by cli commands to check if there is an existing token

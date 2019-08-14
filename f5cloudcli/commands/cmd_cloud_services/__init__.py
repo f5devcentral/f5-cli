@@ -8,6 +8,7 @@ import click
 from f5cloudcli import docs
 from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
 from f5cloudcli.config import ConfigClient
+from f5cloudcli import constants
 
 HELP = docs.get_docs()
 
@@ -18,8 +19,8 @@ HELP = docs.get_docs()
 def cli():
     """ group """
 
-@cli.command('login',
-             help=HELP['CLOUD_SERVICES_LOGIN_HELP'])
+@cli.command('configure-auth',
+             help=HELP['CLOUD_SERVICES_CONFIGURE_AUTH_HELP'])
 @click.option('--user',
               required=True,
               metavar='<USERNAME>')
@@ -29,17 +30,16 @@ def cli():
                        confirmation_prompt=False,
                        metavar='<CLOUD_SERVICES_PASSWORD>')
 @PASS_CONTEXT
-def login(ctx, user, password):
+def configure_auth(ctx, user, password):
     """ command """
     ctx.log('Logging in to F5 Cloud Services as %s with ******', user)
-    client = ManagementClient(user=user, password=password)
-    # delete sensitive attributes
-    delattr(client, '_user')
-    delattr(client, '_password')
-    ctx.client = client
-    # write config state to disk
-    config_client = ConfigClient(client=client)
-    config_client.write_client()
+    config_client = ConfigClient(
+        constants.CLOUD_SERVICES_GROUP_NAME,
+        {
+            'user': user,
+            'password': password
+        })
+    config_client.store_auth()
 
 @cli.command('dns',
              help=HELP['CLOUD_SERVICES_DNS_HELP'],)
