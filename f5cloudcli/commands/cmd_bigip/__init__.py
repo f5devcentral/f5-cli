@@ -89,9 +89,9 @@ def toolchain():
 @PASS_CONTEXT
 def package(ctx, action, component, version):
     """ command """
-    # client = ctx.client if hasattr(ctx, 'client') else ConfigClient().read_client()
     auth = ConfigClient().read_auth(constants.BIGIP_GROUP_NAME)
     client = ManagementClient(auth['host'], user=auth['username'], password=auth['password'])
+
     kwargs = {}
     if version:
         kwargs['version'] = version
