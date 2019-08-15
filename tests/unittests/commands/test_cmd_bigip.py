@@ -100,7 +100,8 @@ class TestCommandBigIp(object):
             ConfigClient, "read_auth")
         mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
 
-        mock_management_client = mocker.patch.object(ManagementClient)
+        mock_management_client = mocker.patch.object(ManagementClient, '__init__')
+        mock_management_client.return_value = None
 
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
@@ -127,7 +128,12 @@ class TestCommandBigIp(object):
         """
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
-        mocker.patch.object(ConfigClient, "read_client")
+        mock_config_client_read_auth = mocker.patch.object(
+            ConfigClient, "read_auth")
+        mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
+
+        mock_management_client = mocker.patch.object(ManagementClient, '__init__')
+        mock_management_client.return_value = None
 
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
@@ -153,7 +159,12 @@ class TestCommandBigIp(object):
         """
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
-        mocker.patch.object(ConfigClient, "read_client")
+        mock_config_client_read_auth = mocker.patch.object(
+            ConfigClient, "read_auth")
+        mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
+
+        mock_management_client = mocker.patch.object(ManagementClient, '__init__')
+        mock_management_client.return_value = None
 
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
@@ -179,7 +190,12 @@ class TestCommandBigIp(object):
         """
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
-        mocker.patch.object(ConfigClient, "read_client")
+        mock_config_client_read_auth = mocker.patch.object(
+            ConfigClient, "read_auth")
+        mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
+
+        mock_management_client = mocker.patch.object(ManagementClient, '__init__')
+        mock_management_client.return_value = None
 
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
@@ -206,7 +222,12 @@ class TestCommandBigIp(object):
         """
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
-        mocker.patch.object(ConfigClient, "read_client")
+        mock_config_client_read_auth = mocker.patch.object(
+            ConfigClient, "read_auth")
+        mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
+
+        mock_management_client = mocker.patch.object(ManagementClient, '__init__')
+        mock_management_client.return_value = None
 
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
@@ -233,7 +254,12 @@ class TestCommandBigIp(object):
         """
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
-        mocker.patch.object(ConfigClient, "read_client")
+        mock_config_client_read_auth = mocker.patch.object(
+            ConfigClient, "read_auth")
+        mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
+
+        mock_management_client = mocker.patch.object(ManagementClient, '__init__')
+        mock_management_client.return_value = None
 
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
@@ -259,7 +285,12 @@ class TestCommandBigIp(object):
         """
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
-        mocker.patch.object(ConfigClient, "read_client")
+        mock_config_client_read_auth = mocker.patch.object(
+            ConfigClient, "read_auth")
+        mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
+
+        mock_management_client = mocker.patch.object(ManagementClient, '__init__')
+        mock_management_client.return_value = None
 
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
@@ -285,7 +316,12 @@ class TestCommandBigIp(object):
         """
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
-        mocker.patch.object(ConfigClient, "read_client")
+        mock_config_client_read_auth = mocker.patch.object(
+            ConfigClient, "read_auth")
+        mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
+
+        mock_management_client = mocker.patch.object(ManagementClient, '__init__')
+        mock_management_client.return_value = None
 
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
@@ -317,7 +353,12 @@ class TestCommandBigIp(object):
         """
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
-        mocker.patch.object(ConfigClient, "read_client")
+        mock_config_client_read_auth = mocker.patch.object(
+            ConfigClient, "read_auth")
+        mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
+
+        mock_management_client = mocker.patch.object(ManagementClient, '__init__')
+        mock_management_client.return_value = None
 
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
@@ -349,7 +390,12 @@ class TestCommandBigIp(object):
         """
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
-        mocker.patch.object(ConfigClient, "read_client")
+        mock_config_client_read_auth = mocker.patch.object(
+            ConfigClient, "read_auth")
+        mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
+
+        mock_management_client = mocker.patch.object(ManagementClient, '__init__')
+        mock_management_client.return_value = None
 
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
@@ -385,7 +431,12 @@ class TestCommandBigIp(object):
         """
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
-        mocker.patch.object(ConfigClient, "read_client")
+        mock_config_client_read_auth = mocker.patch.object(
+            ConfigClient, "read_auth")
+        mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
+
+        mock_management_client = mocker.patch.object(ManagementClient, '__init__')
+        mock_management_client.return_value = None
 
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
@@ -415,7 +466,12 @@ class TestCommandBigIp(object):
         """
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
-        mocker.patch.object(ConfigClient, "read_client")
+        mock_config_client_read_auth = mocker.patch.object(
+            ConfigClient, "read_auth")
+        mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
+
+        mock_management_client = mocker.patch.object(ManagementClient, '__init__')
+        mock_management_client.return_value = None
 
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
