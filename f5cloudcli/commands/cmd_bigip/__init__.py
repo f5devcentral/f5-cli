@@ -133,7 +133,8 @@ def package(ctx, action, component, version):
 @PASS_CONTEXT
 def service(ctx, action, component, version, declaration, install_component): # pylint: disable=too-many-arguments
     """ command """
-    client = ctx.client if hasattr(ctx, 'client') else ConfigClient().read_client()
+    auth = ConfigClient().read_auth(constants.BIGIP_GROUP_NAME)
+    client = ManagementClient(auth['host'], user=auth['username'], password=auth['password'])
 
     kwargs = {}
     if version:

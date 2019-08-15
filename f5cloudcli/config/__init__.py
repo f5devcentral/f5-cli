@@ -2,8 +2,8 @@
 
 import os
 import pickle
-import click
 import json
+import click
 
 import f5cloudcli.constants as constants
 
@@ -97,8 +97,8 @@ class ConfigClient():
     def store_auth(self):
         """ func """
         auth_contents = {}
-        if os.path.isfile('/Users/dieckmann/.f5_cli/auth.json'):
-            with open('/Users/dieckmann/.f5_cli/auth.json') as file:
+        if os.path.isfile(constants.F5_AUTH_FILE):
+            with open(constants.F5_AUTH_FILE) as file:
                 try:
                     auth_contents.update(json.load(file))
                 except json.decoder.JSONDecodeError:
@@ -109,13 +109,13 @@ class ConfigClient():
             {self.group_name: self.auth}
         )
 
-        with open('/Users/dieckmann/.f5_cli/auth.json', 'w') as file:
+        with open(constants.F5_AUTH_FILE, 'w') as file:
             json.dump(auth_contents, file)
 
     def read_auth(self, group_name):
         """ func """
-        if os.path.isfile('/Users/dieckmann/.f5_cli/auth.json'):
-            with open('/Users/dieckmann/.f5_cli/auth.json') as file:
+        if os.path.isfile(constants.F5_AUTH_FILE):
+            with open(constants.F5_AUTH_FILE) as file:
                 auth = json.load(file)
                 return auth[group_name]
         raise click.ClickException('Command failed. You must login to BIG-IP!')
