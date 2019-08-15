@@ -5,6 +5,7 @@ from f5cloudcli.config import ConfigClient
 
 # Module under test
 from f5cloudcli.commands.cmd_cloud_services import cli
+from f5cloudcli import constants
 
 
 class TestCommandBigIp(object):
@@ -30,32 +31,39 @@ class TestCommandBigIp(object):
         Then
         - Exception is thrown
         """
-        result = self.runner.invoke(cli, ['dns', 'create', 'a', 'test_members'])
-        assert result.output == "create DNS a with members test_members\nError: Command not implemented\n"
+        result = self.runner.invoke(
+            cli, ['dns', 'create', 'a', 'test_members'])
+        expected_output = "create DNS a with members test_members\nError: Command not implemented\n"
+        assert result.output == expected_output
         assert result.exception
 
     def test_cmd_cloud_services_login(self, mocker):
-        """ Log into Cloud Services
+        """ Configure authentication to F5 Cloud Services
+
         Given
-        - Cloud Services is available, and client has an account
+        - Cloud Services is available, and end-user has an account
 
         When
-        - User attempts to login to Cloud Services with user/password credentials
+        - User configures Cloud Services authentication with user/password credentials
 
         Then
-        - ManagementClient object is created
-        - ConfigClient is created to store credentials for further request
-        - Connection attempt is logged as output
+        - Credentials are passed to the ConfigClient
+        - The ConfigClient is instructured to save the credentials
         """
-        mock_management_client = mocker.patch.object(ManagementClient, "_login_using_credentials")
-
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
-        mock_config_client_write = mocker.patch.object(ConfigClient, "write_client")
+        mock_config_client_store_auth = mocker.patch.object(
+            ConfigClient, "store_auth")
 
         test_user = 'TEST USER'
-        result = self.runner.invoke(cli, ['login', '--user', test_user,
-                                          '--password', 'TEST PASSWORD'])
-        mock_management_client.assert_called_once()
-        mock_config_client_write.assert_called_once()
+        test_password = 'TEST PASSWORD'
+        result = self.runner.invoke(cli, ['configure-auth', '--user', test_user,
+                                          '--password', test_password])
+        mock_config_client_store_auth.assert_called_once()
+        mock_config_client_args = mock_config_client.call_args_list[0][1]
+        assert mock_config_client_args['group_name'] == constants.CLOUD_SERVICES_GROUP_NAME
+        assert mock_config_client_args['auth'] == {
+            'username': test_user,
+            'password': test_password
+        }
         assert result.output == f"Logging in to F5 Cloud Services as {test_user} with ******\n"
