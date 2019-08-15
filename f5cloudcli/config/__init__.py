@@ -70,7 +70,7 @@ class ConfigClient():
             os.makedirs(_dir)
 
     def store_auth(self):
-        """ Persists the current authentication data to the persistent configuration directory
+        """ Persists the current authentication data to the configuration directory
 
         Parameters
         ----------
@@ -87,9 +87,9 @@ class ConfigClient():
                 try:
                     auth_contents.update(json.load(file))
                 except json.decoder.JSONDecodeError:
-                    print('uh oh!')
-                    print('just catch error here - will overwrite below')
+                    pass
 
+        # update() auth_contents to 'merge' new credentials with existing credentials data
         auth_contents.update(
             {self.group_name: self.auth}
         )
@@ -114,6 +114,11 @@ class ConfigClient():
 
         if os.path.isfile(F5_AUTH_FILE_PATH):
             with open(F5_AUTH_FILE_PATH) as file:
-                auth = json.load(file)
-                return auth[group_name]
-        raise click.ClickException('Command failed. You must login to BIG-IP!')
+                try:
+                    auth = json.load(file)
+                    return auth[group_name]
+                except json.decoder.JSONDecodeError:
+                    raise click.ClickException(
+                        f"Command failed. Unable to read {F5_AUTH_FILE_PATH} contents")
+
+        raise click.ClickException('Command failed. You must configure BIG-IP auth!')
