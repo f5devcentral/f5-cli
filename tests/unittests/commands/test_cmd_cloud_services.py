@@ -37,7 +37,7 @@ class TestCommandBigIp(object):
         assert result.output == expected_output
         assert result.exception
 
-    def test_cmd_cloud_services_login(self, mocker):
+    def test_cmd_cloud_services_configure_auth(self, mocker):
         """ Configure authentication to F5 Cloud Services
 
         Given
