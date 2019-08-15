@@ -1,7 +1,6 @@
 """Configuration module for the CLI """
 
 import os
-import pickle
 import json
 import click
 
