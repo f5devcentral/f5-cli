@@ -1,6 +1,6 @@
 import click
 
-from ...global_test_imports import pytest, MagicMock
+from ...global_test_imports import pytest
 
 # Module under test
 from f5cloudcli.config import ConfigClient
@@ -112,7 +112,6 @@ class TestConfigClient(object):
         with mocker.patch('f5cloudcli.config.open', new_callable=mocker.mock_open()):
             client.store_auth()
             mock_json_dump.assert_called_once()
-        x = mock_json_dump
         mock_json_dump_wrote = mock_json_dump.call_args_list[0][0][0]
         assert mock_json_dump_wrote[constants.BIGIP_GROUP_NAME] == bigip_auth
         assert mock_json_dump_wrote[constants.CLOUD_SERVICES_GROUP_NAME] == cloud_services_auth
