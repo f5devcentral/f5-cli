@@ -4,6 +4,7 @@ from ...global_test_imports import pytest, MagicMock
 
 # Module under test
 from f5cloudcli.config import ConfigClient
+from f5cloudcli import constants
 
 
 class TestConfigClient(object):
@@ -93,25 +94,34 @@ class TestConfigClient(object):
     '''
 
     def test_write_nonexist_config_directory(self, mocker):
-        """ Write ConfigClient object to a config file in a non-exist directory
+        """ Write Auth file into a non-exist directory
         Given
         - Config directory does not exist
+
         When
-        - write_client() is invoked
+        - store_auth() is invoked
 
         Then
         - Config directory is created
-        - A client object is written
-        - Config file path is returned
+        - Auth file is written to disk
         """
-        mock_client_object = MagicMock()
+
         mock_path_exist = mocker.patch("f5cloudcli.config.os.path.exists")
         mock_path_exist.return_value = False
         mock_make_dir = mocker.patch("f5cloudcli.config.os.makedirs")
-        client = ConfigClient()
-        mock_pickle_dump = mocker.patch("f5cloudcli.config.pickle.dump")
+        auth={
+            'username': 'me@f5.com',
+            'password': '1234'
+        }
+        client = ConfigClient(
+            group_name=constants.CLOUD_SERVICES_GROUP_NAME,
+            auth=auth
+            )
+        mock_path_is_file = mocker.patch("f5cloudcli.config.os.path.isfile")
+        mock_path_is_file.return_value = False
+        mock_json_dump = mocker.patch("f5cloudcli.config.json.dump")
         with mocker.patch('f5cloudcli.config.open', new_callable=mocker.mock_open()):
-            result = client.write_client()
-        mock_pickle_dump.assert_called_once()
-        assert 'f5_cloud_cli/auth.file' in result
+            client.store_auth()
+        mock_json_dump.assert_called_once()
         mock_make_dir.assert_called_once()
+        assert mock_json_dump.call_args_list[0][0][0][constants.CLOUD_SERVICES_GROUP_NAME] == auth
