@@ -8,6 +8,8 @@ import click
 import f5cloudcli.constants as constants
 
 CONFIG_DIR = '{0}/{1}'.format(constants.TMP_DIR, 'f5_cloud_cli')
+F5_AUTH_FILE_PATH = constants.F5_AUTH_FILE
+F5_CLI_DIR = constants.F5_CLI_DIR
 
 class ConfigClient():
     """ A class used to pass BIG-IP authentication
@@ -56,7 +58,7 @@ class ConfigClient():
 
         self.config_file = CONFIG_DIR + '/auth.file'
         # create config directory
-        self._create_dir(CONFIG_DIR)
+        self._create_dir(F5_CLI_DIR)
 
     @staticmethod
     def _create_dir(_dir):
@@ -97,8 +99,8 @@ class ConfigClient():
     def store_auth(self):
         """ func """
         auth_contents = {}
-        if os.path.isfile(constants.F5_AUTH_FILE):
-            with open(constants.F5_AUTH_FILE) as file:
+        if os.path.isfile(F5_AUTH_FILE_PATH):
+            with open(F5_AUTH_FILE_PATH) as file:
                 try:
                     auth_contents.update(json.load(file))
                 except json.decoder.JSONDecodeError:
@@ -109,13 +111,13 @@ class ConfigClient():
             {self.group_name: self.auth}
         )
 
-        with open(constants.F5_AUTH_FILE, 'w') as file:
+        with open(F5_AUTH_FILE_PATH, 'w') as file:
             json.dump(auth_contents, file)
 
     def read_auth(self, group_name):
         """ func """
-        if os.path.isfile(constants.F5_AUTH_FILE):
-            with open(constants.F5_AUTH_FILE) as file:
+        if os.path.isfile(F5_AUTH_FILE_PATH):
+            with open(F5_AUTH_FILE_PATH) as file:
                 auth = json.load(file)
                 return auth[group_name]
         raise click.ClickException('Command failed. You must login to BIG-IP!')
