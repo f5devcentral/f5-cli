@@ -96,7 +96,7 @@ class ConfigClient():
         with open(F5_AUTH_FILE_PATH, 'w') as file:
             json.dump(auth_contents, file)
 
-    def read_auth(self, group_name):
+    def read_auth(self, group_name): # pylint: disable=no-self-use
         """ Used by the CLI commands to read the persisted credentials, when the CLI commands need
             to generate a new ManagementClient
 
