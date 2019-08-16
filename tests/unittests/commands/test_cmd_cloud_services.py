@@ -65,4 +65,4 @@ class TestCommandBigIp(object):
             'username': test_user,
             'password': test_password
         }
-        assert result.output == f"Logging in to F5 Cloud Services as {test_user} with ******\n"
+        assert result.output == f"Configuring F5 Cloud Services Auth for {test_user} with ******\n"

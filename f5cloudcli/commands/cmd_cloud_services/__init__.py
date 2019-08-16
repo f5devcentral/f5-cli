@@ -28,7 +28,7 @@ def cli():
 @PASS_CONTEXT
 def configure_auth(ctx, user, password):
     """ command """
-    ctx.log('Logging in to F5 Cloud Services as %s with ******', user)
+    ctx.log('Configuring F5 Cloud Services Auth for %s with ******', user)
     config_client = ConfigClient(
         group_name=constants.CLOUD_SERVICES_GROUP_NAME,
         auth={

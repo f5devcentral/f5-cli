@@ -35,7 +35,7 @@ def cli():
 @PASS_CONTEXT
 def configure_auth(ctx, host, user, password):
     """ command """
-    ctx.log('Logging in to BIG-IP %s as %s with ******', host, user)
+    ctx.log('Configuring BIG-IP Auth to %s as %s with ******', host, user)
     config_client = ConfigClient(
         group_name=constants.BIGIP_GROUP_NAME,
         auth={

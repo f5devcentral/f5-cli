@@ -58,7 +58,8 @@ class TestCommandBigIp(object):
             'username': test_user,
             'password': test_password
         }
-        assert result.output == "Logging in to BIG-IP TEST HOST as TEST USER with ******\n"
+        expected_output = f"Configuring BIG-IP Auth to {test_host} as {test_user} with ******\n"
+        assert result.output == expected_output
 
     def test_cmd_discover_azure_resources(self, mocker):
         """ Discover azure resources
