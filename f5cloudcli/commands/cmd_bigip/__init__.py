@@ -28,13 +28,9 @@ def cli():
 @click.option('--host',
               required=True,
               metavar='<HOST>')
-@click.option('--user',
-              required=True,
-              metavar='<USERNAME>')
+@click.option('--user', **constants.CLI_OPTIONS_USER_AUTH)
 @click.password_option('--password',
-                       required=False,
-                       prompt=True,
-                       confirmation_prompt=False,
+                       **constants.CLI_OPTIONS_PASSWORD_AUTH,
                        metavar='<BIGIP_PASSWORD>')
 @PASS_CONTEXT
 def configure_auth(ctx, host, user, password):

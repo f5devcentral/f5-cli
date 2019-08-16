@@ -21,3 +21,14 @@ AZURE_PROVIDER = 'azure'
 # Command Group names
 CLOUD_SERVICES_GROUP_NAME = 'CLOUD_SERVICES'
 BIGIP_GROUP_NAME = 'BIGIP'
+
+# Auth kwargs
+CLI_OPTIONS_USER_AUTH = {
+    'required': True,
+    'metavar': '<USERNAME>'
+}
+CLI_OPTIONS_PASSWORD_AUTH = {
+    'required': False,
+    'prompt': True,
+    'confirmation_prompt': False
+}

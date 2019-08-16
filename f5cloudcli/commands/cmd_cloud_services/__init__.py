@@ -21,14 +21,10 @@ def cli():
 
 @cli.command('configure-auth',
              help=HELP['CLOUD_SERVICES_CONFIGURE_AUTH_HELP'])
-@click.option('--user',
-              required=True,
-              metavar='<USERNAME>')
+@click.option('--user', **constants.CLI_OPTIONS_USER_AUTH)
 @click.password_option('--password',
-                       required=False,
-                       prompt=True,
-                       confirmation_prompt=False,
-                       metavar='<CLOUD_SERVICES_PASSWORD>')
+                        **constants.CLI_OPTIONS_PASSWORD_AUTH,
+                        metavar='<CLOUD_SERVICES_PASSWORD>')
 @PASS_CONTEXT
 def configure_auth(ctx, user, password):
     """ command """
