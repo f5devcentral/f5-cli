@@ -25,16 +25,21 @@ def cli():
 @click.password_option('--password',
                        **constants.CLI_OPTIONS_PASSWORD_AUTH,
                        metavar='<CLOUD_SERVICES_PASSWORD>')
+@click.option('--api-endpoint', required=False, metavar='<CLOUD_SERVICES_API_ENDPOINT>')
 @PASS_CONTEXT
-def configure_auth(ctx, user, password):
+def configure_auth(ctx, user, password, api_endpoint):
     """ command """
     ctx.log('Configuring F5 Cloud Services Auth for %s with ******', user)
+    auth = {
+        'username': user,
+        'password': password
+    }
+    if api_endpoint is not None:
+        auth['api-endpoint'] = api_endpoint
+
     config_client = ConfigClient(
         group_name=constants.CLOUD_SERVICES_GROUP_NAME,
-        auth={
-            'username': user,
-            'password': password
-        })
+        auth=auth)
     config_client.store_auth()
 
 @cli.command('dns',
