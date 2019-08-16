@@ -36,8 +36,8 @@ This project maintains state...
     - `auth.json`
         - Purpose: Authentication tokens, etc. derived from `configure-auth` command(s)
 
-### Login
+### Authentication configuration
 
-This flowchart describes the high-level decisions around login behavior.
+This flowchart describes the high-level decisions around authentication behavior.
 
-![diagram](../docs/diagrams/login_decision_tree.png)
+![diagram](../docs/diagrams/auth_decision_tree.png)

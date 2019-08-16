@@ -1,10 +1,10 @@
 graph TB
-    init["f5 (command)"] --> login_cmd[login commzzand?]
+    init["f5 (command)"] --> login_cmd[configure-auth command?]
     login_cmd --> login_cmd_yes[Yes]
     login_cmd --> login_cmd_no[No]
     login_cmd_yes --> run_cmd[Run command]
-    login_cmd_no --> cmd_bigip_logged_in{Logged in?}
+    login_cmd_no --> cmd_bigip_logged_in{Auth configured?}
     cmd_bigip_logged_in --> cmd_bigip_run_cmd[Yes]
     cmd_bigip_logged_in --> cmd_bigip_login_required[No]
     cmd_bigip_run_cmd --> run_cmd
-    cmd_bigip_login_required --> login_required[Error: Login Required]
+    cmd_bigip_login_required --> login_required[Error: Auth configuration Required]
