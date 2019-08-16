@@ -120,4 +120,4 @@ class ConfigClient():
                     raise click.ClickException(
                         f"Command failed. Unable to read {F5_AUTH_FILE_PATH} contents")
 
-        raise click.ClickException('Command failed. You must configure BIG-IP auth!')
+        raise click.ClickException('Command failed. You must configure authentication!')

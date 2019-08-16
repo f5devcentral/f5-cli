@@ -54,7 +54,7 @@ class TestConfigClient(object):
         mock_path_is_file.return_value = False
         with pytest.raises(click.exceptions.ClickException) as error:
             client.read_auth('temp')
-        assert error.value.args[0] == "Command failed. You must configure BIG-IP auth!"
+        assert error.value.args[0] == "Command failed. You must configure authentication!"
 
     def test_write_exist_config_directory(self, mocker):
         """ Write credentials to Auth file in an existing directory
