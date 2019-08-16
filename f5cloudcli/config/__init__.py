@@ -38,8 +38,10 @@ class ConfigClient():
 
         Keyword Arguments
         -----------------
-        client_obj : str
-            the client object returned from bigip login
+        group_name: str
+            the CLI command 'group' to store credentials under
+        auth: dict
+            dict of the required authentication credentials
 
         Returns
         -------
