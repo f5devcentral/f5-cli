@@ -18,6 +18,7 @@ BIGIP_TOOLCHAIN_SERVICE_HELP: Create, delete and verify Automation Toolchain ser
 CLOUD_SERVICES_HELP: Configure F5 Cloud Services
 CLOUD_SERVICES_CONFIGURE_AUTH_HELP: Configure F5 Cloud Services authentication
 CLOUD_SERVICES_DNS_HELP: Create, update, and delete DNS records
+CLOUD_SERVICES_SUBSCRIPTION_HELP: Update or show F5 Cloud Services subscription information
 ### f5 provider ###
 PROVIDER_HELP: Configure provider environment
 PROVIDER_LOGIN_HELP: Login to a provider environment

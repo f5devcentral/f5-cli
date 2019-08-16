@@ -1,6 +1,9 @@
 """ This file provides the 'cloud-services' implementation of the CLI. """
 
+import json
+
 from f5cloudsdk.cloud_services import ManagementClient
+from f5cloudsdk.cloud_services.subscription import SubscriptionClient
 
 import click_repl
 import click
@@ -35,12 +38,45 @@ def configure_auth(ctx, user, password, api_endpoint):
         'password': password
     }
     if api_endpoint is not None:
-        auth['api-endpoint'] = api_endpoint
+        auth['api_endpoint'] = api_endpoint
 
     config_client = ConfigClient(
         group_name=constants.CLOUD_SERVICES_GROUP_NAME,
         auth=auth)
     config_client.store_auth()
+
+@cli.command('subscription',
+             help=HELP['CLOUD_SERVICES_SUBSCRIPTION_HELP'])
+@click.argument('action',
+                required=True,
+                type=click.Choice(['show', 'update']),
+                metavar='<ACTION>')
+@click.option('--subscription-id', required=True, metavar='<CLOUD_SERVICES_SUBSCRIPTION_ID>')
+@PASS_CONTEXT
+def subscription(ctx, action, subscription_id):
+    """ Performs actions against a F5 Cloud Services subscription
+
+    Parameters
+    ----------
+    action : str
+        which action to perform
+    subscription : str
+        which subscription to perform the requested action on
+
+    Returns
+    -------
+    str
+        the response for the requested action against the F5 Cloud Services subscription
+    """
+    ctx.log('Calling %s against the %s subscription in F5 Cloud Services', action, subscription_id)
+    auth = ConfigClient().read_auth(constants.CLOUD_SERVICES_GROUP_NAME)
+    mgmt_client = ManagementClient(user=auth['username'], password=auth['password'],
+                                   api_endpoint=auth.pop('api_endpoint', None))
+
+    subscription_client = SubscriptionClient(mgmt_client, subscription_id=subscription_id)
+    if action == 'show':
+        subscription_data = subscription_client.show()
+        click.echo(message=json.dumps(subscription_data))
 
 @cli.command('dns',
              help=HELP['CLOUD_SERVICES_DNS_HELP'],)

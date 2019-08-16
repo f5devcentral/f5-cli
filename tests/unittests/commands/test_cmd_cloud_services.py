@@ -101,3 +101,21 @@ class TestCommandBigIp(object):
             'api-endpoint': test_api_endpoint
         }
         assert result.output == f"Configuring F5 Cloud Services Auth for {test_user} with ******\n"
+
+
+    def test_cmd_cloud_services_subscription_show(self, mocker):
+        """ Execute a 'show' action against an F5 Cloud Services subscription
+
+        Given
+        - Cloud Services is available, and end-user has an account
+        - The user has already configured authentication with Cloud Services
+
+        When
+        - User executes a 'show' against F5 Cloud Services
+
+        Then
+        - Authentication data is read from disk
+        - A Management client is created
+        - A Subscription client is created
+        - The show command is executed
+        """
