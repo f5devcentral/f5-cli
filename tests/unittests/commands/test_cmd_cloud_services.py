@@ -19,7 +19,7 @@ class TestCommandBigIp(object):
         """ Teardown func """
         pass
 
-    def test_dns_service(self, mocker):
+    def test_dns_service(self):
         """ Test DNS service
         Given
         - BIG IP is up
