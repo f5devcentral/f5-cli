@@ -67,6 +67,8 @@ def subscription(ctx, action, subscription_id, declaration):
         which action to perform
     subscription : str
         which subscription to perform the requested action on
+    declaration : str
+        file name or path to file of declaration to send to F5 Cloud Services
 
     Returns
     -------
