@@ -1,3 +1,4 @@
+import pytest
 from click.testing import CliRunner
 
 from ...global_test_imports import MagicMock, call, PropertyMock
@@ -28,7 +29,28 @@ class TestCommandBigIp(object):
         """ Teardown func """
         pass
 
-    def test_cmd_bigip_configure_auth(self, mocker):
+    @classmethod
+    def mock_config_client_read_auth(cls, mocker):
+        """ func """
+        mock_config_client_read_auth = mocker.patch.object(
+            ConfigClient, "read_auth")
+        mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
+
+    @pytest.fixture
+    def config_client_fixture(self, mocker):
+        """ PyTest fixture returning mocked ConfigClient """
+        mock_config_client = mocker.patch.object(ConfigClient, "__init__")
+        mock_config_client.return_value = None
+        return mock_config_client
+
+    @pytest.fixture
+    def mock_mgmt_client(self, mocker):
+        """ PyTest fixture returning mocked BigIP Management Client """
+        mock_management_client = mocker.patch.object(ManagementClient, '__init__')
+        mock_management_client.return_value = None
+        return mock_management_client
+
+    def test_cmd_bigip_configure_auth(self, mocker, config_client_fixture):
         """ Configure authentication to a BIGIP
         Given
         - BIG IP is up
@@ -40,8 +62,7 @@ class TestCommandBigIp(object):
         - Credentials are passed to the ConfigClient
         - The ConfigClient is instructured to save the credentials
         """
-        mock_config_client = mocker.patch.object(ConfigClient, "__init__")
-        mock_config_client.return_value = None
+        mock_config_client = config_client_fixture
         mock_config_client_store_auth = mocker.patch.object(
             ConfigClient, "store_auth")
 
@@ -85,7 +106,7 @@ class TestCommandBigIp(object):
                                           '--provider-tag', 'test_key:test_value'])
         assert result.output == "Discovering all BIG-IPs in azure with tag test_key:test_value\n{\n    \"id\": \"a1\",\n    \"name\": \"f5bigip1\"\n},\n{\n    \"id\": \"b2\",\n    \"name\": \"f5bigip2\"\n}\n"
 
-    def test_cmd_package_verify_existing_toolchain_component(self, mocker):
+    def test_cmd_package_verify_existing_toolchain_component(self, mocker, mock_mgmt_client):  # pylint: disable=redefined-outer-name
         """ Command package verify an existing toolchain component
         Given
         - BIG-IP is up
@@ -95,17 +116,11 @@ class TestCommandBigIp(object):
         Then
         - Installed 'do' toolchain component message is logged
         """
-        mock_config_client = mocker.patch.object(ConfigClient, "__init__")
-        mock_config_client.return_value = None
-        mock_config_client_read_auth = mocker.patch.object(
-            ConfigClient, "read_auth")
-        mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
-
-        mock_management_client = mocker.patch.object(ManagementClient, '__init__')
-        mock_management_client.return_value = None
+        self.mock_config_client_read_auth(mocker)
 
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
+        mock_management_client = mock_mgmt_client
 
         m = MagicMock()
         m.is_installed.return_value = True
@@ -127,13 +142,11 @@ class TestCommandBigIp(object):
         Then
         - Non existing 'do' component message is logged
         """
-        mock_config_client = mocker.patch.object(ConfigClient, "__init__")
-        mock_config_client.return_value = None
-        mock_config_client_read_auth = mocker.patch.object(
-            ConfigClient, "read_auth")
-        mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
+        self.mock_config_clients(mocker)
+        self.mock_config_client_read_auth(mocker)
 
-        mock_management_client = mocker.patch.object(ManagementClient, '__init__')
+        mock_management_client = mocker.patch.object(
+            ManagementClient, '__init__')
         mock_management_client.return_value = None
 
         mock_toolchain_client = mocker.patch(
@@ -158,13 +171,11 @@ class TestCommandBigIp(object):
         Then
         - Already installed 'do' component message is logged
         """
-        mock_config_client = mocker.patch.object(ConfigClient, "__init__")
-        mock_config_client.return_value = None
-        mock_config_client_read_auth = mocker.patch.object(
-            ConfigClient, "read_auth")
-        mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
+        self.mock_config_clients(mocker)
+        self.mock_config_client_read_auth(mocker)
 
-        mock_management_client = mocker.patch.object(ManagementClient, '__init__')
+        mock_management_client = mocker.patch.object(
+            ManagementClient, '__init__')
         mock_management_client.return_value = None
 
         mock_toolchain_client = mocker.patch(
@@ -189,13 +200,11 @@ class TestCommandBigIp(object):
         Then
         -  Successfully installed 'do' component message is logged
         """
-        mock_config_client = mocker.patch.object(ConfigClient, "__init__")
-        mock_config_client.return_value = None
-        mock_config_client_read_auth = mocker.patch.object(
-            ConfigClient, "read_auth")
-        mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
+        self.mock_config_clients(mocker)
+        self.mock_config_client_read_auth(mocker)
 
-        mock_management_client = mocker.patch.object(ManagementClient, '__init__')
+        mock_management_client = mocker.patch.object(
+            ManagementClient, '__init__')
         mock_management_client.return_value = None
 
         mock_toolchain_client = mocker.patch(
@@ -221,13 +230,11 @@ class TestCommandBigIp(object):
         Then
         - Uninstalled 'do' component message is logged
         """
-        mock_config_client = mocker.patch.object(ConfigClient, "__init__")
-        mock_config_client.return_value = None
-        mock_config_client_read_auth = mocker.patch.object(
-            ConfigClient, "read_auth")
-        mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
+        self.mock_config_clients(mocker)
+        self.mock_config_client_read_auth(mocker)
 
-        mock_management_client = mocker.patch.object(ManagementClient, '__init__')
+        mock_management_client = mocker.patch.object(
+            ManagementClient, '__init__')
         mock_management_client.return_value = None
 
         mock_toolchain_client = mocker.patch(
@@ -253,13 +260,11 @@ class TestCommandBigIp(object):
         Then
         -  Already uninstalled 'do' component message is logged
         """
-        mock_config_client = mocker.patch.object(ConfigClient, "__init__")
-        mock_config_client.return_value = None
-        mock_config_client_read_auth = mocker.patch.object(
-            ConfigClient, "read_auth")
-        mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
+        self.mock_config_clients(mocker)
+        self.mock_config_client_read_auth(mocker)
 
-        mock_management_client = mocker.patch.object(ManagementClient, '__init__')
+        mock_management_client = mocker.patch.object(
+            ManagementClient, '__init__')
         mock_management_client.return_value = None
 
         mock_toolchain_client = mocker.patch(
@@ -284,13 +289,11 @@ class TestCommandBigIp(object):
         Then
         -  Non-implemented action exception is thrown
         """
-        mock_config_client = mocker.patch.object(ConfigClient, "__init__")
-        mock_config_client.return_value = None
-        mock_config_client_read_auth = mocker.patch.object(
-            ConfigClient, "read_auth")
-        mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
+        self.mock_config_clients(mocker)
+        self.mock_config_client_read_auth(mocker)
 
-        mock_management_client = mocker.patch.object(ManagementClient, '__init__')
+        mock_management_client = mocker.patch.object(
+            ManagementClient, '__init__')
         mock_management_client.return_value = None
 
         mock_toolchain_client = mocker.patch(
@@ -315,13 +318,11 @@ class TestCommandBigIp(object):
         Then
         -  Current status message of 'do' component is logged
         """
-        mock_config_client = mocker.patch.object(ConfigClient, "__init__")
-        mock_config_client.return_value = None
-        mock_config_client_read_auth = mocker.patch.object(
-            ConfigClient, "read_auth")
-        mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
+        self.mock_config_clients(mocker)
+        self.mock_config_client_read_auth(mocker)
 
-        mock_management_client = mocker.patch.object(ManagementClient, '__init__')
+        mock_management_client = mocker.patch.object(
+            ManagementClient, '__init__')
         mock_management_client.return_value = None
 
         mock_toolchain_client = mocker.patch(
@@ -352,13 +353,11 @@ class TestCommandBigIp(object):
         - 'do' component is available
         -  Current status message of 'do' component is logged
         """
-        mock_config_client = mocker.patch.object(ConfigClient, "__init__")
-        mock_config_client.return_value = None
-        mock_config_client_read_auth = mocker.patch.object(
-            ConfigClient, "read_auth")
-        mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
+        self.mock_config_clients(mocker)
+        self.mock_config_client_read_auth(mocker)
 
-        mock_management_client = mocker.patch.object(ManagementClient, '__init__')
+        mock_management_client = mocker.patch.object(
+            ManagementClient, '__init__')
         mock_management_client.return_value = None
 
         mock_toolchain_client = mocker.patch(
@@ -389,13 +388,11 @@ class TestCommandBigIp(object):
         Then
         -  result status of create action is logged
         """
-        mock_config_client = mocker.patch.object(ConfigClient, "__init__")
-        mock_config_client.return_value = None
-        mock_config_client_read_auth = mocker.patch.object(
-            ConfigClient, "read_auth")
-        mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
+        self.mock_config_clients(mocker)
+        self.mock_config_client_read_auth(mocker)
 
-        mock_management_client = mocker.patch.object(ManagementClient, '__init__')
+        mock_management_client = mocker.patch.object(
+            ManagementClient, '__init__')
         mock_management_client.return_value = None
 
         mock_toolchain_client = mocker.patch(
@@ -430,13 +427,11 @@ class TestCommandBigIp(object):
         Then
         -  deleted status of 'do' service is logged
         """
-        mock_config_client = mocker.patch.object(ConfigClient, "__init__")
-        mock_config_client.return_value = None
-        mock_config_client_read_auth = mocker.patch.object(
-            ConfigClient, "read_auth")
-        mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
+        self.mock_config_clients(mocker)
+        self.mock_config_client_read_auth(mocker)
 
-        mock_management_client = mocker.patch.object(ManagementClient, '__init__')
+        mock_management_client = mocker.patch.object(
+            ManagementClient, '__init__')
         mock_management_client.return_value = None
 
         mock_toolchain_client = mocker.patch(
@@ -465,13 +460,11 @@ class TestCommandBigIp(object):
         Then
         -  Non-implemented action exception is thrown
         """
-        mock_config_client = mocker.patch.object(ConfigClient, "__init__")
-        mock_config_client.return_value = None
-        mock_config_client_read_auth = mocker.patch.object(
-            ConfigClient, "read_auth")
-        mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
+        self.mock_config_clients(mocker)
+        self.mock_config_client_read_auth(mocker)
 
-        mock_management_client = mocker.patch.object(ManagementClient, '__init__')
+        mock_management_client = mocker.patch.object(
+            ManagementClient, '__init__')
         mock_management_client.return_value = None
 
         mock_toolchain_client = mocker.patch(
