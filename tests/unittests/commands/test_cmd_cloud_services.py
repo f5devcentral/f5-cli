@@ -98,7 +98,7 @@ class TestCommandBigIp(object):
         assert mock_config_client_args['auth'] == {
             'username': test_user,
             'password': test_password,
-            'api-endpoint': test_api_endpoint
+            'api_endpoint': test_api_endpoint
         }
         assert result.output == f"Configuring F5 Cloud Services Auth for {test_user} with ******\n"
 

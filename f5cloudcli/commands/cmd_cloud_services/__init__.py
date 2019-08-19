@@ -77,6 +77,8 @@ def subscription(ctx, action, subscription_id):
     if action == 'show':
         subscription_data = subscription_client.show()
         click.echo(message=json.dumps(subscription_data))
+    else:
+        raise click.ClickException(f"Action {action} not implemented for 'subscription' command")
 
 @cli.command('dns',
              help=HELP['CLOUD_SERVICES_DNS_HELP'],)
