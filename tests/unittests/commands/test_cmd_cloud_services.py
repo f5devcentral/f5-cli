@@ -1,5 +1,6 @@
 import pytest
 import click
+import os
 
 from click.testing import CliRunner
 
@@ -201,3 +202,52 @@ class TestCommandBigIp(object):
         result = self.runner.invoke(cli, ['subscription', bad_action])
         assert f"invalid choice: {bad_action}" in result.output
         assert result.exception
+
+    def test_cmd_cloud_services_subscription_update_no_declaration(self):
+        """ Execute 'update' without providing a declaration
+
+        When
+        - The User executes the 'update' action for a Cloud Services Subscription
+        - A declaration is not provided in the 'update' action
+
+        Then
+        - The CLI responds that a declaration is required
+        """
+
+        result = self.runner.invoke(cli, ['subscription', 'update', '--subscription-id', 's'])
+        assert result.exception
+        assert result.output == 'Error: The --declaration option is required when updating a Cloud Services subscription\n'  # pylint: disable=line-too-long
+
+    def test_cmd_cloud_services_subscription_update(self,
+                                                    mocker,
+                                                    config_client_read_auth_fixture,  # pylint: disable=unused-argument
+                                                    mgmt_client_fixture,  # pylint: disable=unused-argument
+                                                    subscription_client_fixture):  # pylint: disable=unused-argument
+        """ Execute an 'update' action against a Cloud Services subscription
+
+        Given
+        - Cloud Services is available, and end-user has an account
+        - The user has already configured authentication with Cloud Services
+        - There is an existing F5 Cloud Services configuration
+
+        When
+        - The User executes the 'update' action for a Cloud Services Subscription
+        - The User provides a valid declaration file
+
+        Then
+        - The CLI calls the F5 Cloud SDK to update Cloud Services
+        """
+
+        mock_subscription_client_update = mocker.patch.object(
+            SubscriptionClient, "update")
+        mock_subscription_client_update.return_value = {
+            'subscription_id': SUBSCRIPTION_ID,
+            'account_id': 'a-123'
+        }
+
+        declaration_file = 'decl.json'
+        expected_config_file = os.path.join(os.getcwd(), declaration_file)
+        result = self.runner.invoke(cli, ['subscription', 'update', '--subscription-id',
+                                          SUBSCRIPTION_ID, '--declaration', 'decl.json'])
+        assert "Cloud Services Subscription updated" in result.output
+        assert mock_subscription_client_update.call_args[1]['config_file'] == expected_config_file

@@ -11,6 +11,7 @@ import click
 from f5cloudcli import docs
 from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
 from f5cloudcli.config import ConfigClient
+from f5cloudcli.utils import core as utils_core
 from f5cloudcli import constants
 
 HELP = docs.get_docs()
@@ -52,8 +53,12 @@ def configure_auth(ctx, user, password, api_endpoint):
                 type=click.Choice(['show', 'update']),
                 metavar='<ACTION>')
 @click.option('--subscription-id', required=True, metavar='<CLOUD_SERVICES_SUBSCRIPTION_ID>')
+@click.option('--declaration',
+              required=False,
+              metavar='<SUBSCRIPTION_DECLARATION>',
+              help='required if performing an update')
 @PASS_CONTEXT
-def subscription(ctx, action, subscription_id):
+def subscription(ctx, action, subscription_id, declaration):
     """ Performs actions against a F5 Cloud Services subscription
 
     Parameters
@@ -68,7 +73,13 @@ def subscription(ctx, action, subscription_id):
     str
         the response for the requested action against the F5 Cloud Services subscription
     """
+    # Additional option validation
+    if action == 'update' and declaration is None:
+        msg = 'The --declaration option is required when updating a Cloud Services subscription'
+        raise click.ClickException(msg)
+
     ctx.log('Calling %s against the %s subscription in F5 Cloud Services', action, subscription_id)
+
     auth = ConfigClient().read_auth(constants.CLOUD_SERVICES_GROUP_NAME)
     mgmt_client = ManagementClient(user=auth['username'], password=auth['password'],
                                    api_endpoint=auth.pop('api_endpoint', None))
@@ -77,6 +88,11 @@ def subscription(ctx, action, subscription_id):
     if action == 'show':
         subscription_data = subscription_client.show()
         click.echo(message=json.dumps(subscription_data))
+    elif action == 'update':
+        decl_location = utils_core.convert_to_absolute(declaration)
+        result = subscription_client.update(config_file=decl_location)
+        ctx.log('Cloud Services Subscription updated:')
+        click.echo(message=json.dumps(result))
     else:
         raise click.ClickException(f"Action {action} not implemented for 'subscription' command")
 
