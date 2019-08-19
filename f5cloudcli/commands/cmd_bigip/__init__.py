@@ -8,7 +8,7 @@ from f5cloudsdk.bigip.toolchain import ToolChainClient
 import click_repl
 import click
 
-from f5cloudcli import docs
+from f5cloudcli import docs, constants
 from f5cloudcli.utils import clients
 from f5cloudcli.utils import core as utils_core
 from f5cloudcli.config import ConfigClient
@@ -23,31 +23,27 @@ HELP = docs.get_docs()
 def cli():
     """ group """
 
-@cli.command('login',
-             help=HELP['BIGIP_LOGIN_HELP'])
+@cli.command('configure-auth',
+             help=HELP['BIGIP_CONFIGURE_AUTH_HELP'])
 @click.option('--host',
               required=True,
               metavar='<HOST>')
-@click.option('--user',
-              required=True,
-              metavar='<USERNAME>')
+@click.option('--user', **constants.CLI_OPTIONS_USER_AUTH)
 @click.password_option('--password',
-                       required=False,
-                       prompt=True,
-                       confirmation_prompt=False,
+                       **constants.CLI_OPTIONS_PASSWORD_AUTH,
                        metavar='<BIGIP_PASSWORD>')
 @PASS_CONTEXT
-def login(ctx, host, user, password):
+def configure_auth(ctx, host, user, password):
     """ command """
-    ctx.log('Logging in to BIG-IP %s as %s with ******', host, user)
-    client = ManagementClient(host, user=user, password=password)
-    # delete sensitive attributes
-    delattr(client, '_user')
-    delattr(client, '_password')
-    ctx.client = client
-    # write config state to disk
-    config_client = ConfigClient(client=client)
-    config_client.write_client()
+    ctx.log('Configuring BIG-IP Auth to %s as %s with ******', host, user)
+    config_client = ConfigClient(
+        group_name=constants.BIGIP_GROUP_NAME,
+        auth={
+            'username': user,
+            'password': password,
+            'host': host
+        })
+    config_client.store_auth()
 
 @cli.command('discover',
              help=HELP['BIGIP_DISCOVER_HELP'])
@@ -89,7 +85,8 @@ def toolchain():
 @PASS_CONTEXT
 def package(ctx, action, component, version):
     """ command """
-    client = ctx.client if hasattr(ctx, 'client') else ConfigClient().read_client()
+    auth = ConfigClient().read_auth(constants.BIGIP_GROUP_NAME)
+    client = ManagementClient(auth['host'], user=auth['username'], password=auth['password'])
 
     kwargs = {}
     if version:
@@ -132,7 +129,8 @@ def package(ctx, action, component, version):
 @PASS_CONTEXT
 def service(ctx, action, component, version, declaration, install_component): # pylint: disable=too-many-arguments
     """ command """
-    client = ctx.client if hasattr(ctx, 'client') else ConfigClient().read_client()
+    auth = ConfigClient().read_auth(constants.BIGIP_GROUP_NAME)
+    client = ManagementClient(auth['host'], user=auth['username'], password=auth['password'])
 
     kwargs = {}
     if version:

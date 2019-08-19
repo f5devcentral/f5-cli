@@ -112,9 +112,9 @@ resource "azurerm_virtual_machine" "deployment" {
   }
 }
 
-resource "null_resource" "login" {
+resource "null_resource" "configure_auth" {
   provisioner "local-exec" {
-    command = "f5 bigip login --host ${azurerm_public_ip.deployment.ip_address} --user ${var.admin_username} --password ${var.admin_password}"
+    command = "f5 bigip configure-auth --host ${azurerm_public_ip.deployment.ip_address} --user ${var.admin_username} --password ${var.admin_password}"
   }
   triggers = {
     # prefer fileexists + file here, when available (TF v0.12): https://www.terraform.io/docs/configuration/functions/fileexists.html
@@ -130,7 +130,7 @@ resource "null_resource" "onboarding" {
   triggers = {
     declaration_hash = "${sha1(file("${path.module}/../declarations/do_decl.json"))}"
   }
-  depends_on = ["null_resource.login"]
+  depends_on = ["null_resource.configure_auth"]
 }
 
 resource "null_resource" "as3" {
@@ -140,7 +140,7 @@ resource "null_resource" "as3" {
   triggers = {
     declaration_hash = "${sha1(file("${path.module}/../declarations/as3_decl.json"))}"
   }
-  depends_on = ["null_resource.login", "null_resource.onboarding"]
+  depends_on = ["null_resource.configure_auth", "null_resource.onboarding"]
 }
 
 output "public_ip_address" {

@@ -6,5 +6,5 @@ This project makes use of [mermaid](https://mermaidjs.github.io) for diagrams fo
 
 ```bash
 npm install
-mmdc -i src/login_decision_tree.mmd -o login_decision_tree.png --theme dark
+mmdc -i src/auth_decision_tree.mmd -o auth_decision_tree.png --theme dark
 ```

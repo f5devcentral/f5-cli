@@ -34,10 +34,10 @@ This project maintains state...
     - `config.json`
         - Purpose: Any stateful configuration settings for the CLI, such as default output format, telemetry choice, etc.
     - `auth.json`
-        - Purpose: Authentication tokens, etc. derived from `login` command(s)
+        - Purpose: Authentication tokens, etc. derived from `configure-auth` command(s)
 
-### Login
+### Authentication configuration
 
-This flowchart describes the high-level decisions around login behavior.
+This flowchart describes the high-level decisions around authentication behavior.
 
-![diagram](../docs/diagrams/login_decision_tree.png)
+![diagram](../docs/diagrams/auth_decision_tree.png)

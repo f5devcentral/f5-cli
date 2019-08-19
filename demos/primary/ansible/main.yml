@@ -85,8 +85,8 @@
       tags:
         devicetype: BIG-IP
       append_tags: true
-  - name: Login to BIG-IP
-    command: f5 bigip login --host {{ output_public_ip_address.state.ip_address }} --user {{ admin_username }} --password {{ admin_password }}
+  - name: Configure BIG-IP Auth
+    command: f5 bigip configure-auth --host {{ output_public_ip_address.state.ip_address }} --user {{ admin_username }} --password {{ admin_password }}
   - name: Configure BIG-IP (onboarding)
     command: f5 bigip toolchain service create --install-component --component do --declaration {{ playbook_dir }}/../declarations/do_decl.json
   - name: Configure Application Services on BIG-IP

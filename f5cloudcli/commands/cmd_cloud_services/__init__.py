@@ -8,6 +8,7 @@ import click
 from f5cloudcli import docs
 from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
 from f5cloudcli.config import ConfigClient
+from f5cloudcli import constants
 
 HELP = docs.get_docs()
 
@@ -18,28 +19,28 @@ HELP = docs.get_docs()
 def cli():
     """ group """
 
-@cli.command('login',
-             help=HELP['CLOUD_SERVICES_LOGIN_HELP'])
-@click.option('--user',
-              required=True,
-              metavar='<USERNAME>')
+@cli.command('configure-auth',
+             help=HELP['CLOUD_SERVICES_CONFIGURE_AUTH_HELP'])
+@click.option('--user', **constants.CLI_OPTIONS_USER_AUTH)
 @click.password_option('--password',
-                       required=False,
-                       prompt=True,
-                       confirmation_prompt=False,
+                       **constants.CLI_OPTIONS_PASSWORD_AUTH,
                        metavar='<CLOUD_SERVICES_PASSWORD>')
+@click.option('--api-endpoint', required=False, metavar='<CLOUD_SERVICES_API_ENDPOINT>')
 @PASS_CONTEXT
-def login(ctx, user, password):
+def configure_auth(ctx, user, password, api_endpoint):
     """ command """
-    ctx.log('Logging in to F5 Cloud Services as %s with ******', user)
-    client = ManagementClient(user=user, password=password)
-    # delete sensitive attributes
-    delattr(client, '_user')
-    delattr(client, '_password')
-    ctx.client = client
-    # write config state to disk
-    config_client = ConfigClient(client=client)
-    config_client.write_client()
+    ctx.log('Configuring F5 Cloud Services Auth for %s with ******', user)
+    auth = {
+        'username': user,
+        'password': password
+    }
+    if api_endpoint is not None:
+        auth['api-endpoint'] = api_endpoint
+
+    config_client = ConfigClient(
+        group_name=constants.CLOUD_SERVICES_GROUP_NAME,
+        auth=auth)
+    config_client.store_auth()
 
 @cli.command('dns',
              help=HELP['CLOUD_SERVICES_DNS_HELP'],)
