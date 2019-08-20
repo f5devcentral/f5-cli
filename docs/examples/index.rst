@@ -1,6 +1,6 @@
 Examples
 ==========
-The following are examples that can be followed to interact with the F5 Cloud CLI.
+Below are examples of interacting with various F5 products and services by using the F5 Cloud CLI.
 
 BIG-IP Examples
 -------
@@ -8,13 +8,6 @@ BIG-IP Examples
    :maxdepth: 4
 
    bigip.rst
-
-Cloud Provider Examples
--------
-.. toctree::
-   :maxdepth: 4
-
-   provider.rst
 
 Cloud Services Examples
 -------
