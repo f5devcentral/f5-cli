@@ -192,7 +192,9 @@ pages:
         # place code coverage artifacts under /coverage
         - mkdir -p ${PUBLIC_DIR}/coverage
         - cp -R code_coverage/* ${PUBLIC_DIR}/coverage
-        # etc...
+        # place code docs artifacts under /code-docs
+        - mkdir -p ${PUBLIC_DIR}/code-docs
+        - cp -R code_docs/html/* ./public/code-docs
     artifacts:
         paths:
             - public
