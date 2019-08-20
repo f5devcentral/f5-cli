@@ -19,9 +19,13 @@ Installation
 Usage
 -----
 
-This example shows how to configure authentication with a BIG-IP, and query
+This example shows how to configure authentication with an existing BIG-IP system, and query the BIG-IP to determine whether or not the AS3 Toolchain component is already installed.
 
 ::
 
     $ f5 bigip configure-auth --host 54.224.182.104 --user myuser
     Password:
+    Configuring BIG-IP Auth to 54.224.182.104 as myuser with ******
+
+    $ f5 bigip toolchain package verify --component as3
+    Toolchain component package installed: False

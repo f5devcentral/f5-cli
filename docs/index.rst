@@ -22,3 +22,4 @@ User Guide Index
    :glob:
 
    userguide/quickstart
+   troubleshooting/index
