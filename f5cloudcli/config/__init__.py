@@ -119,11 +119,11 @@ class ConfigClient():
             with open(F5_AUTH_FILE_PATH) as file:
                 try:
                     auth = json.load(file)
-                    if group_name not in auth:
-                        raise click.ClickException(err_msg)
-                    return auth[group_name]
                 except json.decoder.JSONDecodeError:
                     raise click.ClickException(
                         f"Command failed. Unable to read {F5_AUTH_FILE_PATH} contents")
+            if group_name not in auth:
+                raise click.ClickException(err_msg)
+            return auth[group_name]
 
         raise click.ClickException(err_msg)

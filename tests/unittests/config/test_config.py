@@ -80,6 +80,7 @@ class TestConfigClient(object):
         assert error.value.args[0] == "Command failed. You must configure authentication for temp!"
 
     def test_read_auth_without_key(self,
+                                   mocker,
                                    json_load_fixture,
                                    os_path_exists_fixture,  # pylint: disable=unused-argument
                                    os_path_isfile_fixture):  # pylint: disable=unused-argument
@@ -102,7 +103,8 @@ class TestConfigClient(object):
             group_name: {'username': 'me@home.com', 'password': 'pass123'}}
 
         with pytest.raises(click.exceptions.ClickException) as error:
-            client.read_auth('temp')
+            with mocker.patch('f5cloudcli.config.open', new_callable=mocker.mock_open()):
+                client.read_auth('temp')
         assert error.value.args[0] == "Command failed. You must configure authentication for temp!"
 
     def test_write_exist_config_directory(self,
