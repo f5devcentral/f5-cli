@@ -136,6 +136,23 @@ docs_code_coverage:
             - code_coverage
         expire_in: 1 month
 
+# generate code docs
+docs_code:
+    stage: docs
+    script:
+        # install packages
+        - pip install -r requirements.txt
+        - pip install .
+        # generate docs
+        - make html
+    tags:
+        - cm-official-docker-executor
+    artifacts:
+        name: ${CI_COMMIT_REF_NAME}_code_docs
+        paths:
+            - code_docs
+        expire_in: 1 month
+
 # Publish to internal artifactory
 # Note: Will build and push eggs when new tags are pushed with the assumption being the package
 # version has been updated. However even if it hasn't it will simply update the existing version
