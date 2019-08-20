@@ -21,5 +21,6 @@ User Guide Index
    :includehidden:
    :glob:
 
-   userguide/quickstart
+   quickstart/index
+   examples/index
    troubleshooting/index
