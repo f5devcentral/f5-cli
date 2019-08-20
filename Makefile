@@ -1,4 +1,5 @@
 BUILD_DIR := build
+CODE_DOCS_DIR := ./code_docs
 COVERAGE_DIR := ./code_coverage
 COVERAGE_FILE := .coverage
 DIST_DIR := dist
@@ -41,4 +42,5 @@ html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
+	cp -R docs/_build ${CODE_DOCS_DIR}
 .PHONY: clean
