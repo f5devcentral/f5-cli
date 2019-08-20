@@ -50,8 +50,7 @@ def configure_auth(ctx, user, password, api_endpoint):
              help=HELP['CLOUD_SERVICES_SUBSCRIPTION_HELP'])
 @click.argument('action',
                 required=True,
-                type=click.Choice(['show', 'update']),
-                metavar='<ACTION>')
+                type=click.Choice(['show', 'update']))
 @click.option('--subscription-id', required=True, metavar='<CLOUD_SERVICES_SUBSCRIPTION_ID>')
 @click.option('--declaration',
               required=False,
