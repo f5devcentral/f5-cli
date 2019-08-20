@@ -59,7 +59,6 @@ class TestConfigClient(object):
         mock_json_load.assert_called_once()
 
     def test_read_nonexist_auth(self,
-                                mocker,
                                 os_path_exists_fixture,  # pylint: disable=unused-argument
                                 os_path_isfile_fixture):  # pylint: disable=unused-argument
         """ Attempt to read an Auth file that does not exist
@@ -80,7 +79,10 @@ class TestConfigClient(object):
             client.read_auth('temp')
         assert error.value.args[0] == "Command failed. You must configure authentication for temp!"
 
-    def test_read_auth_without_key(self, mocker):
+    def test_read_auth_without_key(self,
+                                   json_load_fixture,
+                                   os_path_exists_fixture,  # pylint: disable=unused-argument
+                                   os_path_isfile_fixture):  # pylint: disable=unused-argument
         """ Attempt to read an Auth file that exists, but does not contain the required key
         Given
         - Auth file does exist
@@ -92,21 +94,21 @@ class TestConfigClient(object):
         Then
         - Exception is thrown
         """
-        mock_path_exist = mocker.patch("f5cloudcli.config.os.path.exists")
-        mock_path_exist.return_value = True
         client = ConfigClient()
-        mock_path_is_file = mocker.patch("f5cloudcli.config.os.path.isfile")
-        mock_path_is_file.return_value = True
-        mock_json_load = mocker.patch("f5cloudcli.config.json.load")
+        mock_json_load = json_load_fixture
 
         group_name = 'CLOUD_SERVICES'
         mock_json_load.return_value = {
             group_name: {'username': 'me@home.com', 'password': 'pass123'}}
+
         with pytest.raises(click.exceptions.ClickException) as error:
             client.read_auth('temp')
         assert error.value.args[0] == "Command failed. You must configure authentication for temp!"
 
-    def test_write_exist_config_directory(self, mocker):
+    def test_write_exist_config_directory(self,
+                                          mocker,
+                                          os_path_exists_fixture,  # pylint: disable=unused-argument
+                                          os_path_isfile_fixture):
         """ Write credentials to Auth file in an existing directory
         Given
         - Config directory exist
@@ -118,17 +120,19 @@ class TestConfigClient(object):
         Then
         - The credentials are written to the Auth file
         """
-        mock_path_exist = mocker.patch("f5cloudcli.config.os.path.exists")
-        mock_path_exist.return_value = True
         client = ConfigClient()
-        mock_path_isfile = mocker.patch("f5cloudcli.config.os.path.isfile")
+        mock_path_isfile = os_path_isfile_fixture
         mock_path_isfile.return_value = False
         mock_json_dump = mocker.patch("f5cloudcli.config.json.dump")
         with mocker.patch('f5cloudcli.config.open', new_callable=mocker.mock_open()):
             client.store_auth()
             mock_json_dump.assert_called_once()
 
-    def test_write_to_existing_auth_file(self, mocker):
+    def test_write_to_existing_auth_file(self,
+                                         mocker,
+                                         json_load_fixture,
+                                         os_path_exists_fixture,  # pylint: disable=unused-argument
+                                         os_path_isfile_fixture):  # pylint: disable=unused-argument
         """ Write credentials to an existing Auth file
         Given
         - Config directory exists
@@ -141,8 +145,6 @@ class TestConfigClient(object):
         - The existing Auth file is read
         - The Auth file is overwritten, containing merged credentials
         """
-        mock_path_exist = mocker.patch("f5cloudcli.config.os.path.exists")
-        mock_path_exist.return_value = True
         bigip_auth = {
             'username': 'root',
             'password': '123',
@@ -151,13 +153,12 @@ class TestConfigClient(object):
         client = ConfigClient(
             group_name=constants.BIGIP_GROUP_NAME,
             auth=bigip_auth)
-        mock_path_isfile = mocker.patch("f5cloudcli.config.os.path.isfile")
-        mock_path_isfile.return_value = True
-        mock_json_load = mocker.patch("f5cloudcli.config.json.load")
+        mock_json_load = json_load_fixture
         cloud_services_auth = {'username': 'me@home.com', 'password': '123'}
         mock_json_load.return_value = {
             'CLOUD_SERVICES': cloud_services_auth
         }
+
         mock_json_dump = mocker.patch("f5cloudcli.config.json.dump")
         with mocker.patch('f5cloudcli.config.open', new_callable=mocker.mock_open()):
             client.store_auth()
@@ -166,7 +167,10 @@ class TestConfigClient(object):
         assert mock_json_dump_wrote[constants.BIGIP_GROUP_NAME] == bigip_auth
         assert mock_json_dump_wrote[constants.CLOUD_SERVICES_GROUP_NAME] == cloud_services_auth
 
-    def test_write_nonexist_config_directory(self, mocker):
+    def test_write_nonexist_config_directory(self,
+                                             mocker,
+                                             os_path_exists_fixture,
+                                             os_path_isfile_fixture):
         """ Write Auth file into a non-exist directory
         Given
         - Config directory does not exist
@@ -179,8 +183,11 @@ class TestConfigClient(object):
         - Auth file is written to disk
         """
 
-        mock_path_exist = mocker.patch("f5cloudcli.config.os.path.exists")
+        mock_path_exist = os_path_exists_fixture
         mock_path_exist.return_value = False
+        mock_path_is_file = os_path_isfile_fixture
+        mock_path_is_file.return_value = False
+
         mock_make_dir = mocker.patch("f5cloudcli.config.os.makedirs")
         auth = {
             'username': 'me@home.com',
@@ -190,8 +197,7 @@ class TestConfigClient(object):
             group_name=constants.CLOUD_SERVICES_GROUP_NAME,
             auth=auth
         )
-        mock_path_is_file = mocker.patch("f5cloudcli.config.os.path.isfile")
-        mock_path_is_file.return_value = False
+
         mock_json_dump = mocker.patch("f5cloudcli.config.json.dump")
         with mocker.patch('f5cloudcli.config.open', new_callable=mocker.mock_open()):
             client.store_auth()
