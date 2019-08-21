@@ -110,9 +110,10 @@ exclude_patterns = ['_build',
                     'Makefile',
                     'make.bat',
                     '.gitignore',
-					'docs/README.rst',
-					'_static/reuse',
-					'_static/images'
+                    'docs/README.rst',
+                    '_static/reuse',
+                    '_static/images',
+                    'diagrams/node_modules'
                     ]
 
 # The reST default role (used for this markup: `text`) to use for all
