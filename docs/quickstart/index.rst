@@ -63,8 +63,8 @@ The CLI will also provide help information for any commands, such as the describ
     --help                          Show this message and exit.
 
 
-Usage
------
+Quick Start
+-----------
 
 This example shows how to configure authentication with an existing BIG-IP system, and query the BIG-IP to determine whether or not the AS3 Toolchain component is already installed.
 
