@@ -19,9 +19,9 @@ Installation
 Getting Help
 ------------
 
-The F5 Cloud CLI includes a `--help` option, which will display relevant help information, and can be used to provide help information for each command.
+The F5 Cloud CLI includes a `help` option, which will display relevant help information, and can be used to provide help information for each command.
 
-The CLI will provide help information for any sub-commands, as well as relevant options. For example, providing the `--help` option without specifying any commands will provide information on the available commands:
+The CLI will provide help information for any sub-commands, as well as relevant options. For example, providing the `help` option without specifying any commands will provide information on the available commands:
 
 ::
 
