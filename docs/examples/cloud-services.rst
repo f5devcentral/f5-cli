@@ -1,5 +1,5 @@
 1: Configure authentication to F5 Cloud Services
--------------
+------------------------------------------------
 
 The following is an example of how to configure authentication to F5 Cloud Services. Any commands that interact with F5 Cloud Services require that authentication to F5 Cloud Services already be configured.
 
@@ -11,7 +11,7 @@ The following is an example of how to configure authentication to F5 Cloud Servi
 
 
 2: Update an F5 Cloud Services subscription
--------------
+-------------------------------------------
 
 The following is an example of how to update an F5 Cloud Services subscription, such as a DNS Load Balancer.
 
@@ -27,7 +27,7 @@ The following is an example of how to update an F5 Cloud Services subscription, 
 
 
 3: Get configuration of an F5 Cloud Services subscription
--------------
+---------------------------------------------------------
 
 The following is an example of how to display or show the configuration of an existing F5 Cloud Services subscription, such as a DNS Load Balancer.
 

@@ -22,5 +22,6 @@ User Guide Index
    :glob:
 
    quickstart/index
-   examples/index
+   examples/bigip
+   examples/cloud-services
    troubleshooting/index

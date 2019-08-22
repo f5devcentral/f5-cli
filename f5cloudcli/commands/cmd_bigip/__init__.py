@@ -1,4 +1,28 @@
-""" This file provides the 'bigip' implementation of the CLI. """
+"""This file provides the ‘bigip’ implementation of the CLI.
+
+    Example - Discover BIG-IPs running in a Cloud Provider:: none
+
+        $ export F5_CLI_PROVIDER_ACCESS_KEY=<aws_access_key_id>
+        $ export F5_CLI_PROVIDER_SECRET_KEY=<aws_secret_access_key>
+        $ export F5_CLI_PROVIDER_REGION_NAME=<region>
+        $ f5 bigip discover --provider aws --provider-tag "MyTagKey:value1"
+        Discovering all BIG-IPs in aws with tag MyTagKey:value1
+        {
+            "id": "i-0e331f5ca76ad231d",
+            ...
+        }
+
+    Example - Configure authentication to a BIG-IP:: none
+
+        $ f5 bigip configure-auth --host 54.224.182.104 --user myuser
+        Password:
+        Configuring BIG-IP Auth to 54.224.182.104 as myuser with ******
+
+    Example - Install an Automation Toolchain package:: none
+
+        $ f5 bigip toolchain package install --component do
+        Toolchain component package do installed
+"""
 
 import os
 
