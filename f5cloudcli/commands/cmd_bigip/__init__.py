@@ -2,7 +2,7 @@
 """Below are examples of using the Cloud CLI to interact with a BIG-IP.
 
     1. Discover BIG-IPs running in a Cloud Provider
-    ------------------------------------------------
+    -----------------------------------------------
     The following is an example of how to discover information about a BIG-IP, including IP addresses, running in a cloud provider. ::
 
         $ export F5_CLI_PROVIDER_ACCESS_KEY=<aws_access_key_id>
