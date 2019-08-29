@@ -1,7 +1,7 @@
 F5 Cloud CLI
 ============
 
-Welcome to the F5 Cloud CLI User Guide. To provide feedback on this documentation, you can file a `GitHub Issue <https://github.com/f5networks/f5-cloud-cli/issues>`.
+Welcome to the F5 Cloud CLI User Guide. To provide feedback on this documentation, you can file a `GitHub Issue <https://github.com/f5networks/f5-cloud-cli/issues>`_.
 
 Introduction
 ------------
