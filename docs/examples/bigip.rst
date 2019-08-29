@@ -1,0 +1,1 @@
+.. automodule:: f5cloudcli.commands.cmd_bigip

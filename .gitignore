@@ -10,6 +10,10 @@ __pycache__/
 .coverage
 code_coverage/
 
+# docs build
+_build/
+code_docs/
+
 # build
 build/
 dist/
