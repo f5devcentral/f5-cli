@@ -85,6 +85,9 @@
       tags:
         devicetype: BIG-IP
       append_tags: true
+  - name: sleep for three minutes and continue with play
+    wait_for:
+      timeout: 180
   - name: Configure BIG-IP Auth
     command: f5 bigip configure-auth --host {{ output_public_ip_address.state.ip_address }} --user {{ admin_username }} --password {{ admin_password }}
   - name: Configure BIG-IP (onboarding)

@@ -111,6 +111,13 @@ resource "azurerm_virtual_machine" "deployment" {
     disable_password_authentication = false
   }
 }
+# add a delay for now, should explore CLI ready check perhaps?
+resource "null_resource" "delay_three_minutes" {
+  provisioner "local-exec" {
+    command = "sleep 180"
+  }
+  depends_on = ["azurerm_virtual_machine.deployment"]
+}
 
 resource "null_resource" "configure_auth" {
   provisioner "local-exec" {
@@ -120,7 +127,7 @@ resource "null_resource" "configure_auth" {
     # prefer fileexists + file here, when available (TF v0.12): https://www.terraform.io/docs/configuration/functions/fileexists.html
     always_run = "${timestamp()}"
   }
-  depends_on = ["azurerm_virtual_machine.deployment"]
+  depends_on = ["null_resource.delay_three_minutes"]
 }
 
 resource "null_resource" "onboarding" {
