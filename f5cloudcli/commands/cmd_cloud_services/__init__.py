@@ -39,7 +39,7 @@
 import json
 
 from f5cloudsdk.cloud_services import ManagementClient
-from f5cloudsdk.cloud_services.subscription import SubscriptionClient
+from f5cloudsdk.cloud_services.subscriptions import SubscriptionClient
 
 import click_repl
 import click
@@ -121,13 +121,13 @@ def subscription(ctx, action, subscription_id, declaration):
     mgmt_client = ManagementClient(user=auth['username'], password=auth['password'],
                                    api_endpoint=auth.pop('api_endpoint', None))
 
-    subscription_client = SubscriptionClient(mgmt_client, subscription_id=subscription_id)
+    subscription_client = SubscriptionClient(mgmt_client)
     if action == 'show':
-        subscription_data = subscription_client.show()
+        subscription_data = subscription_client.show(name=subscription_id)
         click.echo(message=json.dumps(subscription_data))
     elif action == 'update':
         decl_location = utils_core.convert_to_absolute(declaration)
-        result = subscription_client.update(config_file=decl_location)
+        result = subscription_client.update(name=subscription_id, config_file=decl_location)
         ctx.log('Cloud Services Subscription updated:')
         click.echo(message=json.dumps(result))
     else:

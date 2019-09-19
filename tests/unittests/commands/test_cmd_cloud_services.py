@@ -5,7 +5,7 @@ import os
 from click.testing import CliRunner
 
 from f5cloudsdk.cloud_services import ManagementClient
-from f5cloudsdk.cloud_services.subscription import SubscriptionClient
+from f5cloudsdk.cloud_services.subscriptions import SubscriptionClient
 from f5cloudcli.config import ConfigClient
 
 # Module under test
