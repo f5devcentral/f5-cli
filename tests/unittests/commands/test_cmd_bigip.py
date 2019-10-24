@@ -129,7 +129,7 @@ class TestCommandBigIp(object):
         When
         - User attempts to verify status of the install 'do' toolchain component
         Then
-        - Installed 'do' toolchain component message is logged
+        - Installed version information 'do' toolchain component is logged
         """
         mock_management_client = mgmt_client_fixture
 
@@ -149,7 +149,7 @@ class TestCommandBigIp(object):
         When
         - User attempts to verify status of the install 'do' component
         Then
-        - Non existing 'do' component message is logged
+        - Installed version information 'do' toolchain component is logged
         """
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
