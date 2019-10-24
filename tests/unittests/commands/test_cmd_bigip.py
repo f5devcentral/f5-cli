@@ -329,7 +329,7 @@ class TestCommandBigIp(object):
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
         mock_package = MagicMock()
-        mock_package.is_installed.return_value = {'installed': False }
+        mock_package.is_installed.return_value = {'installed': False}
         mock_package.install.return_value = None
         type(mock_toolchain_client.return_value).package = PropertyMock(
             return_value=mock_package)
