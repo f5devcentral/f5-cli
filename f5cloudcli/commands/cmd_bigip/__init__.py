@@ -140,17 +140,18 @@ def package(ctx, action, component, version):
         kwargs['version'] = version
     toolchain_client = ToolChainClient(client, component, **kwargs)
 
-    installed = toolchain_client.package.is_installed()['is_installed']
+    component_info = toolchain_client.package.is_installed()
     if action == 'verify':
-        ctx.log('Toolchain component package installed: %s', (installed))
+        ctx.log([component_info])
     elif action == 'install':
-        if not installed:
+        if not component_info['installed']:
             toolchain_client.package.install()
             ctx.log('Toolchain component package %s installed', component)
         else:
-            ctx.log('Toolchain component package %s is already installed', component)
+            ctx.log('Toolchain component package %s version %s is already installed',
+                    component, component_info['installed_version'])
     elif action == 'uninstall':
-        if not installed:
+        if not component_info['installed']:
             ctx.log('Toolchain component package %s is already uninstalled', component)
         else:
             toolchain_client.package.uninstall()
@@ -186,7 +187,7 @@ def service(ctx, action, component, version, declaration, install_component): # 
 
     # intent based - support install in 'service' sub-command
     # install toolchain component if requested (and not installed)
-    installed = toolchain_client.package.is_installed()['is_installed']
+    installed = toolchain_client.package.is_installed()['installed']
     if install_component and not installed:
         ctx.log('Installing toolchain component package')
         toolchain_client.package.install()
