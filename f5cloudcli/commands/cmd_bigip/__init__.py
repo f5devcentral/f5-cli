@@ -19,7 +19,7 @@
     ---------------------------------------
     The following is an example of how to configure authentication for a BIG-IP. Any commands that interact with a BIG-IP require that authentication to that BIG-IP is already configured. ::
 
-        $ f5 bigip configure-auth --host 54.224.182.104 --user myuser
+        $ f5 bigip configure-auth --host 54.224.182.104 --port 443 --user myuser
         Password:
         Configuring BIG-IP Auth to 54.224.182.104 as myuser with ******
 
@@ -75,12 +75,15 @@ def cli():
 @click.option('--host',
               required=True,
               metavar='<HOST>')
+@click.option('--port',
+              required=False,
+              metavar='<PORT>')
 @click.option('--user', **constants.CLI_OPTIONS_USER_AUTH)
 @click.password_option('--password',
                        **constants.CLI_OPTIONS_PASSWORD_AUTH,
                        metavar='<BIGIP_PASSWORD>')
 @PASS_CONTEXT
-def configure_auth(ctx, host, user, password):
+def configure_auth(ctx, host, port, user, password):
     """ command """
     ctx.log('Configuring BIG-IP Auth to %s as %s with ******', host, user)
     config_client = ConfigClient(
@@ -88,7 +91,8 @@ def configure_auth(ctx, host, user, password):
         auth={
             'username': user,
             'password': password,
-            'host': host
+            'host': host,
+            'port': port
         })
     config_client.store_auth()
 
@@ -133,7 +137,8 @@ def toolchain():
 def package(ctx, action, component, version):
     """ command """
     auth = ConfigClient().read_auth(constants.BIGIP_GROUP_NAME)
-    client = ManagementClient(auth['host'], user=auth['username'], password=auth['password'])
+    management_kwargs = dict(port=auth['port'], user=auth['username'], password=auth['password'])
+    client = ManagementClient(auth['host'], **management_kwargs)
 
     kwargs = {}
     if version:
@@ -178,8 +183,8 @@ def package(ctx, action, component, version):
 def service(ctx, action, component, version, declaration, install_component): # pylint: disable=too-many-arguments
     """ command """
     auth = ConfigClient().read_auth(constants.BIGIP_GROUP_NAME)
-    client = ManagementClient(auth['host'], user=auth['username'], password=auth['password'])
-
+    management_kwargs = dict(port=auth['port'], user=auth['username'], password=auth['password'])
+    client = ManagementClient(auth['host'], **management_kwargs)
     kwargs = {}
     if version:
         kwargs['version'] = version
