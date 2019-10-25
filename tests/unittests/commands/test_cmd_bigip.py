@@ -12,6 +12,7 @@ from f5cloudcli import constants
 
 MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE = {
     'host': '1.2.3.4',
+    'port': '1234',
     'username': 'test_user',
     'password': 'test_password'
 }
@@ -79,6 +80,7 @@ class TestCommandBigIp(object):
 
         test_host = 'TEST HOST'
         test_user = 'TEST USER'
+        test_port = 'TEST PORT'
         test_password = 'TEST PASSWORD'
         result = self.runner.invoke(cli, ['configure-auth', '--host', test_host,
                                           '--user', test_user, '--password', test_password])
@@ -87,6 +89,41 @@ class TestCommandBigIp(object):
         assert mock_config_client_args['group_name'] == constants.BIGIP_GROUP_NAME
         assert mock_config_client_args['auth'] == {
             'host': test_host,
+            'port': None,
+            'username': test_user,
+            'password': test_password
+        }
+        expected_output = f"Configuring BIG-IP Auth to {test_host} as {test_user} with ******\n"
+        assert result.output == expected_output
+
+    def test_cmd_bigip_configure_auth_with_port(self, mocker, config_client_fixture):
+        """ Configure authentication to a BIGIP
+        Given
+        - BIG IP is up
+
+        When
+        - User to configure auth with a BIGIP against a specific port
+
+        Then
+        - Credentials as well as the host and port information is passed to the ConfigClient
+        - The ConfigClient is instructured to save the credentials
+        """
+        mock_config_client = config_client_fixture
+        mock_config_client_store_auth = mocker.patch.object(
+            ConfigClient, "store_auth")
+
+        test_host = 'TEST HOST'
+        test_user = 'TEST USER'
+        test_port = 'TEST PORT'
+        test_password = 'TEST PASSWORD'
+        result = self.runner.invoke(cli, ['configure-auth', '--host', test_host, '--port', test_port,
+                                          '--user', test_user, '--password', test_password])
+        mock_config_client_store_auth.assert_called_once()
+        mock_config_client_args = mock_config_client.call_args_list[0][1]
+        assert mock_config_client_args['group_name'] == constants.BIGIP_GROUP_NAME
+        assert mock_config_client_args['auth'] == {
+            'host': test_host,
+            'port': test_port,
             'username': test_user,
             'password': test_password
         }

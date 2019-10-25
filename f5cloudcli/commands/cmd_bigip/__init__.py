@@ -75,12 +75,15 @@ def cli():
 @click.option('--host',
               required=True,
               metavar='<HOST>')
+@click.option('--port',
+              required=False,
+              metavar='<PORT>')
 @click.option('--user', **constants.CLI_OPTIONS_USER_AUTH)
 @click.password_option('--password',
                        **constants.CLI_OPTIONS_PASSWORD_AUTH,
                        metavar='<BIGIP_PASSWORD>')
 @PASS_CONTEXT
-def configure_auth(ctx, host, user, password):
+def configure_auth(ctx, host, port, user, password):
     """ command """
     ctx.log('Configuring BIG-IP Auth to %s as %s with ******', host, user)
     config_client = ConfigClient(
@@ -88,7 +91,8 @@ def configure_auth(ctx, host, user, password):
         auth={
             'username': user,
             'password': password,
-            'host': host
+            'host': host,
+            'port': port
         })
     config_client.store_auth()
 
@@ -133,7 +137,7 @@ def toolchain():
 def package(ctx, action, component, version):
     """ command """
     auth = ConfigClient().read_auth(constants.BIGIP_GROUP_NAME)
-    client = ManagementClient(auth['host'], user=auth['username'], password=auth['password'])
+    client = ManagementClient(auth['host'], port=auth['port'], user=auth['username'], password=auth['password'])
 
     kwargs = {}
     if version:
