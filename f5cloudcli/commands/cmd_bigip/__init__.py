@@ -137,7 +137,8 @@ def toolchain():
 def package(ctx, action, component, version):
     """ command """
     auth = ConfigClient().read_auth(constants.BIGIP_GROUP_NAME)
-    client = ManagementClient(auth['host'], port=auth['port'], user=auth['username'], password=auth['password']) # pylint: disable=line-too-long
+    management_kwargs = dict(port=auth['port'], user=auth['username'], password=auth['password'])
+    client = ManagementClient(auth['host'], **management_kwargs)
 
     kwargs = {}
     if version:
@@ -182,8 +183,8 @@ def package(ctx, action, component, version):
 def service(ctx, action, component, version, declaration, install_component): # pylint: disable=too-many-arguments
     """ command """
     auth = ConfigClient().read_auth(constants.BIGIP_GROUP_NAME)
-    client = ManagementClient(auth['host'], port=auth['port'], user=auth['username'], password=auth['password']) # pylint: disable=line-too-long
-
+    management_kwargs = dict(port=auth['port'], user=auth['username'], password=auth['password'])
+    client = ManagementClient(auth['host'], **management_kwargs)
     kwargs = {}
     if version:
         kwargs['version'] = version
