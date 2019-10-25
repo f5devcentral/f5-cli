@@ -182,7 +182,7 @@ def package(ctx, action, component, version):
 def service(ctx, action, component, version, declaration, install_component): # pylint: disable=too-many-arguments
     """ command """
     auth = ConfigClient().read_auth(constants.BIGIP_GROUP_NAME)
-    client = ManagementClient(auth['host'], user=auth['username'], password=auth['password'])
+    client = ManagementClient(auth['host'], port=auth['port'], user=auth['username'], password=auth['password'])
 
     kwargs = {}
     if version:
