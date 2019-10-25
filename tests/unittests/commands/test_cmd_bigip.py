@@ -80,7 +80,6 @@ class TestCommandBigIp(object):
 
         test_host = 'TEST HOST'
         test_user = 'TEST USER'
-        test_port = 'TEST PORT'
         test_password = 'TEST PASSWORD'
         result = self.runner.invoke(cli, ['configure-auth', '--host', test_host,
                                           '--user', test_user, '--password', test_password])
