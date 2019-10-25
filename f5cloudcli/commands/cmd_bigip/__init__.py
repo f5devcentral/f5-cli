@@ -19,7 +19,7 @@
     ---------------------------------------
     The following is an example of how to configure authentication for a BIG-IP. Any commands that interact with a BIG-IP require that authentication to that BIG-IP is already configured. ::
 
-        $ f5 bigip configure-auth --host 54.224.182.104 --user myuser
+        $ f5 bigip configure-auth --host 54.224.182.104 --port 443 --user myuser
         Password:
         Configuring BIG-IP Auth to 54.224.182.104 as myuser with ******
 
