@@ -22,7 +22,7 @@ class TestContext(object):
         pass
 
     @staticmethod
-    def get_output_format_side_effect(data, output_format):
+    def format_output_side_effect(data):
         return data
 
     def test_log_message_no_argument_with_environment_variable(self, mocker):
@@ -38,8 +38,8 @@ class TestContext(object):
         """
         mock_output_format_env = mocker.patch("f5cloudcli.cli.os.environ.get")
         mock_output_format_env.return_value = "json"
-        mock_get_output_format = mocker.patch("f5cloudcli.cli.get_output_format")
-        mock_get_output_format.side_effect = TestContext.get_output_format_side_effect
+        mock_format_output = mocker.patch("f5cloudcli.cli.format_output")
+        mock_format_output.side_effect = TestContext.format_output_side_effect
         mock_click_echo = mocker.patch("f5cloudcli.cli.click.echo")
         self.context.log("Test message")
         mock_click_echo.assert_called_once_with('Test message', file=sys.stderr)
@@ -57,8 +57,8 @@ class TestContext(object):
         """
         mock_output_format_env = mocker.patch("f5cloudcli.cli.os.environ.get")
         mock_output_format_env.return_value = "json"
-        mock_get_output_format = mocker.patch("f5cloudcli.cli.get_output_format")
-        mock_get_output_format.side_effect = TestContext.get_output_format_side_effect
+        mock_format_output = mocker.patch("f5cloudcli.cli.format_output")
+        mock_format_output.side_effect = TestContext.format_output_side_effect
         mock_click_echo = mocker.patch("f5cloudcli.cli.click.echo")
         self.context.log("Test message with argument: %s", "fake value")
         mock_click_echo.assert_called_once_with('Test message with argument: fake value', file=sys.stderr)
@@ -75,16 +75,16 @@ class TestContext(object):
         Then
         - Message is logged in specific format
         """
-        mock_output_format_env = mocker.patch("f5cloudcli.cli.os.environ.get")
+        mock_output_format_env = mocker.patch("f5cloudcli.utils.core.os.environ.get")
         mock_output_format_env.return_value = "-1"
-        mock_os_path_isfile = mocker.patch("f5cloudcli.cli.os.path.isfile")
+        mock_os_path_isfile = mocker.patch("f5cloudcli.utils.core.os.path.isfile")
         mock_os_path_isfile.return_value = True
-        mock_open_config_file = mocker.patch("f5cloudcli.cli.open", mocker.mock_open(read_data='json'))
-        mock_json_load = mocker.patch("f5cloudcli.cli.json.load")
+        mock_open_config_file = mocker.patch("f5cloudcli.utils.core.open", mocker.mock_open(read_data='json'))
+        mock_json_load = mocker.patch("f5cloudcli.utils.core.json.load")
         mock_json_load.return_value = {"output": "json"}
 
-        mock_get_output_format = mocker.patch("f5cloudcli.cli.get_output_format")
-        mock_get_output_format.side_effect = TestContext.get_output_format_side_effect
+        mock_format_output = mocker.patch("f5cloudcli.utils.core.format_output")
+        mock_format_output.side_effect = TestContext.format_output_side_effect
         mock_click_echo = mocker.patch("f5cloudcli.cli.click.echo")
         self.context.log("Test message")
         mock_click_echo.assert_called_once_with('Test message', file=sys.stderr)
@@ -109,8 +109,8 @@ class TestContext(object):
         mock_os_path_isfile.return_value = False
         mocker.patch("f5cloudcli.cli.open", mocker.mock_open(read_data='json'))
 
-        mock_get_output_format = mocker.patch("f5cloudcli.cli.get_output_format")
-        mock_get_output_format.side_effect = TestContext.get_output_format_side_effect
+        mock_format_output = mocker.patch("f5cloudcli.cli.format_output")
+        mock_format_output.side_effect = TestContext.format_output_side_effect
         mock_click_echo = mocker.patch("f5cloudcli.cli.click.echo")
         self.context.log("Test message")
         mock_click_echo.assert_called_once_with('Test message', file=sys.stderr)
@@ -133,8 +133,8 @@ class TestContext(object):
         mock_os_path_isfile.return_value = False
         mocker.patch("f5cloudcli.cli.open", mocker.mock_open(read_data='json'))
 
-        mock_get_output_format = mocker.patch("f5cloudcli.cli.get_output_format")
-        mock_get_output_format.side_effect = TestContext.get_output_format_side_effect
+        mock_format_output = mocker.patch("f5cloudcli.cli.format_output")
+        mock_format_output.side_effect = TestContext.format_output_side_effect
         mock_click_echo = mocker.patch("f5cloudcli.cli.click.echo")
         self.context.verbose = True
         self.context.vlog("Test message")

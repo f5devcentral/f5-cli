@@ -10,9 +10,13 @@ F5_CLI_DIR = join(expanduser("~"), ".f5_cli")
 F5_CONFIG_FILE = join(F5_CLI_DIR, "config.json")
 F5_AUTH_FILE = join(F5_CLI_DIR, "auth.json")
 
-# Output data format
-JSON_FORMAT = 'json'
-TABLE_FORMAT = 'table'
+# output data format(s)
+FORMATS = {
+    'JSON': 'json',
+    'TABLE': 'table',
+    'DEFAULT': 'json'
+}
+FORMATS_ENV_VAR = 'F5_OUTPUT_FORMAT_ENV'
 
 # Providers
 AWS_PROVIDER = 'aws'

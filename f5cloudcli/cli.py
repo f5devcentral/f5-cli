@@ -2,11 +2,12 @@
 
 import os
 import sys
-import json
+
 import click
+
+from f5cloudcli.constants import FORMATS
 from f5cloudcli import docs
-from f5cloudcli.constants import F5_CONFIG_FILE, JSON_FORMAT
-from f5cloudcli.utils.clients import get_output_format
+from f5cloudcli.utils.core import format_output
 
 DOC = docs.get_docs()
 
@@ -21,23 +22,17 @@ class Context():
         self.verbose = False
         self.home = os.getcwd()
 
-    def log(self, msg, *args): # pylint: disable=no-self-use
-        """Logs a message to stderr."""
-        output_format = os.environ.get(F5_OUTPUT_FORMAT, '-1')
-        if output_format == '-1':
-            if os.path.isfile(F5_CONFIG_FILE):
-                with open(F5_CONFIG_FILE, 'r') as config_file:
-                    output_format = json.load(config_file)['output']
-            else:
-                output_format = JSON_FORMAT
-        msg = get_output_format(msg, output_format)
+    @staticmethod
+    def log(msg, *args):
+        """Logs a message"""
+
         if args:
-            args = get_output_format(args, output_format)
+            args = format_output(args)
             msg %= args
-        click.echo(msg, file=sys.stderr)
+        click.echo(format_output(msg), file=sys.stderr)
 
     def vlog(self, msg, *args):
-        """Logs a message to stderr only if verbose is enabled."""
+        """Logs a message only if verbose is enabled."""
         if self.verbose:
             self.log(msg, *args)
 
@@ -89,7 +84,7 @@ class F5CloudCLI(click.MultiCommand):
               is_flag=True,
               help=DOC[('VERBOSE_HELP')])
 @click.option('--output',
-              default=JSON_FORMAT,
+              default=FORMATS['DEFAULT'],
               help=DOC['OUTPUT_HELP'],
               show_default=True)
 @PASS_CONTEXT
