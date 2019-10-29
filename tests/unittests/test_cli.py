@@ -1,14 +1,15 @@
+""" Test CLI """
+
+import sys
 import json
 
 import click
-from click.testing import CliRunner
-import sys
 
 from f5cloudcli.constants import F5_CONFIG_FILE
-
-# Module under test
 from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
 from f5cloudcli import cli
+
+from ..global_test_imports import CliRunner
 
 
 class TestContext(object):
@@ -21,10 +22,10 @@ class TestContext(object):
     @classmethod
     def teardown_class(cls):
         """ Teardown func """
-        pass
 
     @staticmethod
     def format_output_side_effect(data):
+        """ Format output side effect """
         return data
 
     def test_log_message_no_argument_with_environment_variable(self, mocker):
@@ -121,8 +122,9 @@ class TestContext(object):
         self.context.log("Test message")
         mock_click_echo.assert_called_once_with('Test message', file=sys.stderr)
 
-    def test_vlog_message_no_argument_with_environment_variable_no_config_file(self, mocker):
-        """ Verbose log a message, no argument, no output format env variable, config file does not exists
+    def test_vlog_message_no_argument_with_environment_variable_no_config_file(
+            self, mocker):
+        """ Vlog a message, no args, no output format env variable, config file does not exist
         Given
         - Environment variable of output format JSON does not exist
         - F5_CONFIG_FILE does not exists
@@ -149,6 +151,8 @@ class TestContext(object):
 
 class TestAliasedGroup(object):
     """ Test Class: Aliased Group """
+
+    @classmethod
     def setup_class(cls):
         """ Setup func """
         cls.runner = CliRunner()
@@ -156,7 +160,6 @@ class TestAliasedGroup(object):
     @classmethod
     def teardown_class(cls):
         """ Teardown func """
-        pass
 
     def test_get_existed_command(self):
         """
@@ -171,18 +174,17 @@ class TestAliasedGroup(object):
 
         """
         @click.group('test_alias_group', cls=AliasedGroup)
-        def cli():
+        def mockcli():
             """ test aliased group """
-            pass
 
-        @cli.command('foo')
+        @mockcli.command('mockcommand')
         @PASS_CONTEXT
-        def foo(ctx):
-            ctx.log("Test foo command")
-        result = self.runner.invoke(cli, 'foo')
+        def mockcommand(ctx):  # pylint: disable=unused-variable
+            ctx.log("Test mock command")
+        result = self.runner.invoke(mockcli, 'mockcommand')
         assert not result.exception
         assert result.output == json.dumps(
-            {'message': 'Test foo command'},
+            {'message': 'Test mock command'},
             indent=4,
             sort_keys=True
         ) + '\n'
@@ -200,15 +202,14 @@ class TestAliasedGroup(object):
 
         """
         @click.group('test_alias_group', cls=AliasedGroup)
-        def cli():
+        def mockcli():
             """ test aliased group """
-            pass
 
-        @cli.command('foo')
+        @mockcli.command('mockcommand')
         @PASS_CONTEXT
-        def foo(ctx):
+        def mockcommand(ctx):  # pylint: disable=unused-variable
             ctx.log("Test aliased group")
-        result = self.runner.invoke(cli, 'bar')
+        result = self.runner.invoke(mockcli, 'bar')
         assert result.exception
         assert "Error: No such command \"bar\"" in result.output
 
@@ -224,19 +225,16 @@ class TestAliasedGroup(object):
         - output of foot command is logged
 
         """
-        @click.group(
-            'test_alias_group',
-            cls=AliasedGroup
-        )
-        def cli():
+        @click.group('test_alias_group', cls=AliasedGroup)
+        def mockcli():
             """ test aliased group """
-            pass
 
-        @cli.command('foot')
+        @mockcli.command('foot')
         @PASS_CONTEXT
-        def foot(ctx):
+        def foot(ctx):  # pylint: disable=unused-variable
             ctx.log("Test foot command")
-        result = self.runner.invoke(cli, 'foo')
+        result = self.runner.invoke(mockcli, 'foo')
+
         assert not result.exception
         assert result.output == json.dumps(
             {'message': 'Test foot command'},
@@ -259,20 +257,19 @@ class TestAliasedGroup(object):
         """
         @click.group('test_alias_group',
                      cls=AliasedGroup)
-        def cli():
+        def mockcli():
             """ test aliased group """
-            pass
 
-        @cli.command('foot')
+        @mockcli.command('foot')
         @PASS_CONTEXT
-        def foot(ctx):
+        def foot(ctx):  # pylint: disable=unused-variable
             ctx.log("Test foot command")
 
-        @cli.command('food')
+        @mockcli.command('food')
         @PASS_CONTEXT
-        def food(ctx):
+        def food(ctx):  # pylint: disable=unused-variable
             ctx.log("Test food command")
 
-        result = self.runner.invoke(cli, 'foo')
+        result = self.runner.invoke(mockcli, 'foo')
         assert result.exception
         assert "Error: Too many matches: food, foot" in result.output

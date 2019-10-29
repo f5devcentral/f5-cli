@@ -1,16 +1,15 @@
-import pytest
-from click.testing import CliRunner
+""" Test BIG-IP command """
 
 import json
 
-from ...global_test_imports import MagicMock, call, PropertyMock
 from f5cloudsdk.bigip import ManagementClient
+
 from f5cloudcli.config import ConfigClient
 from f5cloudcli.utils import clients
-
-# Module under test
 from f5cloudcli.commands.cmd_bigip import cli, toolchain
 from f5cloudcli import constants
+
+from ...global_test_imports import MagicMock, call, PropertyMock, pytest, CliRunner
 
 MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE = {
     'host': '1.2.3.4',
@@ -25,6 +24,8 @@ MOCK_IS_INSTALLED_RETURN_VALUE = {
     'latest_version': '1.3.0'
 }
 
+# pylint: disable=too-many-public-methods
+
 
 class TestCommandBigIp(object):
     """ Test Class: command bigip """
@@ -36,35 +37,38 @@ class TestCommandBigIp(object):
     @classmethod
     def teardown_class(cls):
         """ Teardown func """
-        pass
 
+    @staticmethod
     @pytest.fixture
-    def toolchain_client_fixture(self, mocker):
+    def toolchain_client_fixture(mocker):
+        """Test fixture """
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
-        m = MagicMock()
-        m.is_installed.return_value = MOCK_IS_INSTALLED_RETURN_VALUE
-        type(mock_toolchain_client.return_value).package = PropertyMock(
-            return_value=m)
+        mock = MagicMock()
+        mock.is_installed.return_value = MOCK_IS_INSTALLED_RETURN_VALUE
+        type(mock_toolchain_client.return_value).package = PropertyMock(return_value=mock)
         return mock_toolchain_client
 
+    @staticmethod
     @pytest.fixture
-    def config_client_read_auth_fixture(self, mocker):
+    def config_client_read_auth_fixture(mocker):
         """ PyTest fixture mocking ConfigClient's read_auth method """
         mock_config_client_read_auth = mocker.patch.object(
             ConfigClient, "read_auth")
         mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
 
+    @staticmethod
     @pytest.fixture
-    def config_client_fixture(self, mocker):
+    def config_client_fixture(mocker):
         """ PyTest fixture returning mocked ConfigClient """
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
         return mock_config_client
 
+    @staticmethod
     @pytest.fixture
-    def mgmt_client_fixture(self, mocker):
+    def mgmt_client_fixture(mocker):
         """ PyTest fixture returning mocked BigIP Management Client """
         mock_management_client = mocker.patch.object(ManagementClient, '__init__')
         mock_management_client.return_value = None
@@ -233,10 +237,9 @@ class TestCommandBigIp(object):
             'latest_version': '1.3.0'
         }
 
-        m = MagicMock()
-        m.is_installed.return_value = mock_is_installed_return_value
-        type(mock_toolchain_client.return_value).package = PropertyMock(
-            return_value=m)
+        mock = MagicMock()
+        mock.is_installed.return_value = mock_is_installed_return_value
+        type(mock_toolchain_client.return_value).package = PropertyMock(return_value=mock)
 
         result = self.runner.invoke(
             toolchain, ['package', 'verify', '--component', 'do', '--version', '1.3.0'])
@@ -284,15 +287,14 @@ class TestCommandBigIp(object):
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
-        m = MagicMock()
-        m.is_installed.return_value = {
+        mock = MagicMock()
+        mock.is_installed.return_value = {
             'installed': False,
             'installed_version': '',
             'latest_version': '1.3.0'
         }
-        m.install.return_value = None
-        type(mock_toolchain_client.return_value).package = PropertyMock(
-            return_value=m)
+        mock.install.return_value = None
+        type(mock_toolchain_client.return_value).package = PropertyMock(return_value=mock)
 
         result = self.runner.invoke(
             toolchain, ['package', 'install', '--component', 'do', '--version', '1.3.0'])
@@ -319,11 +321,12 @@ class TestCommandBigIp(object):
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
-        m = MagicMock()
-        m.is_installed.return_value = {'installed': True}
-        m.uninstall.return_value = None
+        mock = MagicMock()
+        mock.is_installed.return_value = {'installed': True}
+        mock.uninstall.return_value = None
         type(mock_toolchain_client.return_value).package = PropertyMock(
-            return_value=m)
+            return_value=mock
+        )
 
         result = self.runner.invoke(
             toolchain, ['package', 'uninstall', '--component', 'do', '--version', '1.3.0'])
@@ -350,10 +353,9 @@ class TestCommandBigIp(object):
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
-        m = MagicMock()
-        m.is_installed.return_value = {'installed': False}
-        type(mock_toolchain_client.return_value).package = PropertyMock(
-            return_value=m)
+        mock = MagicMock()
+        mock.is_installed.return_value = {'installed': False}
+        type(mock_toolchain_client.return_value).package = PropertyMock(return_value=mock)
 
         result = self.runner.invoke(
             toolchain, ['package', 'uninstall', '--component', 'do', '--version', '1.3.0'])
@@ -380,10 +382,10 @@ class TestCommandBigIp(object):
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
-        m = MagicMock()
-        m.is_installed.return_value = {'installed': False}
-        type(mock_toolchain_client.return_value).package = PropertyMock(
-            return_value=m)
+        mock = MagicMock()
+        mock.is_installed.return_value = {'installed': False}
+        type(mock_toolchain_client.return_value).package = PropertyMock(return_value=mock)
+
         result = self.runner.invoke(
             toolchain, ['package', 'upgrade', '--component', 'do'])
         assert result.exception

@@ -7,6 +7,8 @@ try:
 except ImportError:  # python 2.x support
     from mock import Mock, MagicMock, patch, call, PropertyMock, mock_open
 
+from click.testing import CliRunner
+
 __all__ = [
     'unittest',
     'pytest',
@@ -15,5 +17,6 @@ __all__ = [
     'patch',
     'call',
     'PropertyMock',
-    'mock_open'
+    'mock_open',
+    'CliRunner'
 ]

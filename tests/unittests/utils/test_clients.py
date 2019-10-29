@@ -1,8 +1,10 @@
-import click
-from ...global_test_imports import pytest
+""" Test clients """
 
-# Module under test
+import click
+
 from f5cloudcli.utils import clients
+
+from ...global_test_imports import pytest
 
 
 class TestUtilsClients(object):
@@ -10,14 +12,13 @@ class TestUtilsClients(object):
     @classmethod
     def setup_class(cls):
         """ Setup func """
-        pass
 
     @classmethod
     def teardown_class(cls):
         """ Teardown func """
-        pass
 
-    def test_get_non_exist_environment_variables(self, mocker):
+    @staticmethod
+    def test_get_non_exist_environment_variables(mocker):
         """ Retrieve a non existed environment variable
         Given
         - Environment variable FOO does not exist
@@ -35,11 +36,12 @@ class TestUtilsClients(object):
                               "TENANT_ID": "tenant_id_value",
                               "CLIENT_ID": "client_id_value"
                           })
-        with pytest.raises(click.exceptions.ClickException) as e:
+        with pytest.raises(click.exceptions.ClickException) as err:
             clients.get_env_vars(["FOO", "BAR", "CLIENT_ID"])
-        assert e.value.args[0] == "Environment variables must exist: ['FOO', 'BAR', 'CLIENT_ID']"
+        assert err.value.args[0] == "Environment variables must exist: ['FOO', 'BAR', 'CLIENT_ID']"
 
-    def test_get_existed_environment_variables(self, mocker):
+    @staticmethod
+    def test_get_existed_environment_variables(mocker):
         """ Retrieve multiple existed environment variable
         Given
         - Environment variables FOO and BAR exist
@@ -55,7 +57,8 @@ class TestUtilsClients(object):
         results = clients.get_env_vars(["FOO", "BAR"])
         assert results == ["foo_value", "bar_value"]
 
-    def test_get_unsupported_provider(self, mocker):
+    @staticmethod
+    def test_get_unsupported_provider():
         """ Retrieve a unsupported cloud provider
         Given
         - 'alibaba' cloud is not supported
@@ -66,11 +69,12 @@ class TestUtilsClients(object):
         Then
         - exception is thrown
         """
-        with pytest.raises(click.exceptions.ClickException) as e:
+        with pytest.raises(click.exceptions.ClickException) as err:
             clients.get_provider_client('alibaba')
-        assert e.value.args[0] == "Provider alibaba not implemented"
+        assert err.value.args[0] == "Provider alibaba not implemented"
 
-    def test_get_azure_provider(self, mocker):
+    @staticmethod
+    def test_get_azure_provider(mocker):
         """ Retrieve azure cloud provider
         Given
         - 'azure' cloud is supported
@@ -95,7 +99,8 @@ class TestUtilsClients(object):
                                                   secret='3',
                                                   subscription_id='4')
 
-    def test_get_aws_provider(self, mocker):
+    @staticmethod
+    def test_get_aws_provider(mocker):
         """ Retrieve aws cloud provider
         Given
         - 'aws' cloud is supported

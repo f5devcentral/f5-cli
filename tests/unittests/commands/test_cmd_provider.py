@@ -1,9 +1,10 @@
+""" Test Provider command """
+
 import json
 
-from click.testing import CliRunner
-
-# Module under test
 from f5cloudcli.commands.cmd_provider import cli
+
+from ...global_test_imports import CliRunner
 
 
 class TestCommandProvider(object):
@@ -16,7 +17,6 @@ class TestCommandProvider(object):
     @classmethod
     def teardown_class(cls):
         """ Teardown func """
-        pass
 
     def test_cmd_bigip_login_with_credentials(self, mocker):
         """ Log into a cloud

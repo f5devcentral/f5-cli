@@ -1,17 +1,17 @@
-import json
+""" Test Cloud Services command """
 
-import pytest
+import json
 import os
 
-from click.testing import CliRunner
 
 from f5cloudsdk.cloud_services import ManagementClient
 from f5cloudsdk.cloud_services.subscriptions import SubscriptionClient
-from f5cloudcli.config import ConfigClient
 
-# Module under test
+from f5cloudcli.config import ConfigClient
 from f5cloudcli.commands.cmd_cloud_services import cli
 from f5cloudcli import constants
+
+from ...global_test_imports import pytest, CliRunner
 
 # Test Constants
 TEST_USER = 'TEST USER'
@@ -34,39 +34,43 @@ class TestCommandBigIp(object):
     @classmethod
     def teardown_class(cls):
         """ Teardown func """
-        pass
 
+    @staticmethod
     @pytest.fixture
-    def config_client_fixture(self, mocker):
+    def config_client_fixture(mocker):
         """ PyTest fixture returning mocked ConfigClient """
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
         return mock_config_client
 
+    @staticmethod
     @pytest.fixture
-    def config_client_store_auth_fixture(self, mocker):
+    def config_client_store_auth_fixture(mocker):
         """ PyTest fixture mocking ConfigClient's store_auth method """
         mock_config_client_store_auth = mocker.patch.object(
             ConfigClient, "store_auth")
         return mock_config_client_store_auth
 
+    @staticmethod
     @pytest.fixture
-    def config_client_read_auth_fixture(self, mocker):
+    def config_client_read_auth_fixture(mocker):
         """ PyTest fixture mocking ConfigClient's read_auth method """
         mock_config_client_read_auth = mocker.patch.object(
             ConfigClient, "read_auth")
         mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
         return mock_config_client_read_auth
 
+    @staticmethod
     @pytest.fixture
-    def mgmt_client_fixture(self, mocker):
+    def mgmt_client_fixture(mocker):
         """ PyTest fixture returning mocked Cloud Services Management Client """
         mock_management_client = mocker.patch.object(ManagementClient, '__init__')
         mock_management_client.return_value = None
         return mock_management_client
 
+    @staticmethod
     @pytest.fixture
-    def subscription_client_fixture(self, mocker):
+    def subscription_client_fixture(mocker):
         """ PyTest fixture returning mocked Cloud Services Subscription Client """
         mock_subscription_client = mocker.patch.object(SubscriptionClient, '__init__')
         mock_subscription_client.return_value = None

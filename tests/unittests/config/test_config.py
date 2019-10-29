@@ -1,37 +1,41 @@
+""" Test config """
+
 import click
 
-from ...global_test_imports import pytest
-
-# Module under test
 from f5cloudcli.config import ConfigClient
 from f5cloudcli import constants
+
+from ...global_test_imports import pytest
 
 
 class TestConfigClient(object):
     """ Test Class: configure client """
 
+    @staticmethod
     @pytest.fixture
-    def json_load_fixture(self, mocker):
+    def json_load_fixture(mocker):
         """ PyTest fixture returning mocked json load() """
         mock_json_load = mocker.patch('f5cloudcli.config.json.load')
         return mock_json_load
 
+    @staticmethod
     @pytest.fixture
-    def os_path_exists_fixture(self, mocker):
+    def os_path_exists_fixture(mocker):
         """ PyTest fixture returning mocked os.path.exists object """
         mock_exists = mocker.patch('f5cloudcli.config.os.path.exists')
         mock_exists.return_value = True
         return mock_exists
 
+    @staticmethod
     @pytest.fixture
-    def os_path_isfile_fixture(self, mocker):
+    def os_path_isfile_fixture(mocker):
         """ PyTest fixture returning mocked os.path.isfile object """
         mock_isfile = mocker.patch('f5cloudcli.config.os.path.isfile')
         mock_isfile.return_value = True
         return mock_isfile
 
-    def test_read_exist_auth(self,
-                             mocker,
+    @staticmethod
+    def test_read_exist_auth(mocker,
                              json_load_fixture,
                              os_path_exists_fixture,  # pylint: disable=unused-argument
                              os_path_isfile_fixture):  # pylint: disable=unused-argument
@@ -58,8 +62,8 @@ class TestConfigClient(object):
         assert result == mock_json_load.return_value[group_name]
         mock_json_load.assert_called_once()
 
-    def test_read_nonexist_auth(self,
-                                os_path_exists_fixture,  # pylint: disable=unused-argument
+    @staticmethod
+    def test_read_nonexist_auth(os_path_exists_fixture,  # pylint: disable=unused-argument
                                 os_path_isfile_fixture):  # pylint: disable=unused-argument
         """ Attempt to read an Auth file that does not exist
         Given
@@ -79,8 +83,8 @@ class TestConfigClient(object):
             client.read_auth('temp')
         assert error.value.args[0] == "Command failed. You must configure authentication for temp!"
 
-    def test_read_auth_without_key(self,
-                                   mocker,
+    @staticmethod
+    def test_read_auth_without_key(mocker,
                                    json_load_fixture,
                                    os_path_exists_fixture,  # pylint: disable=unused-argument
                                    os_path_isfile_fixture):  # pylint: disable=unused-argument
@@ -107,8 +111,8 @@ class TestConfigClient(object):
                 client.read_auth('temp')
         assert error.value.args[0] == "Command failed. You must configure authentication for temp!"
 
-    def test_write_exist_config_directory(self,
-                                          mocker,
+    @staticmethod
+    def test_write_exist_config_directory(mocker,
                                           os_path_exists_fixture,  # pylint: disable=unused-argument
                                           os_path_isfile_fixture):
         """ Write credentials to Auth file in an existing directory
@@ -130,8 +134,8 @@ class TestConfigClient(object):
             client.store_auth()
             mock_json_dump.assert_called_once()
 
-    def test_write_to_existing_auth_file(self,
-                                         mocker,
+    @staticmethod
+    def test_write_to_existing_auth_file(mocker,
                                          json_load_fixture,
                                          os_path_exists_fixture,  # pylint: disable=unused-argument
                                          os_path_isfile_fixture):  # pylint: disable=unused-argument
@@ -169,8 +173,8 @@ class TestConfigClient(object):
         assert mock_json_dump_wrote[constants.BIGIP_GROUP_NAME] == bigip_auth
         assert mock_json_dump_wrote[constants.CLOUD_SERVICES_GROUP_NAME] == cloud_services_auth
 
-    def test_write_nonexist_config_directory(self,
-                                             mocker,
+    @staticmethod
+    def test_write_nonexist_config_directory(mocker,
                                              os_path_exists_fixture,
                                              os_path_isfile_fixture):
         """ Write Auth file into a non-exist directory
