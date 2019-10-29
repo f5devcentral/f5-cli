@@ -19,6 +19,12 @@ MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE = {
     'password': 'test_password'
 }
 
+MOCK_IS_INSTALLED_RETURN_VALUE = {
+    'installed': True,
+    'installed_version': '1.3.0',
+    'latest_version': '1.3.0'
+}
+
 
 class TestCommandBigIp(object):
     """ Test Class: command bigip """
@@ -38,7 +44,7 @@ class TestCommandBigIp(object):
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
         m = MagicMock()
-        m.is_installed.return_value = {'installed': True, 'installed_version': '1.3.0', 'latest_version': '1.3.0'}
+        m.is_installed.return_value = MOCK_IS_INSTALLED_RETURN_VALUE
         type(mock_toolchain_client.return_value).package = PropertyMock(
             return_value=m)
         return mock_toolchain_client
@@ -188,7 +194,9 @@ class TestCommandBigIp(object):
         result = self.runner.invoke(
             toolchain, ['package', 'verify', '--component', 'do', '--version', '1.3.0'])
         mock_management_client.assert_called_once()
-        assert result.output == "{\n    \"installed\": true,\n    \"installed_version\": \"1.3.0\",\n    \"latest_version\": \"1.3.0\"\n}\n"
+        assert result.output == json.dumps(
+            MOCK_IS_INSTALLED_RETURN_VALUE, indent=4, sort_keys=True
+        ) + '\n'
 
     def test_cmd_package_verify_nonexist_toolchain_component(self,
                                                              mocker,
@@ -206,14 +214,22 @@ class TestCommandBigIp(object):
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
+        mock_is_installed_return_value = {
+            'installed': False,
+            'installed_version': '',
+            'latest_version': '1.3.0'
+        }
+
         m = MagicMock()
-        m.is_installed.return_value = {'installed': False, 'installed_version': '', 'latest_version': '1.3.0'}
+        m.is_installed.return_value = mock_is_installed_return_value
         type(mock_toolchain_client.return_value).package = PropertyMock(
             return_value=m)
 
         result = self.runner.invoke(
             toolchain, ['package', 'verify', '--component', 'do', '--version', '1.3.0'])
-        assert result.output == "{\n    \"installed\": false,\n    \"installed_version\": \"\",\n    \"latest_version\": \"1.3.0\"\n}\n"
+        assert result.output == json.dumps(
+            mock_is_installed_return_value, indent=4, sort_keys=True
+        ) + '\n'
 
     def test_cmd_package_install_existing_toolchain_component(self,
                                                               mocker,  # pylint: disable=unused-argument
