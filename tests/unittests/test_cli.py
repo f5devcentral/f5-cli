@@ -76,7 +76,7 @@ class TestContext(object):
         - Message is logged in specific format
         """
         mock_output_format_env = mocker.patch("f5cloudcli.utils.core.os.environ.get")
-        mock_output_format_env.return_value = "-1"
+        mock_output_format_env.return_value = None
         mock_os_path_isfile = mocker.patch("f5cloudcli.utils.core.os.path.isfile")
         mock_os_path_isfile.return_value = True
         mock_open_config_file = mocker.patch("f5cloudcli.utils.core.open", mocker.mock_open(read_data='json'))

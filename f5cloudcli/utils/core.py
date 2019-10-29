@@ -11,6 +11,47 @@ def convert_to_absolute(file):
     """Convert file to absolute path """
     return os.path.abspath(os.path.join(os.getcwd(), file))
 
+def _get_output_format():
+    """Get output format """
+
+    # format discovery priority is as follows:
+    # 1) environment variable
+    # 2) config file
+    # 3) default format
+    if os.environ.get(FORMATS_ENV_VAR, None) is not None:
+        output_format = os.environ[FORMATS_ENV_VAR]
+    elif os.path.isfile(F5_CONFIG_FILE):
+        with open(F5_CONFIG_FILE, 'r') as config_file:
+            output_format = json.load(config_file)['output']
+    else:
+        output_format = FORMATS['DEFAULT']
+
+    return output_format
+
+def _format_data_as_table(data):
+    """Format data as a table """
+
+    # Get common keys
+    common_keys = {key for key, val in data.items() if isinstance(val, str)}
+    for idx in range(1, len(data)):
+        common_keys = common_keys.intersection(set(data[idx].keys()))
+    common_keys = sorted(common_keys)
+    # Construct output as table
+    column_width = {val:len(data[0][val]) + 4 for val in common_keys}
+    row_format = ''.join(['{:' + str(width) + '}\t\t' for _, width in column_width.items()])
+
+    title = row_format.format(*column_width.keys())
+
+    separator_column_width = ['-'*width for _, width in column_width.items()]
+    separator = row_format.format(*separator_column_width)
+    formatted_data = title + '\n' + separator
+
+    # Construct each row data
+    for entry in data:
+        row_data = [entry[key] for key in common_keys]
+        formatted_data += '\n' + row_format.format(*row_data)
+    return formatted_data
+
 def format_output(data):
     """ Get data in specified format
 
@@ -62,40 +103,22 @@ def format_output(data):
                 }
             }
     """
-    formatted_data = data
 
-    output_format = os.environ.get(FORMATS_ENV_VAR, '-1')
-    if output_format == '-1':
-        if os.path.isfile(F5_CONFIG_FILE):
-            with open(F5_CONFIG_FILE, 'r') as config_file:
-                output_format = json.load(config_file)['output']
-        else:
-            output_format = FORMATS['DEFAULT']
+    output_format = _get_output_format()
 
-    if data and isinstance(data, (dict, list)):
-        if output_format == FORMATS['JSON']:
-            formatted_data = ',\n'.join(tuple([json.dumps(d, indent=4, sort_keys=True) \
-                for d in data]))
+    if data:
+        # it is typical that data is machine readable, however
+        # if text is provided wrap it like so: {"message": "my message"}
+        if not isinstance(data, (dict, list)):
+            #data = {'message': data}
+            formatted_data = data
+        elif output_format == FORMATS['JSON']:
+            formatted_data = json.dumps(data, indent=4, sort_keys=True)
         elif output_format == FORMATS['TABLE']:
-            # Get common keys
-            common_keys = {key for key, val in data[0].items() if isinstance(val, str)}
-            for idx in range(1, len(data)):
-                common_keys = common_keys.intersection(set(data[idx].keys()))
-            common_keys = sorted(common_keys)
-            # Construct output as table
-            column_width = {val:len(data[0][val]) + 4 for val in common_keys}
-            row_format = ''.join(['{:' + str(width) + '}\t\t' for _, width in column_width.items()])
-
-            title = row_format.format(*column_width.keys())
-
-            separator_column_width = ['-'*width for _, width in column_width.items()]
-            separator = row_format.format(*separator_column_width)
-            formatted_data = title + '\n' + separator
-
-            # Construct each row data
-            for entry in data:
-                row_data = [entry[key] for key in common_keys]
-                formatted_data += '\n' + row_format.format(*row_data)
+            formatted_data = _format_data_as_table(data)
         else:
             raise click.ClickException("Unsupported format {}".format(output_format))
+    else:
+        formatted_data = data
+
     return formatted_data

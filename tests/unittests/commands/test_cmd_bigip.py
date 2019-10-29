@@ -1,6 +1,8 @@
 import pytest
 from click.testing import CliRunner
 
+import json
+
 from ...global_test_imports import MagicMock, call, PropertyMock
 from f5cloudsdk.bigip import ManagementClient
 from f5cloudcli.config import ConfigClient
@@ -143,15 +145,29 @@ class TestCommandBigIp(object):
         Then
         - Azure resources are retrieved
         """
+
+        virtual_machines = [
+            {
+                "id": "a1",
+                "name": "f5bigip1"
+            },
+            {
+                "id": "b2",
+                "name": "f5bigip2"
+            }
+        ]
+
         mock_clients = mocker.patch.object(clients, "get_provider_client")
-        m = MagicMock()
-        m.list.return_value = [{"id": "a1", "name": "f5bigip1"},
-                               {"id": "b2", "name": "f5bigip2"}]
+        mock_list = MagicMock()
+        mock_list.list.return_value = virtual_machines
         type(mock_clients.return_value).virtual_machines = PropertyMock(
-            return_value=m)
-        result = self.runner.invoke(cli, ['discover', '--provider', 'azure',
-                                          '--provider-tag', 'test_key:test_value'])
-        assert result.output == "Discovering all BIG-IPs in azure with tag test_key:test_value\n{\n    \"id\": \"a1\",\n    \"name\": \"f5bigip1\"\n},\n{\n    \"id\": \"b2\",\n    \"name\": \"f5bigip2\"\n}\n"
+            return_value=mock_list)
+
+        result = self.runner.invoke(
+            cli,
+            ['discover', '--provider', 'azure', '--provider-tag', 'test_key:test_value']
+        )
+        assert result.output == json.dumps(virtual_machines, indent=4, sort_keys=True) + '\n'
 
     def test_cmd_package_verify_existing_toolchain_component(self,
                                                              mocker,  # pylint: disable=unused-argument

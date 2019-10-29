@@ -108,7 +108,6 @@ def configure_auth(ctx, host, port, user, password):
 @PASS_CONTEXT
 def discover(ctx, provider, provider_tag):
     """ command """
-    ctx.log('Discovering all BIG-IPs in %s with tag %s', provider, provider_tag)
 
     # get provider client
     provider_client = clients.get_provider_client(provider)
@@ -147,7 +146,7 @@ def package(ctx, action, component, version):
 
     component_info = toolchain_client.package.is_installed()
     if action == 'verify':
-        ctx.log([component_info])
+        ctx.log(component_info)
     elif action == 'install':
         if not component_info['installed']:
             toolchain_client.package.install()
