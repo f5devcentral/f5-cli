@@ -7,6 +7,7 @@ import click
 from f5cloudsdk import provider
 from f5cloudcli.constants import AWS_PROVIDER, AZURE_PROVIDER
 
+
 def get_env_vars(env_vars):
     """ Get environment variables """
 
@@ -17,7 +18,7 @@ def get_env_vars(env_vars):
     # return resolved environment variables
     return [os.environ[i] for i in env_vars]
 
-# TODO: put this somewhere better...
+
 def get_provider_client(_provider):
     """ Get provider client """
     client = None

@@ -63,7 +63,8 @@ class TestContext(object):
         mock_format_output.side_effect = TestContext.format_output_side_effect
         mock_click_echo = mocker.patch("f5cloudcli.cli.click.echo")
         self.context.log("Test message with argument: %s", "fake value")
-        mock_click_echo.assert_called_once_with('Test message with argument: fake value', file=sys.stderr)
+        mock_click_echo.assert_called_once_with(
+            'Test message with argument: fake value', file=sys.stderr)
 
     def test_log_message_no_argument_no_environment_variable_with_config_file(self, mocker):
         """ Log a message, no argument, no output format env variable, config file exists
@@ -81,7 +82,8 @@ class TestContext(object):
         mock_output_format_env.return_value = None
         mock_os_path_isfile = mocker.patch("f5cloudcli.utils.core.os.path.isfile")
         mock_os_path_isfile.return_value = True
-        mock_open_config_file = mocker.patch("f5cloudcli.utils.core.open", mocker.mock_open(read_data='json'))
+        mock_open_config_file = mocker.patch(
+            "f5cloudcli.utils.core.open", mocker.mock_open(read_data='json'))
         mock_json_load = mocker.patch("f5cloudcli.utils.core.json.load")
         mock_json_load.return_value = {"output": "json"}
 
@@ -168,8 +170,7 @@ class TestAliasedGroup(object):
         - output of foo command is logged
 
         """
-        @click.group('test_alias_group',
-             cls=AliasedGroup)
+        @click.group('test_alias_group', cls=AliasedGroup)
         def cli():
             """ test aliased group """
             pass
@@ -198,8 +199,7 @@ class TestAliasedGroup(object):
         - bar not exists message is logged
 
         """
-        @click.group('test_alias_group',
-             cls=AliasedGroup)
+        @click.group('test_alias_group', cls=AliasedGroup)
         def cli():
             """ test aliased group """
             pass
@@ -224,8 +224,10 @@ class TestAliasedGroup(object):
         - output of foot command is logged
 
         """
-        @click.group('test_alias_group',
-             cls=AliasedGroup)
+        @click.group(
+            'test_alias_group',
+            cls=AliasedGroup
+        )
         def cli():
             """ test aliased group """
             pass
@@ -256,7 +258,7 @@ class TestAliasedGroup(object):
 
         """
         @click.group('test_alias_group',
-             cls=AliasedGroup)
+                     cls=AliasedGroup)
         def cli():
             """ test aliased group """
             pass

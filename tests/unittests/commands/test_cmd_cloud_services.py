@@ -160,11 +160,12 @@ class TestCommandBigIp(object):
             sort_keys=True
         ) + '\n'
 
+    # pylint: disable=unused-argument
     def test_cmd_cloud_services_subscription_show(self,
                                                   mocker,
-                                                  config_client_read_auth_fixture,  # pylint: disable=unused-argument
-                                                  mgmt_client_fixture,  # pylint: disable=unused-argument
-                                                  subscription_client_fixture):  # pylint: disable=unused-argument
+                                                  config_client_read_auth_fixture,
+                                                  mgmt_client_fixture,
+                                                  subscription_client_fixture):
         """ Execute a 'show' action against an F5 Cloud Services subscription
 
         Given
@@ -226,13 +227,17 @@ class TestCommandBigIp(object):
 
         result = self.runner.invoke(cli, ['subscription', 'update', '--subscription-id', 's'])
         assert result.exception
-        assert result.output == 'Error: The --declaration option is required when updating a Cloud Services subscription\n'  # pylint: disable=line-too-long
 
+        expected_output = ("Error: The --declaration option is required when"
+                           " updating a Cloud Services subscription\n")
+        assert result.output == expected_output
+
+    # pylint: disable=unused-argument
     def test_cmd_cloud_services_subscription_update(self,
                                                     mocker,
-                                                    config_client_read_auth_fixture,  # pylint: disable=unused-argument
-                                                    mgmt_client_fixture,  # pylint: disable=unused-argument
-                                                    subscription_client_fixture):  # pylint: disable=unused-argument
+                                                    config_client_read_auth_fixture,
+                                                    mgmt_client_fixture,
+                                                    subscription_client_fixture):
         """ Execute an 'update' action against a Cloud Services subscription
 
         Given

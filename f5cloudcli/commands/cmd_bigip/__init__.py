@@ -1,9 +1,9 @@
-# pylint: disable=line-too-long
 """Below are examples of using the Cloud CLI to interact with a BIG-IP.
 
     1. Discover BIG-IPs running in a Cloud Provider
     -----------------------------------------------
-    The following is an example of how to discover information about a BIG-IP, including IP addresses, running in a cloud provider. ::
+    The following is an example of how to discover information about a BIG-IP,
+    including IP addresses, running in a cloud provider. ::
 
         $ export F5_CLI_PROVIDER_ACCESS_KEY=<aws_access_key_id>
         $ export F5_CLI_PROVIDER_SECRET_KEY=<aws_secret_access_key>
@@ -16,7 +16,8 @@
 
     2. Configure authentication to a BIG-IP
     ---------------------------------------
-    The following is an example of how to configure authentication for a BIG-IP. Any commands that interact with a BIG-IP require that authentication to that BIG-IP is already configured. ::
+    The following is an example of how to configure authentication for a BIG-IP. Any commands
+    that interact with a BIG-IP require that authentication to that BIG-IP is already configured. ::
 
         $ f5 bigip configure-auth --host 54.224.182.104 --port 443 --user myuser
         Password:
@@ -27,7 +28,8 @@
 
     3. Install an Automation Toolchain package
     ------------------------------------------
-    The following is an example of how to install the Declarative Onboarding package onto a BIG-IP. ::
+    The following is an example of how to install the Declarative Onboarding package
+    onto a BIG-IP. ::
 
         $ f5 bigip toolchain package install --component do
         {
@@ -48,9 +50,8 @@
 
 
 """
-# pylint: enable=line-too-long
 
-import os
+# pylint: disable=too-many-arguments
 
 from f5cloudsdk.bigip import ManagementClient
 from f5cloudsdk.bigip.toolchain import ToolChainClient
@@ -65,6 +66,7 @@ from f5cloudcli.config import ConfigClient
 from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
 
 HELP = docs.get_docs()
+
 
 # group: bigip
 @click.group('bigip',
@@ -120,6 +122,7 @@ def discover(ctx, provider, provider_tag):
     virtual_machines = provider_client.virtual_machines.list(filter_tag=provider_tag)
 
     ctx.log(virtual_machines)
+
 
 # group: toolchain - package, service
 TOOLCHAIN_COMPONENTS = ['do', 'as3', 'ts', 'failover']
@@ -185,7 +188,7 @@ def package(ctx, action, component, version):
               required=False,
               is_flag=True)
 @PASS_CONTEXT
-def service(ctx, action, component, version, declaration, install_component): # pylint: disable=too-many-arguments
+def service(ctx, action, component, version, declaration, install_component):
     """ command """
     auth = ConfigClient().read_auth(constants.BIGIP_GROUP_NAME)
     management_kwargs = dict(port=auth['port'], user=auth['username'], password=auth['password'])
@@ -212,5 +215,6 @@ def service(ctx, action, component, version, declaration, install_component): # 
         ctx.log(toolchain_client.service.delete())
     else:
         raise click.ClickException('Action not implemented')
+
 
 click_repl.register_repl(cli)

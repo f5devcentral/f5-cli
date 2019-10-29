@@ -27,7 +27,8 @@ unit_test:
 	pytest -vv --flake8 --cov=${PACKAGE_DIR} ${UNIT_TEST_DIR}/;
 lint:
 	echo "Running linter (any error will result in non-zero exit code)";
-	pylint ${PACKAGE_DIR}/;
+	flake8 ${PACKAGE_DIR}/ ${TEST_DIR}/;
+	pylint -j 0 ${PACKAGE_DIR}/ ${TEST_DIR}/;
 coverage: unit_test
 	echo "Generating code coverage documentation"
 	coverage html

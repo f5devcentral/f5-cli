@@ -9,6 +9,7 @@ import f5cloudcli.constants as constants
 F5_AUTH_FILE_PATH = constants.F5_AUTH_FILE
 F5_CLI_DIR = constants.F5_CLI_DIR
 
+
 class ConfigClient():
     """ A class used to store any required authentication
     or configuration data used by the F5 Cloud CLI
@@ -98,7 +99,8 @@ class ConfigClient():
         with open(F5_AUTH_FILE_PATH, 'w') as file:
             json.dump(auth_contents, file)
 
-    def read_auth(self, group_name): # pylint: disable=no-self-use
+    @staticmethod
+    def read_auth(group_name):
         """ Used by the CLI commands to read the persisted credentials, when the CLI commands need
             to generate a new ManagementClient
 

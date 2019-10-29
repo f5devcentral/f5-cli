@@ -7,9 +7,11 @@ import click
 
 from f5cloudcli.constants import F5_CONFIG_FILE, FORMATS, FORMATS_ENV_VAR
 
+
 def convert_to_absolute(file):
     """Convert file to absolute path """
     return os.path.abspath(os.path.join(os.getcwd(), file))
+
 
 def _get_output_format():
     """Get output format """
@@ -28,6 +30,7 @@ def _get_output_format():
 
     return output_format
 
+
 def _format_data_as_table(data):
     """Format data as a table """
 
@@ -37,7 +40,7 @@ def _format_data_as_table(data):
         common_keys = common_keys.intersection(set(data[idx].keys()))
     common_keys = sorted(common_keys)
     # Construct output as table
-    column_width = {val:len(data[0][val]) + 4 for val in common_keys}
+    column_width = {val: len(data[0][val]) + 4 for val in common_keys}
     row_format = ''.join(['{:' + str(width) + '}\t\t' for _, width in column_width.items()])
 
     title = row_format.format(*column_width.keys())
@@ -51,6 +54,7 @@ def _format_data_as_table(data):
         row_data = [entry[key] for key in common_keys]
         formatted_data += '\n' + row_format.format(*row_data)
     return formatted_data
+
 
 def format_output(data):
     """ Get data in specified format

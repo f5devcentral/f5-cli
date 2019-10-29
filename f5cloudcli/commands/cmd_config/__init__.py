@@ -12,6 +12,7 @@ from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
 
 HELP = docs.get_docs()
 
+
 # group: configure
 @click.group('configure',
              help=HELP['CONFIG_CLI_HELP'],
@@ -38,5 +39,6 @@ def output_format(ctx, output):
     }
     with open(F5_CONFIG_FILE, 'w') as outfile:
         json.dump(config_content, outfile, indent=4, sort_keys=True)
+
 
 click_repl.register_repl(cli)

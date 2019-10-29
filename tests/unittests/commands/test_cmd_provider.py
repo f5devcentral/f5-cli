@@ -29,7 +29,9 @@ class TestCommandProvider(object):
         Then
         - Login is successful
         """
-        mock_provider_client = mocker.patch('f5cloudcli.commands.cmd_provider.clients.get_provider_client')
+        mock_provider_client = mocker.patch(
+            'f5cloudcli.commands.cmd_provider.clients.get_provider_client'
+        )
         mock_provider_client.return_value.is_logged_in.return_value = True
 
         result = self.runner.invoke(cli, ['login', '--environment', 'azure'])
@@ -48,7 +50,9 @@ class TestCommandProvider(object):
         Then
         - Login is successful
         """
-        mock_provider_client = mocker.patch('f5cloudcli.commands.cmd_provider.clients.get_provider_client')
+        mock_provider_client = mocker.patch(
+            'f5cloudcli.commands.cmd_provider.clients.get_provider_client'
+        )
         mock_provider_client.return_value.is_logged_in.return_value = False
 
         result = self.runner.invoke(cli, ['login', '--environment', 'azure'])

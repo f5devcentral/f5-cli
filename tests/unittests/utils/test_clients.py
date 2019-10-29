@@ -30,7 +30,11 @@ class TestUtilsClients(object):
         - Exception is thrown
         """
         mocker.patch.dict("f5cloudcli.utils.clients.os.environ",
-                         {"BAR": "bar_value", "TENANT_ID": "tenant_id_value", "CLIENT_ID": "client_id_value"})
+                          {
+                              "BAR": "bar_value",
+                              "TENANT_ID": "tenant_id_value",
+                              "CLIENT_ID": "client_id_value"
+                          })
         with pytest.raises(click.exceptions.ClickException) as e:
             clients.get_env_vars(["FOO", "BAR", "CLIENT_ID"])
         assert e.value.args[0] == "Environment variables must exist: ['FOO', 'BAR', 'CLIENT_ID']"
@@ -78,12 +82,12 @@ class TestUtilsClients(object):
         - azure provider client is returned
         """
         mocker.patch.dict("f5cloudcli.utils.clients.os.environ",
-                         {
-                             'F5_CLI_PROVIDER_TENANT_ID': '1',
-                             'F5_CLI_PROVIDER_CLIENT_ID': '2',
-                             'F5_CLI_PROVIDER_SECRET': '3',
-                             'F5_CLI_PROVIDER_SUBSCRIPTION_ID': '4'
-                         })
+                          {
+                              'F5_CLI_PROVIDER_TENANT_ID': '1',
+                              'F5_CLI_PROVIDER_CLIENT_ID': '2',
+                              'F5_CLI_PROVIDER_SECRET': '3',
+                              'F5_CLI_PROVIDER_SUBSCRIPTION_ID': '4'
+                          })
         mock_azure_client = mocker.patch("f5cloudcli.utils.clients.provider.azure.ProviderClient")
         clients.get_provider_client('azure')
         mock_azure_client.assert_called_once_with(tenant_id='1',
@@ -103,11 +107,11 @@ class TestUtilsClients(object):
         - aws provider client is returned
         """
         mocker.patch.dict("f5cloudcli.utils.clients.os.environ",
-                        {
-                            'F5_CLI_PROVIDER_ACCESS_KEY': '1',
-                            'F5_CLI_PROVIDER_SECRET_KEY': '2',
-                            'F5_CLI_PROVIDER_REGION_NAME': '3'
-                        })
+                          {
+                              'F5_CLI_PROVIDER_ACCESS_KEY': '1',
+                              'F5_CLI_PROVIDER_SECRET_KEY': '2',
+                              'F5_CLI_PROVIDER_REGION_NAME': '3'
+                          })
         mock_aws_client = mocker.patch("f5cloudcli.utils.clients.provider.aws.ProviderClient")
         clients.get_provider_client('aws')
         mock_aws_client.assert_called_once_with(access_key='1',

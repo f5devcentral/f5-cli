@@ -1,9 +1,10 @@
-# pylint: disable=line-too-long
 """Below are examples of using the Cloud CLI to interact with F5 Cloud Services.
 
     1. Configure authentication to F5 Cloud Services
     ------------------------------------------------
-    The following is an example of how to configure authentication to F5 Cloud Services. Any commands that interact with F5 Cloud Services require that authentication to F5 Cloud Services already be configured. ::
+    The following is an example of how to configure authentication to F5 Cloud Services.
+    Any commands that interact with F5 Cloud Services require that authentication to
+    F5 Cloud Services already be configured. ::
 
         $ f5 cloud-services configure-auth --user user@us.com
         Password:
@@ -13,7 +14,8 @@
 
     2. Update an F5 Cloud Services subscription
     -------------------------------------------
-    The following is an example of how to update an F5 Cloud Services subscription, such as a DNS Load Balancer. ::
+    The following is an example of how to update an F5 Cloud Services subscription,
+    such as a DNS Load Balancer. ::
 
         $ f5 cloud-services subscription update --subscription-id s-123 --declaration decl.json
         {
@@ -23,7 +25,8 @@
 
     3. Get configuration of an F5 Cloud Services subscription
     ---------------------------------------------------------
-    The following is an example of how to display or show the configuration of an existing F5 Cloud Services subscription, such as a DNS Load Balancer. ::
+    The following is an example of how to display or show the configuration of an existing
+    F5 Cloud Services subscription, such as a DNS Load Balancer. ::
 
         $ f5 cloud-services subscription show --subscription-id s-123
         {
@@ -32,9 +35,6 @@
         }
 
 """
-# pylint: enable=line-too-long
-
-import json
 
 from f5cloudsdk.cloud_services import ManagementClient
 from f5cloudsdk.cloud_services.subscriptions import SubscriptionClient
@@ -49,6 +49,7 @@ from f5cloudcli.utils import core as utils_core
 from f5cloudcli import constants
 
 HELP = docs.get_docs()
+
 
 # group: cloud-services
 @click.group('cloud-services',
@@ -149,5 +150,6 @@ def dns(ctx, action, record_type, members):
     """ command """
 
     raise click.ClickException('Command not implemented')
+
 
 click_repl.register_repl(cli)

@@ -126,8 +126,11 @@ class TestCommandBigIp(object):
         test_user = 'TEST USER'
         test_port = 'TEST PORT'
         test_password = 'TEST PASSWORD'
-        result = self.runner.invoke(cli, ['configure-auth', '--host', test_host, '--port', test_port,
-                                          '--user', test_user, '--password', test_password])
+        result = self.runner.invoke(
+            cli,
+            ['configure-auth', '--host', test_host, '--port', test_port,
+             '--user', test_user, '--password', test_password]
+        )
         mock_config_client_store_auth.assert_called_once()
         mock_config_client_args = mock_config_client.call_args_list[0][1]
         assert mock_config_client_args['group_name'] == constants.BIGIP_GROUP_NAME
@@ -181,11 +184,12 @@ class TestCommandBigIp(object):
         )
         assert result.output == json.dumps(virtual_machines, indent=4, sort_keys=True) + '\n'
 
+    # pylint: disable=unused-argument
     def test_cmd_package_verify_existing_toolchain_component(self,
-                                                             mocker,  # pylint: disable=unused-argument
+                                                             mocker,
                                                              mgmt_client_fixture,
-                                                             config_client_read_auth_fixture,  # pylint: disable=unused-argument
-                                                             toolchain_client_fixture):  # pylint: disable=unused-argument
+                                                             config_client_read_auth_fixture,
+                                                             toolchain_client_fixture):
         """ Command package verify an existing toolchain component
         Given
         - BIG-IP is up
@@ -206,10 +210,11 @@ class TestCommandBigIp(object):
             sort_keys=True
         ) + '\n'
 
+    # pylint: disable=unused-argument
     def test_cmd_package_verify_nonexist_toolchain_component(self,
                                                              mocker,
-                                                             config_client_read_auth_fixture,  # pylint: disable=unused-argument
-                                                             mgmt_client_fixture):  # pylint: disable=unused-argument
+                                                             config_client_read_auth_fixture,
+                                                             mgmt_client_fixture):
         """ Command package verify a non-existing package
         Given
         - BIG-IP is up
@@ -239,11 +244,12 @@ class TestCommandBigIp(object):
             mock_is_installed_return_value, indent=4, sort_keys=True
         ) + '\n'
 
+    # pylint: disable=unused-argument
     def test_cmd_package_install_existing_toolchain_component(self,
-                                                              mocker,  # pylint: disable=unused-argument
-                                                              config_client_read_auth_fixture,  # pylint: disable=unused-argument
-                                                              mgmt_client_fixture,  # pylint: disable=unused-argument
-                                                              toolchain_client_fixture):  # pylint: disable=unused-argument
+                                                              mocker,
+                                                              config_client_read_auth_fixture,
+                                                              mgmt_client_fixture,
+                                                              toolchain_client_fixture):
         """ Command package install an existing package
         Given
         - BIG-IP is up
@@ -261,10 +267,11 @@ class TestCommandBigIp(object):
             sort_keys=True
         ) + '\n'
 
+    # pylint: disable=unused-argument
     def test_cmd_package_install_non_existing_toolchain_component(self,
                                                                   mocker,
-                                                                  config_client_read_auth_fixture,  # pylint: disable=unused-argument
-                                                                  mgmt_client_fixture):  # pylint: disable=unused-argument
+                                                                  config_client_read_auth_fixture,
+                                                                  mgmt_client_fixture):
         """ Command package install a non-existing package
         Given
         - BIG-IP is up
@@ -278,7 +285,11 @@ class TestCommandBigIp(object):
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
         m = MagicMock()
-        m.is_installed.return_value = {'installed': False, 'installed_version': '', 'latest_version': '1.3.0'}
+        m.is_installed.return_value = {
+            'installed': False,
+            'installed_version': '',
+            'latest_version': '1.3.0'
+        }
         m.install.return_value = None
         type(mock_toolchain_client.return_value).package = PropertyMock(
             return_value=m)
@@ -291,10 +302,11 @@ class TestCommandBigIp(object):
             sort_keys=True
         ) + '\n'
 
+    # pylint: disable=unused-argument
     def test_cmd_package_uninstall_existing_toolchain_component(self,
                                                                 mocker,
-                                                                config_client_read_auth_fixture,  # pylint: disable=unused-argument
-                                                                mgmt_client_fixture):  # pylint: disable=unused-argument
+                                                                config_client_read_auth_fixture,
+                                                                mgmt_client_fixture):
         """ Command package uninstall an existing package
         Given
         - BIG-IP is up
@@ -321,10 +333,11 @@ class TestCommandBigIp(object):
             sort_keys=True
         ) + '\n'
 
+    # pylint: disable=unused-argument
     def test_cmd_package_uninstall_non_existing_toolchain_component(self,
                                                                     mocker,
-                                                                    config_client_read_auth_fixture,  # pylint: disable=unused-argument
-                                                                    mgmt_client_fixture):  # pylint: disable=unused-argument
+                                                                    config_client_read_auth_fixture,
+                                                                    mgmt_client_fixture):
         """ Command package uninstall a non-existing package
         Given
         - BIG-IP is up
@@ -350,10 +363,11 @@ class TestCommandBigIp(object):
             sort_keys=True
         ) + '\n'
 
+    # pylint: disable=unused-argument
     def test_cmd_package_unsupported_action(self,
                                             mocker,
-                                            config_client_read_auth_fixture,  # pylint: disable=unused-argument
-                                            mgmt_client_fixture):  # pylint: disable=unused-argument
+                                            config_client_read_auth_fixture,
+                                            mgmt_client_fixture):
         """ Unsupported command package action
         Given
         - BIG-IP is up
@@ -375,11 +389,12 @@ class TestCommandBigIp(object):
         assert result.exception
         assert result.output == "Error: Action upgrade not implemented\n"
 
+    # pylint: disable=unused-argument
     def test_cmd_service_show_installed_component(self,
                                                   mocker,
-                                                  config_client_read_auth_fixture,  # pylint: disable=unused-argument
-                                                  mgmt_client_fixture,  # pylint: disable=unused-argument
-                                                  toolchain_client_fixture):  # pylint: disable=unused-argument
+                                                  config_client_read_auth_fixture,
+                                                  mgmt_client_fixture,
+                                                  toolchain_client_fixture):
         """ Command service show an already installed component
         Given
         - BIG-IP is up
@@ -406,10 +421,11 @@ class TestCommandBigIp(object):
             toolchain, ['service', 'show', '--component', 'do', '--version', '1.3.0'])
         assert result.output == json.dumps(show_response, indent=4, sort_keys=True) + '\n'
 
+    # pylint: disable=unused-argument
     def test_cmd_service_show_non_installed_component(self,
                                                       mocker,
-                                                      config_client_read_auth_fixture,  # pylint: disable=unused-argument
-                                                      mgmt_client_fixture):  # pylint: disable=unused-argument
+                                                      config_client_read_auth_fixture,
+                                                      mgmt_client_fixture):
         """ Command service show status of a non-installed component
         Given
         - BIG-IP is up
@@ -442,14 +458,17 @@ class TestCommandBigIp(object):
         type(mock_toolchain_client.return_value).service = PropertyMock(
             return_value=mock_service)
 
-        result = self.runner.invoke(toolchain, [
-                                    'service', 'show', '--component', 'do', '--version', '1.3.0', '--install-component'])
+        result = self.runner.invoke(
+            toolchain,
+            ['service', 'show', '--component', 'do', '--version', '1.3.0', '--install-component']
+        )
         assert result.output == json.dumps(show_response, indent=4, sort_keys=True) + '\n'
 
+    # pylint: disable=unused-argument
     def test_cmd_service_create_declaration_installed_component(self,
                                                                 mocker,
-                                                                config_client_read_auth_fixture,  # pylint: disable=unused-argument
-                                                                mgmt_client_fixture,  # pylint: disable=unused-argument
+                                                                config_client_read_auth_fixture,
+                                                                mgmt_client_fixture,
                                                                 toolchain_client_fixture):
         """ Command service create declaration of an installed component
         Given
@@ -482,11 +501,12 @@ class TestCommandBigIp(object):
         mock_utils_core_convert.assert_has_calls(
             [call('./test/fake_declaration.json')])
 
+    # pylint: disable=unused-argument
     def test_cmd_service_delete_installed_component(self,
                                                     mocker,
-                                                    config_client_read_auth_fixture,  # pylint: disable=unused-argument
+                                                    config_client_read_auth_fixture,
                                                     mgmt_client_fixture,
-                                                    toolchain_client_fixture):  # pylint: disable=unused-argument
+                                                    toolchain_client_fixture):
         """ Command service delete of an already installed component
         Given
         - BIG-IP is up
