@@ -100,8 +100,11 @@ class TestCommandBigIp(object):
             'username': test_user,
             'password': test_password
         }
-        expected_output = f"Configuring BIG-IP Auth to {test_host} as {test_user} with ******\n"
-        assert result.output == expected_output
+        assert result.output == json.dumps(
+            {'message': f'Configuring BIG-IP Auth to {test_host} as {test_user} with ******'},
+            indent=4,
+            sort_keys=True
+        ) + '\n'
 
     def test_cmd_bigip_configure_auth_with_port(self, mocker, config_client_fixture):
         """ Configure authentication to a BIGIP
@@ -134,8 +137,11 @@ class TestCommandBigIp(object):
             'username': test_user,
             'password': test_password
         }
-        expected_output = f"Configuring BIG-IP Auth to {test_host} as {test_user} with ******\n"
-        assert result.output == expected_output
+        assert result.output == json.dumps(
+            {'message': f'Configuring BIG-IP Auth to {test_host} as {test_user} with ******'},
+            indent=4,
+            sort_keys=True
+        ) + '\n'
 
     def test_cmd_discover_azure_resources(self, mocker):
         """ Discover azure resources
@@ -195,7 +201,9 @@ class TestCommandBigIp(object):
             toolchain, ['package', 'verify', '--component', 'do', '--version', '1.3.0'])
         mock_management_client.assert_called_once()
         assert result.output == json.dumps(
-            MOCK_IS_INSTALLED_RETURN_VALUE, indent=4, sort_keys=True
+            MOCK_IS_INSTALLED_RETURN_VALUE,
+            indent=4,
+            sort_keys=True
         ) + '\n'
 
     def test_cmd_package_verify_nonexist_toolchain_component(self,
@@ -247,7 +255,11 @@ class TestCommandBigIp(object):
         """
         result = self.runner.invoke(
             toolchain, ['package', 'install', '--component', 'do', '--version', '1.3.0'])
-        assert result.output == "Toolchain component package do version 1.3.0 is already installed\n"
+        assert result.output == json.dumps(
+            {'message': 'Toolchain component package do version 1.3.0 is already installed'},
+            indent=4,
+            sort_keys=True
+        ) + '\n'
 
     def test_cmd_package_install_non_existing_toolchain_component(self,
                                                                   mocker,
@@ -273,7 +285,11 @@ class TestCommandBigIp(object):
 
         result = self.runner.invoke(
             toolchain, ['package', 'install', '--component', 'do', '--version', '1.3.0'])
-        assert result.output == "Toolchain component package do installed\n"
+        assert result.output == json.dumps(
+            {'message': 'Toolchain component package do installed'},
+            indent=4,
+            sort_keys=True
+        ) + '\n'
 
     def test_cmd_package_uninstall_existing_toolchain_component(self,
                                                                 mocker,
@@ -299,7 +315,11 @@ class TestCommandBigIp(object):
 
         result = self.runner.invoke(
             toolchain, ['package', 'uninstall', '--component', 'do', '--version', '1.3.0'])
-        assert result.output == "Toolchain component package do uninstalled\n"
+        assert result.output == json.dumps(
+            {'message': 'Toolchain component package do uninstalled'},
+            indent=4,
+            sort_keys=True
+        ) + '\n'
 
     def test_cmd_package_uninstall_non_existing_toolchain_component(self,
                                                                     mocker,
@@ -324,7 +344,11 @@ class TestCommandBigIp(object):
 
         result = self.runner.invoke(
             toolchain, ['package', 'uninstall', '--component', 'do', '--version', '1.3.0'])
-        assert result.output == "Toolchain component package do is already uninstalled\n"
+        assert result.output == json.dumps(
+            {'message': 'Toolchain component package do is already uninstalled'},
+            indent=4,
+            sort_keys=True
+        ) + '\n'
 
     def test_cmd_package_unsupported_action(self,
                                             mocker,
@@ -369,14 +393,18 @@ class TestCommandBigIp(object):
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
+        show_response = {
+            'foo': 'bar'
+        }
+
         mock_service = MagicMock()
-        mock_service.show.return_value = "Test DO status"
+        mock_service.show.return_value = show_response
         type(mock_toolchain_client.return_value).service = PropertyMock(
             return_value=mock_service)
 
         result = self.runner.invoke(
             toolchain, ['service', 'show', '--component', 'do', '--version', '1.3.0'])
-        assert result.output == "Toolchain component service show: Test DO status\n"
+        assert result.output == json.dumps(show_response, indent=4, sort_keys=True) + '\n'
 
     def test_cmd_service_show_non_installed_component(self,
                                                       mocker,
@@ -396,20 +424,27 @@ class TestCommandBigIp(object):
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
+        is_installed_response = {
+            'installed': False
+        }
+        show_response = {
+            'foo': 'bar'
+        }
+
         mock_package = MagicMock()
-        mock_package.is_installed.return_value = {'installed': False}
+        mock_package.is_installed.return_value = is_installed_response
         mock_package.install.return_value = None
         type(mock_toolchain_client.return_value).package = PropertyMock(
             return_value=mock_package)
         mock_service = MagicMock()
-        mock_service.show.return_value = "Test DO status"
+        mock_service.show.return_value = show_response
         mock_service.is_available.return_value = None
         type(mock_toolchain_client.return_value).service = PropertyMock(
             return_value=mock_service)
 
         result = self.runner.invoke(toolchain, [
                                     'service', 'show', '--component', 'do', '--version', '1.3.0', '--install-component'])
-        assert result.output == "Installing toolchain component package\nChecking toolchain component service is available\nToolchain component service show: Test DO status\n"
+        assert result.output == json.dumps(show_response, indent=4, sort_keys=True) + '\n'
 
     def test_cmd_service_create_declaration_installed_component(self,
                                                                 mocker,
@@ -426,7 +461,12 @@ class TestCommandBigIp(object):
         -  result status of create action is logged
         """
         mock_service = MagicMock()
-        mock_service.create.return_value = "Test DO create status"
+
+        create_response = {
+            'foo': 'bar'
+        }
+
+        mock_service.create.return_value = create_response
         mock_toolchain_client = toolchain_client_fixture
         type(mock_toolchain_client.return_value).service = PropertyMock(
             return_value=mock_service)
@@ -437,7 +477,8 @@ class TestCommandBigIp(object):
 
         result = self.runner.invoke(toolchain, ['service', 'create', '--component', 'do',
                                                 '--declaration', './test/fake_declaration.json'])
-        assert result.output == "Toolchain component service create: Test DO create status\n"
+
+        assert result.output == json.dumps(create_response, indent=4, sort_keys=True) + '\n'
         mock_utils_core_convert.assert_has_calls(
             [call('./test/fake_declaration.json')])
 
@@ -457,14 +498,18 @@ class TestCommandBigIp(object):
         """
         mock_toolchain_client = toolchain_client_fixture
 
+        delete_response = {
+            'foo': 'bar'
+        }
+
         mock_service = MagicMock()
-        mock_service.delete.return_value = "Test DO delete status"
+        mock_service.delete.return_value = delete_response
         type(mock_toolchain_client.return_value).service = PropertyMock(
             return_value=mock_service)
 
         result = self.runner.invoke(
             toolchain, ['service', 'delete', '--component', 'do'])
-        assert result.output == "Toolchain component service delete: Test DO delete status\n"
+        assert result.output == json.dumps(delete_response, indent=4, sort_keys=True) + '\n'
 
     def test_cmd_service_unsupported_action(self):
         """ Unsupported command service action

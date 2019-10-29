@@ -193,21 +193,17 @@ def service(ctx, action, component, version, declaration, install_component): # 
     # install toolchain component if requested (and not installed)
     installed = toolchain_client.package.is_installed()['installed']
     if install_component and not installed:
-        ctx.log('Installing toolchain component package')
         toolchain_client.package.install()
-        ctx.log('Checking toolchain component service is available')
         toolchain_client.service.is_available()
 
     if action == 'show':
-        result = toolchain_client.service.show()
-        ctx.log('Toolchain component service show: %s', (result))
+        ctx.log(toolchain_client.service.show())
     elif action == 'create':
-        decl_location = utils_core.convert_to_absolute(declaration)
-        result = toolchain_client.service.create(config_file=decl_location)
-        ctx.log('Toolchain component service create: %s', (result))
+        ctx.log(toolchain_client.service.create(
+            config_file=utils_core.convert_to_absolute(declaration)
+        ))
     elif action == 'delete':
-        result = toolchain_client.service.delete()
-        ctx.log('Toolchain component service delete: %s', (result))
+        ctx.log(toolchain_client.service.delete())
     else:
         raise click.ClickException('Action not implemented')
 

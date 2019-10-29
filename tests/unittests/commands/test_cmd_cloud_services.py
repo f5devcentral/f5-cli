@@ -1,3 +1,5 @@
+import json
+
 import pytest
 import click
 import os
@@ -84,8 +86,8 @@ class TestCommandBigIp(object):
         """
         result = self.runner.invoke(
             cli, ['dns', 'create', 'a', 'test_members'])
-        expected_output = "create DNS a with members test_members\nError: Command not implemented\n"
-        assert result.output == expected_output
+
+        assert result.output == 'Error: Command not implemented\n'
         assert result.exception
 
     def test_cmd_cloud_services_configure_auth(self,
@@ -116,7 +118,11 @@ class TestCommandBigIp(object):
             'username': TEST_USER,
             'password': TEST_PASSWORD
         }
-        assert result.output == f"Configuring F5 Cloud Services Auth for {TEST_USER} with ******\n"
+        assert result.output == json.dumps(
+            {'message': f'Configuring F5 Cloud Services Auth for {TEST_USER} with ******'},
+            indent=4,
+            sort_keys=True
+        ) + '\n'
 
     def test_cmd_cloud_services_configure_auth_custom_api(self,
                                                           config_client_fixture,
@@ -149,7 +155,11 @@ class TestCommandBigIp(object):
             'password': TEST_PASSWORD,
             'api_endpoint': test_api_endpoint
         }
-        assert result.output == f"Configuring F5 Cloud Services Auth for {TEST_USER} with ******\n"
+        assert result.output == json.dumps(
+            {'message': f'Configuring F5 Cloud Services Auth for {TEST_USER} with ******'},
+            indent=4,
+            sort_keys=True
+        ) + '\n'
 
     def test_cmd_cloud_services_subscription_show(self,
                                                   mocker,

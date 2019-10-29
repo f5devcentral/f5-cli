@@ -1,3 +1,5 @@
+import json
+
 import click
 from click.testing import CliRunner
 import sys
@@ -87,7 +89,9 @@ class TestContext(object):
         mock_format_output.side_effect = TestContext.format_output_side_effect
         mock_click_echo = mocker.patch("f5cloudcli.cli.click.echo")
         self.context.log("Test message")
-        mock_click_echo.assert_called_once_with('Test message', file=sys.stderr)
+        mock_click_echo.assert_called_once_with(
+            '{\n    "message": "Test message"\n}', file=sys.stderr
+        )
         mock_open_config_file.assert_called_once_with(F5_CONFIG_FILE, 'r')
         mock_json_load.assert_called_once_with(mock_open_config_file.return_value)
 
@@ -176,7 +180,11 @@ class TestAliasedGroup(object):
             ctx.log("Test foo command")
         result = self.runner.invoke(cli, 'foo')
         assert not result.exception
-        assert result.output == "Test foo command\n"
+        assert result.output == json.dumps(
+            {'message': 'Test foo command'},
+            indent=4,
+            sort_keys=True
+        ) + '\n'
 
     def test_get_non_existed_command(self):
         """
@@ -228,7 +236,11 @@ class TestAliasedGroup(object):
             ctx.log("Test foot command")
         result = self.runner.invoke(cli, 'foo')
         assert not result.exception
-        assert result.output == "Test foot command\n"
+        assert result.output == json.dumps(
+            {'message': 'Test foot command'},
+            indent=4,
+            sort_keys=True
+        ) + '\n'
 
     def test_get_multiple_matched_commands(self):
         """

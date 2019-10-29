@@ -110,9 +110,9 @@ def format_output(data):
         # it is typical that data is machine readable, however
         # if text is provided wrap it like so: {"message": "my message"}
         if not isinstance(data, (dict, list)):
-            #data = {'message': data}
-            formatted_data = data
-        elif output_format == FORMATS['JSON']:
+            data = {'message': data}
+
+        if output_format == FORMATS['JSON']:
             formatted_data = json.dumps(data, indent=4, sort_keys=True)
         elif output_format == FORMATS['TABLE']:
             formatted_data = _format_data_as_table(data)

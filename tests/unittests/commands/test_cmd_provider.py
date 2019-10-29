@@ -1,3 +1,5 @@
+import json
+
 from click.testing import CliRunner
 
 # Module under test
@@ -31,7 +33,9 @@ class TestCommandProvider(object):
         mock_provider_client.return_value.is_logged_in.return_value = True
 
         result = self.runner.invoke(cli, ['login', '--environment', 'azure'])
-        assert result.output == "Login successful\n"
+        assert result.output == json.dumps(
+            {'message': 'Login successful'}, indent=4, sort_keys=True
+        ) + '\n'
 
     def test_cmd_bigip_login_no_credentials(self, mocker):
         """ Log into a cloud
@@ -48,4 +52,6 @@ class TestCommandProvider(object):
         mock_provider_client.return_value.is_logged_in.return_value = False
 
         result = self.runner.invoke(cli, ['login', '--environment', 'azure'])
-        assert result.output == "Login unsuccessful\n"
+        assert result.output == json.dumps(
+            {'message': 'Login unsuccessful'}, indent=4, sort_keys=True
+        ) + '\n'

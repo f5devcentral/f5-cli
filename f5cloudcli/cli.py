@@ -26,9 +26,10 @@ class Context():
     def log(msg, *args):
         """Logs a message"""
 
+        # if args are provided, assume string formatting is required
         if args:
-            args = format_output(args)
             msg %= args
+
         click.echo(format_output(msg), file=sys.stderr)
 
     def vlog(self, msg, *args):
