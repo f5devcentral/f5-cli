@@ -69,7 +69,7 @@ def cli():
 @PASS_CONTEXT
 def configure_auth(ctx, user, password, api_endpoint):
     """ command """
-    ctx.log('Configuring F5 Cloud Services Auth for %s with ******', user)
+
     auth = {
         'username': user,
         'password': password
@@ -81,6 +81,8 @@ def configure_auth(ctx, user, password, api_endpoint):
         group_name=constants.CLOUD_SERVICES_GROUP_NAME,
         auth=auth)
     config_client.store_auth()
+
+    ctx.log('Authentication configured successfully')
 
 @cli.command('subscription',
              help=HELP['CLOUD_SERVICES_SUBSCRIPTION_HELP'])
@@ -112,10 +114,9 @@ def subscription(ctx, action, subscription_id, declaration):
     """
     # Additional option validation
     if action == 'update' and declaration is None:
-        msg = 'The --declaration option is required when updating a Cloud Services subscription'
-        raise click.ClickException(msg)
-
-    ctx.log('Calling %s against the %s subscription in F5 Cloud Services', action, subscription_id)
+        raise click.ClickException(
+            'The --declaration option is required when updating a Cloud Services subscription'
+        )
 
     auth = ConfigClient().read_auth(constants.CLOUD_SERVICES_GROUP_NAME)
     mgmt_client = ManagementClient(user=auth['username'], password=auth['password'],
@@ -123,13 +124,12 @@ def subscription(ctx, action, subscription_id, declaration):
 
     subscription_client = SubscriptionClient(mgmt_client)
     if action == 'show':
-        subscription_data = subscription_client.show(name=subscription_id)
-        click.echo(message=json.dumps(subscription_data))
+        ctx.log(subscription_client.show(name=subscription_id))
     elif action == 'update':
-        decl_location = utils_core.convert_to_absolute(declaration)
-        result = subscription_client.update(name=subscription_id, config_file=decl_location)
-        ctx.log('Cloud Services Subscription updated:')
-        click.echo(message=json.dumps(result))
+        ctx.log(subscription_client.update(
+            name=subscription_id,
+            config_file=utils_core.convert_to_absolute(declaration)
+        ))
     else:
         raise click.ClickException(f"Action {action} not implemented for 'subscription' command")
 

@@ -85,7 +85,7 @@ def cli():
 @PASS_CONTEXT
 def configure_auth(ctx, host, port, user, password):
     """ command """
-    ctx.log('Configuring BIG-IP Auth to %s as %s with ******', host, user)
+
     config_client = ConfigClient(
         group_name=constants.BIGIP_GROUP_NAME,
         auth={
@@ -95,6 +95,8 @@ def configure_auth(ctx, host, port, user, password):
             'port': port
         })
     config_client.store_auth()
+
+    ctx.log('Authentication configured successfully')
 
 @cli.command('discover',
              help=HELP['BIGIP_DISCOVER_HELP'])
@@ -113,6 +115,7 @@ def discover(ctx, provider, provider_tag):
     provider_client = clients.get_provider_client(provider)
     # list virtual machines
     virtual_machines = provider_client.virtual_machines.list(filter_tag=provider_tag)
+
     ctx.log(virtual_machines)
 
 # group: toolchain - package, service

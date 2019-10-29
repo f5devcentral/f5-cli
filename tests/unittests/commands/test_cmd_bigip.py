@@ -101,7 +101,7 @@ class TestCommandBigIp(object):
             'password': test_password
         }
         assert result.output == json.dumps(
-            {'message': f'Configuring BIG-IP Auth to {test_host} as {test_user} with ******'},
+            {'message': 'Authentication configured successfully'},
             indent=4,
             sort_keys=True
         ) + '\n'
@@ -138,7 +138,7 @@ class TestCommandBigIp(object):
             'password': test_password
         }
         assert result.output == json.dumps(
-            {'message': f'Configuring BIG-IP Auth to {test_host} as {test_user} with ******'},
+            {'message': 'Authentication configured successfully'},
             indent=4,
             sort_keys=True
         ) + '\n'

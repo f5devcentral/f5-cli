@@ -1,7 +1,6 @@
 import json
 
 import pytest
-import click
 import os
 
 from click.testing import CliRunner
@@ -119,7 +118,7 @@ class TestCommandBigIp(object):
             'password': TEST_PASSWORD
         }
         assert result.output == json.dumps(
-            {'message': f'Configuring F5 Cloud Services Auth for {TEST_USER} with ******'},
+            {'message': 'Authentication configured successfully'},
             indent=4,
             sort_keys=True
         ) + '\n'
@@ -156,7 +155,7 @@ class TestCommandBigIp(object):
             'api_endpoint': test_api_endpoint
         }
         assert result.output == json.dumps(
-            {'message': f'Configuring F5 Cloud Services Auth for {TEST_USER} with ******'},
+            {'message': 'Authentication configured successfully'},
             indent=4,
             sort_keys=True
         ) + '\n'
@@ -181,18 +180,19 @@ class TestCommandBigIp(object):
         - A Subscription client is created
         - The show command is executed
         """
-        mock_subscription_client_show = mocker.patch.object(
-            SubscriptionClient, "show")
-        mock_subscription_client_show.return_value = {
+
+        mock_show_return = {
             'subscription_id': SUBSCRIPTION_ID,
             'account_id': 'a-123'
         }
-        click_echo = mocker.patch.object(click, 'echo')
-        self.runner.invoke(cli, ['subscription', 'show',
-                                 '--subscription-id', SUBSCRIPTION_ID])
+        mock_subscription_client_show = mocker.patch.object(
+            SubscriptionClient, "show")
+        mock_subscription_client_show.return_value = mock_show_return
 
-        expected_response = '{"subscription_id": "s-123", "account_id": "a-123"}'
-        assert click_echo.call_args[1]['message'] == expected_response
+        result = self.runner.invoke(cli, ['subscription', 'show',
+                                          '--subscription-id', SUBSCRIPTION_ID])
+
+        assert result.output == json.dumps(mock_show_return, indent=4, sort_keys=True) + '\n'
 
     def test_cmd_cloud_services_subscription_bad_action(self):
         """ Execute an unimplemented action for F5 Cloud Services subscription
@@ -248,16 +248,18 @@ class TestCommandBigIp(object):
         - The CLI calls the F5 Cloud SDK to update Cloud Services
         """
 
-        mock_subscription_client_update = mocker.patch.object(
-            SubscriptionClient, "update")
-        mock_subscription_client_update.return_value = {
+        mock_update_return = {
             'subscription_id': SUBSCRIPTION_ID,
             'account_id': 'a-123'
         }
+
+        mock_subscription_client_update = mocker.patch.object(
+            SubscriptionClient, "update")
+        mock_subscription_client_update.return_value = mock_update_return
 
         declaration_file = 'decl.json'
         expected_config_file = os.path.join(os.getcwd(), declaration_file)
         result = self.runner.invoke(cli, ['subscription', 'update', '--subscription-id',
                                           SUBSCRIPTION_ID, '--declaration', 'decl.json'])
-        assert "Cloud Services Subscription updated" in result.output
+        assert result.output == json.dumps(mock_update_return, indent=4, sort_keys=True) + '\n'
         assert mock_subscription_client_update.call_args[1]['config_file'] == expected_config_file
