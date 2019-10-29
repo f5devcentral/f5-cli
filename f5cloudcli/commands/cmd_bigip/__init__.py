@@ -9,7 +9,6 @@
         $ export F5_CLI_PROVIDER_SECRET_KEY=<aws_secret_access_key>
         $ export F5_CLI_PROVIDER_REGION_NAME=<region>
         $ f5 bigip discover --provider aws --provider-tag "MyTagKey:value1"
-        Discovering all BIG-IPs in aws with tag MyTagKey:value1
         {
             "id": "i-0e331f5ca76ad231d",
             ...
@@ -21,7 +20,9 @@
 
         $ f5 bigip configure-auth --host 54.224.182.104 --port 443 --user myuser
         Password:
-        Configuring BIG-IP Auth to 54.224.182.104 as myuser with ******
+        {
+            "message": "Authentication configured successfully"
+        }
 
 
     3. Install an Automation Toolchain package
@@ -29,7 +30,9 @@
     The following is an example of how to install the Declarative Onboarding package onto a BIG-IP. ::
 
         $ f5 bigip toolchain package install --component do
-        Toolchain component package do installed
+        {
+            "message": "Toolchain component package do installed"
+        }
 
 
     4. Install an Automation Toolchain service
@@ -37,7 +40,7 @@
     The following is an example of how to configure a new service using AS3 ::
 
         $ f5 bigip toolchain service --component as3 --declaration as3_decl.json create
-        Toolchain component service create: {
+        {
             "declaration": {
                 ...
             }
