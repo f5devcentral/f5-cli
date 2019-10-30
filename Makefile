@@ -24,7 +24,7 @@ build:
 	python3 setup.py sdist bdist_wheel
 unit_test:
 	echo "Running unit tests (incl code coverage)";
-	pytest -vv --flake8 --cov=${PACKAGE_DIR} ${UNIT_TEST_DIR}/;
+	pytest --cov=${PACKAGE_DIR} ${UNIT_TEST_DIR}/;
 lint:
 	echo "Running linter (any error will result in non-zero exit code)";
 	flake8 ${PACKAGE_DIR}/ ${TEST_DIR}/;

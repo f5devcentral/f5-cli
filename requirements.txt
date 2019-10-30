@@ -13,7 +13,7 @@ recommonmark==0.6.0
 sphinx_copybutton==0.2.5
 # dev packages
 pytest==4.3.1
-pytest-cov==2.6.1
+pytest-cov==2.8.1
 pytest-mock==1.10.4
 flake8==3.7.9
 pylint==2.3.1 ; python_version > '3.0'
