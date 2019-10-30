@@ -20,7 +20,7 @@ def _get_output_format():
     # 1) environment variable
     # 2) config file
     # 3) default format
-    if os.environ.get(FORMATS_ENV_VAR, None) is not None:
+    if FORMATS_ENV_VAR in os.environ:
         output_format = os.environ[FORMATS_ENV_VAR]
     elif os.path.isfile(F5_CONFIG_FILE):
         with open(F5_CONFIG_FILE, 'r') as config_file:
@@ -34,13 +34,16 @@ def _get_output_format():
 def _format_data_as_table(data):
     """Format data as a table """
 
+    if isinstance(data, dict):
+        data = [data]
+
     # Get common keys
-    common_keys = {key for key, val in data.items() if isinstance(val, str)}
+    common_keys = {key for key, val in data[0].items() if isinstance(val, str)}
     for idx in range(1, len(data)):
         common_keys = common_keys.intersection(set(data[idx].keys()))
     common_keys = sorted(common_keys)
     # Construct output as table
-    column_width = {val: len(data[0][val]) + 4 for val in common_keys}
+    column_width = {val: len(data[0][val]) for val in common_keys}
     row_format = ''.join(['{:' + str(width) + '}\t\t' for _, width in column_width.items()])
 
     title = row_format.format(*column_width.keys())
@@ -108,21 +111,21 @@ def format_output(data):
             }
     """
 
+    if not data:
+        raise click.ClickException('Data must be provided!')
+
     output_format = _get_output_format()
 
-    if data:
-        # it is typical that data is machine readable, however
-        # if text is provided wrap it like so: {"message": "my message"}
-        if not isinstance(data, (dict, list)):
-            data = {'message': data}
+    # it is typical that data is machine readable, however
+    # if text is provided wrap it like so: {"message": "my message"}
+    if not isinstance(data, (dict, list)):
+        data = {'message': data}
 
-        if output_format == FORMATS['JSON']:
-            formatted_data = json.dumps(data, indent=4, sort_keys=True)
-        elif output_format == FORMATS['TABLE']:
-            formatted_data = _format_data_as_table(data)
-        else:
-            raise click.ClickException("Unsupported format {}".format(output_format))
+    if output_format == FORMATS['JSON']:
+        formatted_data = json.dumps(data, indent=4, sort_keys=True)
+    elif output_format == FORMATS['TABLE']:
+        formatted_data = _format_data_as_table(data)
     else:
-        formatted_data = data
+        raise click.ClickException("Unsupported format {}".format(output_format))
 
     return formatted_data
