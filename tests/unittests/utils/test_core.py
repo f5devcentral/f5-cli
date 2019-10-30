@@ -97,10 +97,10 @@ def test_format_output_as_table(mocker):
     - data as list of dictionary
     [
         {
-            "foo": "bar"
+            "my_key": "my_first_value"
         },
         {
-            "foo": "baz"
+            "my_key": "my_first_value"
         }
     ]
 
@@ -132,5 +132,38 @@ def test_format_output_as_table(mocker):
         "--------------\t\t\n"
         "my_first_value\t\t\n"
         "my_second_value\t\t"
+    )
+    assert core_utils.format_output(data) == expected_result
+
+def test_format_output_as_table_dict(mocker):
+    """ Format output using table format
+    Given
+    - data as dictionary
+    {
+        "my_key": "my_first_value"
+    }
+
+    When
+    - data is requested as table format
+
+    Then
+    - data is returned in table format
+    """
+
+    mocker.patch.dict(
+        "f5cloudcli.utils.clients.os.environ",
+        {
+            FORMATS_ENV_VAR: FORMATS['TABLE']
+        }
+    )
+
+    data = {
+        'my_key': 'my_first_value'
+    }
+
+    expected_result = (
+        "my_key        \t\t\n"
+        "--------------\t\t\n"
+        "my_first_value\t\t"
     )
     assert core_utils.format_output(data) == expected_result

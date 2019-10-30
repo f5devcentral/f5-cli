@@ -5,11 +5,11 @@ import json
 
 import click
 
-from f5cloudcli.constants import F5_CONFIG_FILE
+from f5cloudcli.constants import F5_CONFIG_FILE, FORMATS, FORMATS_ENV_VAR
 from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
 from f5cloudcli import cli
 
-from ..global_test_imports import CliRunner
+from ..global_test_imports import pytest, CliRunner
 
 
 class TestContext(object):
@@ -24,11 +24,27 @@ class TestContext(object):
         """ Teardown func """
 
     @staticmethod
+    @pytest.fixture
+    def click_echo_fixture(mocker):
+        """Test fixture """
+
+        mocker.patch.dict(
+            "f5cloudcli.utils.clients.os.environ",
+            {
+                FORMATS_ENV_VAR: FORMATS['JSON']
+            }
+        )
+        mock_format_output = mocker.patch("f5cloudcli.cli.format_output")
+        mock_format_output.side_effect = TestContext.format_output_side_effect
+        mock_click_echo = mocker.patch("f5cloudcli.cli.click.echo")
+        return mock_click_echo
+
+    @staticmethod
     def format_output_side_effect(data):
         """ Format output side effect """
         return data
 
-    def test_log_message_no_argument_with_environment_variable(self, mocker):
+    def test_log_message_no_argument_with_environment_variable(self, click_echo_fixture):
         """ Log a message, no argument
         Given
         - Environment variable of output format JSON exists
@@ -39,15 +55,11 @@ class TestContext(object):
         Then
         - Message is logged in specific format
         """
-        mock_output_format_env = mocker.patch("f5cloudcli.cli.os.environ.get")
-        mock_output_format_env.return_value = "json"
-        mock_format_output = mocker.patch("f5cloudcli.cli.format_output")
-        mock_format_output.side_effect = TestContext.format_output_side_effect
-        mock_click_echo = mocker.patch("f5cloudcli.cli.click.echo")
-        self.context.log("Test message")
-        mock_click_echo.assert_called_once_with('Test message', file=sys.stderr)
 
-    def test_log_message_argument_with_environment_variable(self, mocker):
+        self.context.log("Test message")
+        click_echo_fixture.assert_called_once_with('Test message', file=sys.stderr)
+
+    def test_log_message_argument_with_environment_variable(self, click_echo_fixture):
         """ Log a message, with argument
         Given
         - Environment variable of output format JSON exists
@@ -58,13 +70,9 @@ class TestContext(object):
         Then
         - Message is logged in specific format
         """
-        mock_output_format_env = mocker.patch("f5cloudcli.cli.os.environ.get")
-        mock_output_format_env.return_value = "json"
-        mock_format_output = mocker.patch("f5cloudcli.cli.format_output")
-        mock_format_output.side_effect = TestContext.format_output_side_effect
-        mock_click_echo = mocker.patch("f5cloudcli.cli.click.echo")
+
         self.context.log("Test message with argument: %s", "fake value")
-        mock_click_echo.assert_called_once_with(
+        click_echo_fixture.assert_called_once_with(
             'Test message with argument: fake value', file=sys.stderr)
 
     def test_log_message_no_argument_no_environment_variable_with_config_file(self, mocker):
@@ -79,6 +87,7 @@ class TestContext(object):
         Then
         - Message is logged in specific format
         """
+
         mock_output_format_env = mocker.patch("f5cloudcli.utils.core.os.environ.get")
         mock_output_format_env.return_value = None
         mock_os_path_isfile = mocker.patch("f5cloudcli.utils.core.os.path.isfile")
@@ -122,31 +131,38 @@ class TestContext(object):
         self.context.log("Test message")
         mock_click_echo.assert_called_once_with('Test message', file=sys.stderr)
 
-    def test_vlog_message_no_argument_with_environment_variable_no_config_file(
-            self, mocker):
-        """ Vlog a message, no args, no output format env variable, config file does not exist
+    def test_vlog_message(self, click_echo_fixture):
+        """ Vlog a message
         Given
-        - Environment variable of output format JSON does not exist
-        - F5_CONFIG_FILE does not exists
+        - Environment variable of output format JSON exists
 
         When
         - User attempts to log a message
 
         Then
-        - Message is logged in specific format
+        - Verbose message is logged
         """
-        mock_output_format_env = mocker.patch("f5cloudcli.cli.os.environ.get")
-        mock_output_format_env.return_value = "-1"
-        mock_os_path_isfile = mocker.patch("f5cloudcli.cli.os.path.isfile")
-        mock_os_path_isfile.return_value = False
-        mocker.patch("f5cloudcli.cli.open", mocker.mock_open(read_data='json'))
 
-        mock_format_output = mocker.patch("f5cloudcli.cli.format_output")
-        mock_format_output.side_effect = TestContext.format_output_side_effect
-        mock_click_echo = mocker.patch("f5cloudcli.cli.click.echo")
         self.context.verbose = True
         self.context.vlog("Test message")
-        mock_click_echo.assert_called_once_with('Test message', file=sys.stderr)
+        click_echo_fixture.assert_called_once_with('Test message', file=sys.stderr)
+
+    def test_vlog_message_verbose_false(self, click_echo_fixture):
+        """ Vlog a message
+        Given
+        - Environment variable of output format JSON exists
+        - context.verbose is set to 'False'
+
+        When
+        - User attempts to log a message
+
+        Then
+        - Verbose message is NOT logged
+        """
+
+        self.context.verbose = False
+        self.context.vlog("Test message")
+        assert click_echo_fixture.called == 0
 
 
 class TestAliasedGroup(object):
