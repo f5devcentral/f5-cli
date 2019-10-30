@@ -39,6 +39,7 @@ clean:
 	rm -rf ${EGG_DIR}
 	rm -rf ${COVERAGE_DIR}
 	rm -rf ${COVERAGE_FILE}
+	find . -type d -name __pycache__ -exec rm -r {} \+
 html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
