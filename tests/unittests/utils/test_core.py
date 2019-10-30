@@ -135,6 +135,7 @@ def test_format_output_as_table(mocker):
     )
     assert core_utils.format_output(data) == expected_result
 
+
 def test_format_output_as_table_dict(mocker):
     """ Format output using table format
     Given
