@@ -2,17 +2,19 @@
 
 import os
 import sys
-import json
+
 import click
+
+from f5cloudcli.constants import FORMATS
 from f5cloudcli import docs
-from f5cloudcli.constants import F5_CONFIG_FILE, JSON_FORMAT
-from f5cloudcli.utils.clients import get_output_format
+from f5cloudcli.utils.core import format_output
 
 DOC = docs.get_docs()
 
 CONTEXT_SETTINGS = dict(auto_envvar_prefix='F5CloudCli')
 CMD_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), 'commands'))
 F5_OUTPUT_FORMAT = 'F5_OUTPUT_FORMAT_ENV'
+
 
 class Context():
     """ Context class for click. """
@@ -21,27 +23,24 @@ class Context():
         self.verbose = False
         self.home = os.getcwd()
 
-    def log(self, msg, *args): # pylint: disable=no-self-use
-        """Logs a message to stderr."""
-        output_format = os.environ.get(F5_OUTPUT_FORMAT, '-1')
-        if output_format == '-1':
-            if os.path.isfile(F5_CONFIG_FILE):
-                with open(F5_CONFIG_FILE, 'r') as config_file:
-                    output_format = json.load(config_file)['output']
-            else:
-                output_format = JSON_FORMAT
-        msg = get_output_format(msg, output_format)
+    @staticmethod
+    def log(msg, *args):
+        """Logs a message"""
+
+        # if args are provided, assume string formatting is required
         if args:
-            args = get_output_format(args, output_format)
             msg %= args
-        click.echo(msg, file=sys.stderr)
+
+        click.echo(format_output(msg), file=sys.stderr)
 
     def vlog(self, msg, *args):
-        """Logs a message to stderr only if verbose is enabled."""
+        """Logs a message only if verbose is enabled."""
         if self.verbose:
             self.log(msg, *args)
 
+
 PASS_CONTEXT = click.make_pass_decorator(Context, ensure=True)
+
 
 class AliasedGroup(click.Group):
     """ Alias group class for click. """
@@ -58,6 +57,7 @@ class AliasedGroup(click.Group):
             return click.Group.get_command(self, ctx, matches[0])
         ctx.fail('Too many matches: %s' % ', '.join(sorted(matches)))
 
+
 class F5CloudCLI(click.MultiCommand):
     """ Base click class for the CLI. """
 
@@ -66,7 +66,7 @@ class F5CloudCLI(click.MultiCommand):
         for _dir in os.listdir(CMD_FOLDER):
             if os.path.isdir(os.path.join(CMD_FOLDER, _dir)) and _dir.startswith('cmd_'):
                 cmd = _dir[4:]
-                cmd = cmd.replace('_', '-') # multi-word commands: foo_bar -> foo-bar
+                cmd = cmd.replace('_', '-')  # multi-word commands: foo_bar -> foo-bar
                 ret.append(cmd)
         return ret
 
@@ -81,6 +81,7 @@ class F5CloudCLI(click.MultiCommand):
             return
         return mod.cli
 
+
 @click.command(cls=F5CloudCLI,
                context_settings=CONTEXT_SETTINGS,
                help=DOC[('CLI_HELP')])
@@ -89,17 +90,18 @@ class F5CloudCLI(click.MultiCommand):
               is_flag=True,
               help=DOC[('VERBOSE_HELP')])
 @click.option('--output',
-              default=JSON_FORMAT,
+              default=FORMATS['DEFAULT'],
               help=DOC['OUTPUT_HELP'],
               show_default=True)
 @PASS_CONTEXT
-def cli(ctx='', output='', verbose='', home='', prog_name=''): # pylint: disable=unused-argument
+def cli(ctx='', output='', verbose='', home='', prog_name=''):  # pylint: disable=unused-argument
     """ main cli """
     ctx.verbose = verbose
     if home is not None:
         ctx.home = home
     if output:
         os.environ[F5_OUTPUT_FORMAT] = output
+
 
 if __name__ == '__main__':
     cli(prog_name='f5')

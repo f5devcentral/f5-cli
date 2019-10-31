@@ -9,6 +9,7 @@ from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
 
 HELP = docs.get_docs()
 
+
 @click.group('provider',
              help=HELP['PROVIDER_HELP'],
              cls=AliasedGroup)
@@ -28,5 +29,6 @@ def login(ctx, environment):
         ctx.log('Login successful')
     else:
         ctx.log('Login unsuccessful')
+
 
 click_repl.register_repl(cli)

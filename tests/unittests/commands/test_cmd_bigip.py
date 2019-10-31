@@ -1,14 +1,15 @@
-import pytest
-from click.testing import CliRunner
+""" Test BIG-IP command """
 
-from ...global_test_imports import MagicMock, call, PropertyMock
+import json
+
 from f5cloudsdk.bigip import ManagementClient
+
 from f5cloudcli.config import ConfigClient
 from f5cloudcli.utils import clients
-
-# Module under test
 from f5cloudcli.commands.cmd_bigip import cli, toolchain
 from f5cloudcli import constants
+
+from ...global_test_imports import MagicMock, call, PropertyMock, pytest, CliRunner
 
 MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE = {
     'host': '1.2.3.4',
@@ -16,6 +17,14 @@ MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE = {
     'username': 'test_user',
     'password': 'test_password'
 }
+
+MOCK_IS_INSTALLED_RETURN_VALUE = {
+    'installed': True,
+    'installed_version': '1.3.0',
+    'latest_version': '1.3.0'
+}
+
+# pylint: disable=too-many-public-methods
 
 
 class TestCommandBigIp(object):
@@ -28,35 +37,38 @@ class TestCommandBigIp(object):
     @classmethod
     def teardown_class(cls):
         """ Teardown func """
-        pass
 
+    @staticmethod
     @pytest.fixture
-    def toolchain_client_fixture(self, mocker):
+    def toolchain_client_fixture(mocker):
+        """Test fixture """
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
-        m = MagicMock()
-        m.is_installed.return_value = {'installed': True, 'installed_version': '1.3.0', 'latest_version': '1.3.0'}
-        type(mock_toolchain_client.return_value).package = PropertyMock(
-            return_value=m)
+        mock = MagicMock()
+        mock.is_installed.return_value = MOCK_IS_INSTALLED_RETURN_VALUE
+        type(mock_toolchain_client.return_value).package = PropertyMock(return_value=mock)
         return mock_toolchain_client
 
+    @staticmethod
     @pytest.fixture
-    def config_client_read_auth_fixture(self, mocker):
+    def config_client_read_auth_fixture(mocker):
         """ PyTest fixture mocking ConfigClient's read_auth method """
         mock_config_client_read_auth = mocker.patch.object(
             ConfigClient, "read_auth")
         mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
 
+    @staticmethod
     @pytest.fixture
-    def config_client_fixture(self, mocker):
+    def config_client_fixture(mocker):
         """ PyTest fixture returning mocked ConfigClient """
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
         return mock_config_client
 
+    @staticmethod
     @pytest.fixture
-    def mgmt_client_fixture(self, mocker):
+    def mgmt_client_fixture(mocker):
         """ PyTest fixture returning mocked BigIP Management Client """
         mock_management_client = mocker.patch.object(ManagementClient, '__init__')
         mock_management_client.return_value = None
@@ -92,8 +104,11 @@ class TestCommandBigIp(object):
             'username': test_user,
             'password': test_password
         }
-        expected_output = f"Configuring BIG-IP Auth to {test_host} as {test_user} with ******\n"
-        assert result.output == expected_output
+        assert result.output == json.dumps(
+            {'message': 'Authentication configured successfully'},
+            indent=4,
+            sort_keys=True
+        ) + '\n'
 
     def test_cmd_bigip_configure_auth_with_port(self, mocker, config_client_fixture):
         """ Configure authentication to a BIGIP
@@ -115,8 +130,11 @@ class TestCommandBigIp(object):
         test_user = 'TEST USER'
         test_port = 'TEST PORT'
         test_password = 'TEST PASSWORD'
-        result = self.runner.invoke(cli, ['configure-auth', '--host', test_host, '--port', test_port,
-                                          '--user', test_user, '--password', test_password])
+        result = self.runner.invoke(
+            cli,
+            ['configure-auth', '--host', test_host, '--port', test_port,
+             '--user', test_user, '--password', test_password]
+        )
         mock_config_client_store_auth.assert_called_once()
         mock_config_client_args = mock_config_client.call_args_list[0][1]
         assert mock_config_client_args['group_name'] == constants.BIGIP_GROUP_NAME
@@ -126,8 +144,11 @@ class TestCommandBigIp(object):
             'username': test_user,
             'password': test_password
         }
-        expected_output = f"Configuring BIG-IP Auth to {test_host} as {test_user} with ******\n"
-        assert result.output == expected_output
+        assert result.output == json.dumps(
+            {'message': 'Authentication configured successfully'},
+            indent=4,
+            sort_keys=True
+        ) + '\n'
 
     def test_cmd_discover_azure_resources(self, mocker):
         """ Discover azure resources
@@ -143,21 +164,36 @@ class TestCommandBigIp(object):
         Then
         - Azure resources are retrieved
         """
-        mock_clients = mocker.patch.object(clients, "get_provider_client")
-        m = MagicMock()
-        m.list.return_value = [{"id": "a1", "name": "f5bigip1"},
-                               {"id": "b2", "name": "f5bigip2"}]
-        type(mock_clients.return_value).virtual_machines = PropertyMock(
-            return_value=m)
-        result = self.runner.invoke(cli, ['discover', '--provider', 'azure',
-                                          '--provider-tag', 'test_key:test_value'])
-        assert result.output == "Discovering all BIG-IPs in azure with tag test_key:test_value\n{\n    \"id\": \"a1\",\n    \"name\": \"f5bigip1\"\n},\n{\n    \"id\": \"b2\",\n    \"name\": \"f5bigip2\"\n}\n"
 
+        virtual_machines = [
+            {
+                "id": "a1",
+                "name": "f5bigip1"
+            },
+            {
+                "id": "b2",
+                "name": "f5bigip2"
+            }
+        ]
+
+        mock_clients = mocker.patch.object(clients, "get_provider_client")
+        mock_list = MagicMock()
+        mock_list.list.return_value = virtual_machines
+        type(mock_clients.return_value).virtual_machines = PropertyMock(
+            return_value=mock_list)
+
+        result = self.runner.invoke(
+            cli,
+            ['discover', '--provider', 'azure', '--provider-tag', 'test_key:test_value']
+        )
+        assert result.output == json.dumps(virtual_machines, indent=4, sort_keys=True) + '\n'
+
+    # pylint: disable=unused-argument
     def test_cmd_package_verify_existing_toolchain_component(self,
-                                                             mocker,  # pylint: disable=unused-argument
+                                                             mocker,
                                                              mgmt_client_fixture,
-                                                             config_client_read_auth_fixture,  # pylint: disable=unused-argument
-                                                             toolchain_client_fixture):  # pylint: disable=unused-argument
+                                                             config_client_read_auth_fixture,
+                                                             toolchain_client_fixture):
         """ Command package verify an existing toolchain component
         Given
         - BIG-IP is up
@@ -172,12 +208,17 @@ class TestCommandBigIp(object):
         result = self.runner.invoke(
             toolchain, ['package', 'verify', '--component', 'do', '--version', '1.3.0'])
         mock_management_client.assert_called_once()
-        assert result.output == "{\n    \"installed\": true,\n    \"installed_version\": \"1.3.0\",\n    \"latest_version\": \"1.3.0\"\n}\n"
+        assert result.output == json.dumps(
+            MOCK_IS_INSTALLED_RETURN_VALUE,
+            indent=4,
+            sort_keys=True
+        ) + '\n'
 
+    # pylint: disable=unused-argument
     def test_cmd_package_verify_nonexist_toolchain_component(self,
                                                              mocker,
-                                                             config_client_read_auth_fixture,  # pylint: disable=unused-argument
-                                                             mgmt_client_fixture):  # pylint: disable=unused-argument
+                                                             config_client_read_auth_fixture,
+                                                             mgmt_client_fixture):
         """ Command package verify a non-existing package
         Given
         - BIG-IP is up
@@ -190,20 +231,28 @@ class TestCommandBigIp(object):
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
-        m = MagicMock()
-        m.is_installed.return_value = {'installed': False, 'installed_version': '', 'latest_version': '1.3.0'}
-        type(mock_toolchain_client.return_value).package = PropertyMock(
-            return_value=m)
+        mock_is_installed_return_value = {
+            'installed': False,
+            'installed_version': '',
+            'latest_version': '1.3.0'
+        }
+
+        mock = MagicMock()
+        mock.is_installed.return_value = mock_is_installed_return_value
+        type(mock_toolchain_client.return_value).package = PropertyMock(return_value=mock)
 
         result = self.runner.invoke(
             toolchain, ['package', 'verify', '--component', 'do', '--version', '1.3.0'])
-        assert result.output == "{\n    \"installed\": false,\n    \"installed_version\": \"\",\n    \"latest_version\": \"1.3.0\"\n}\n"
+        assert result.output == json.dumps(
+            mock_is_installed_return_value, indent=4, sort_keys=True
+        ) + '\n'
 
+    # pylint: disable=unused-argument
     def test_cmd_package_install_existing_toolchain_component(self,
-                                                              mocker,  # pylint: disable=unused-argument
-                                                              config_client_read_auth_fixture,  # pylint: disable=unused-argument
-                                                              mgmt_client_fixture,  # pylint: disable=unused-argument
-                                                              toolchain_client_fixture):  # pylint: disable=unused-argument
+                                                              mocker,
+                                                              config_client_read_auth_fixture,
+                                                              mgmt_client_fixture,
+                                                              toolchain_client_fixture):
         """ Command package install an existing package
         Given
         - BIG-IP is up
@@ -215,12 +264,17 @@ class TestCommandBigIp(object):
         """
         result = self.runner.invoke(
             toolchain, ['package', 'install', '--component', 'do', '--version', '1.3.0'])
-        assert result.output == "Toolchain component package do version 1.3.0 is already installed\n"
+        assert result.output == json.dumps(
+            {'message': 'Toolchain component package do version 1.3.0 is already installed'},
+            indent=4,
+            sort_keys=True
+        ) + '\n'
 
+    # pylint: disable=unused-argument
     def test_cmd_package_install_non_existing_toolchain_component(self,
                                                                   mocker,
-                                                                  config_client_read_auth_fixture,  # pylint: disable=unused-argument
-                                                                  mgmt_client_fixture):  # pylint: disable=unused-argument
+                                                                  config_client_read_auth_fixture,
+                                                                  mgmt_client_fixture):
         """ Command package install a non-existing package
         Given
         - BIG-IP is up
@@ -233,20 +287,28 @@ class TestCommandBigIp(object):
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
-        m = MagicMock()
-        m.is_installed.return_value = {'installed': False, 'installed_version': '', 'latest_version': '1.3.0'}
-        m.install.return_value = None
-        type(mock_toolchain_client.return_value).package = PropertyMock(
-            return_value=m)
+        mock = MagicMock()
+        mock.is_installed.return_value = {
+            'installed': False,
+            'installed_version': '',
+            'latest_version': '1.3.0'
+        }
+        mock.install.return_value = None
+        type(mock_toolchain_client.return_value).package = PropertyMock(return_value=mock)
 
         result = self.runner.invoke(
             toolchain, ['package', 'install', '--component', 'do', '--version', '1.3.0'])
-        assert result.output == "Toolchain component package do installed\n"
+        assert result.output == json.dumps(
+            {'message': 'Toolchain component package do installed'},
+            indent=4,
+            sort_keys=True
+        ) + '\n'
 
+    # pylint: disable=unused-argument
     def test_cmd_package_uninstall_existing_toolchain_component(self,
                                                                 mocker,
-                                                                config_client_read_auth_fixture,  # pylint: disable=unused-argument
-                                                                mgmt_client_fixture):  # pylint: disable=unused-argument
+                                                                config_client_read_auth_fixture,
+                                                                mgmt_client_fixture):
         """ Command package uninstall an existing package
         Given
         - BIG-IP is up
@@ -259,20 +321,26 @@ class TestCommandBigIp(object):
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
-        m = MagicMock()
-        m.is_installed.return_value = {'installed': True}
-        m.uninstall.return_value = None
+        mock = MagicMock()
+        mock.is_installed.return_value = {'installed': True}
+        mock.uninstall.return_value = None
         type(mock_toolchain_client.return_value).package = PropertyMock(
-            return_value=m)
+            return_value=mock
+        )
 
         result = self.runner.invoke(
             toolchain, ['package', 'uninstall', '--component', 'do', '--version', '1.3.0'])
-        assert result.output == "Toolchain component package do uninstalled\n"
+        assert result.output == json.dumps(
+            {'message': 'Toolchain component package do uninstalled'},
+            indent=4,
+            sort_keys=True
+        ) + '\n'
 
+    # pylint: disable=unused-argument
     def test_cmd_package_uninstall_non_existing_toolchain_component(self,
                                                                     mocker,
-                                                                    config_client_read_auth_fixture,  # pylint: disable=unused-argument
-                                                                    mgmt_client_fixture):  # pylint: disable=unused-argument
+                                                                    config_client_read_auth_fixture,
+                                                                    mgmt_client_fixture):
         """ Command package uninstall a non-existing package
         Given
         - BIG-IP is up
@@ -285,19 +353,23 @@ class TestCommandBigIp(object):
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
-        m = MagicMock()
-        m.is_installed.return_value = {'installed': False}
-        type(mock_toolchain_client.return_value).package = PropertyMock(
-            return_value=m)
+        mock = MagicMock()
+        mock.is_installed.return_value = {'installed': False}
+        type(mock_toolchain_client.return_value).package = PropertyMock(return_value=mock)
 
         result = self.runner.invoke(
             toolchain, ['package', 'uninstall', '--component', 'do', '--version', '1.3.0'])
-        assert result.output == "Toolchain component package do is already uninstalled\n"
+        assert result.output == json.dumps(
+            {'message': 'Toolchain component package do is already uninstalled'},
+            indent=4,
+            sort_keys=True
+        ) + '\n'
 
+    # pylint: disable=unused-argument
     def test_cmd_package_unsupported_action(self,
                                             mocker,
-                                            config_client_read_auth_fixture,  # pylint: disable=unused-argument
-                                            mgmt_client_fixture):  # pylint: disable=unused-argument
+                                            config_client_read_auth_fixture,
+                                            mgmt_client_fixture):
         """ Unsupported command package action
         Given
         - BIG-IP is up
@@ -310,20 +382,21 @@ class TestCommandBigIp(object):
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
-        m = MagicMock()
-        m.is_installed.return_value = {'installed': False}
-        type(mock_toolchain_client.return_value).package = PropertyMock(
-            return_value=m)
+        mock = MagicMock()
+        mock.is_installed.return_value = {'installed': False}
+        type(mock_toolchain_client.return_value).package = PropertyMock(return_value=mock)
+
         result = self.runner.invoke(
             toolchain, ['package', 'upgrade', '--component', 'do'])
         assert result.exception
         assert result.output == "Error: Action upgrade not implemented\n"
 
+    # pylint: disable=unused-argument
     def test_cmd_service_show_installed_component(self,
                                                   mocker,
-                                                  config_client_read_auth_fixture,  # pylint: disable=unused-argument
-                                                  mgmt_client_fixture,  # pylint: disable=unused-argument
-                                                  toolchain_client_fixture):  # pylint: disable=unused-argument
+                                                  config_client_read_auth_fixture,
+                                                  mgmt_client_fixture,
+                                                  toolchain_client_fixture):
         """ Command service show an already installed component
         Given
         - BIG-IP is up
@@ -337,19 +410,24 @@ class TestCommandBigIp(object):
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
+        show_response = {
+            'foo': 'bar'
+        }
+
         mock_service = MagicMock()
-        mock_service.show.return_value = "Test DO status"
+        mock_service.show.return_value = show_response
         type(mock_toolchain_client.return_value).service = PropertyMock(
             return_value=mock_service)
 
         result = self.runner.invoke(
             toolchain, ['service', 'show', '--component', 'do', '--version', '1.3.0'])
-        assert result.output == "Toolchain component service show: Test DO status\n"
+        assert result.output == json.dumps(show_response, indent=4, sort_keys=True) + '\n'
 
+    # pylint: disable=unused-argument
     def test_cmd_service_show_non_installed_component(self,
                                                       mocker,
-                                                      config_client_read_auth_fixture,  # pylint: disable=unused-argument
-                                                      mgmt_client_fixture):  # pylint: disable=unused-argument
+                                                      config_client_read_auth_fixture,
+                                                      mgmt_client_fixture):
         """ Command service show status of a non-installed component
         Given
         - BIG-IP is up
@@ -364,25 +442,35 @@ class TestCommandBigIp(object):
         mock_toolchain_client = mocker.patch(
             "f5cloudcli.commands.cmd_bigip.ToolChainClient")
 
+        is_installed_response = {
+            'installed': False
+        }
+        show_response = {
+            'foo': 'bar'
+        }
+
         mock_package = MagicMock()
-        mock_package.is_installed.return_value = {'installed': False}
+        mock_package.is_installed.return_value = is_installed_response
         mock_package.install.return_value = None
         type(mock_toolchain_client.return_value).package = PropertyMock(
             return_value=mock_package)
         mock_service = MagicMock()
-        mock_service.show.return_value = "Test DO status"
+        mock_service.show.return_value = show_response
         mock_service.is_available.return_value = None
         type(mock_toolchain_client.return_value).service = PropertyMock(
             return_value=mock_service)
 
-        result = self.runner.invoke(toolchain, [
-                                    'service', 'show', '--component', 'do', '--version', '1.3.0', '--install-component'])
-        assert result.output == "Installing toolchain component package\nChecking toolchain component service is available\nToolchain component service show: Test DO status\n"
+        result = self.runner.invoke(
+            toolchain,
+            ['service', 'show', '--component', 'do', '--version', '1.3.0', '--install-component']
+        )
+        assert result.output == json.dumps(show_response, indent=4, sort_keys=True) + '\n'
 
+    # pylint: disable=unused-argument
     def test_cmd_service_create_declaration_installed_component(self,
                                                                 mocker,
-                                                                config_client_read_auth_fixture,  # pylint: disable=unused-argument
-                                                                mgmt_client_fixture,  # pylint: disable=unused-argument
+                                                                config_client_read_auth_fixture,
+                                                                mgmt_client_fixture,
                                                                 toolchain_client_fixture):
         """ Command service create declaration of an installed component
         Given
@@ -394,7 +482,12 @@ class TestCommandBigIp(object):
         -  result status of create action is logged
         """
         mock_service = MagicMock()
-        mock_service.create.return_value = "Test DO create status"
+
+        create_response = {
+            'foo': 'bar'
+        }
+
+        mock_service.create.return_value = create_response
         mock_toolchain_client = toolchain_client_fixture
         type(mock_toolchain_client.return_value).service = PropertyMock(
             return_value=mock_service)
@@ -405,15 +498,17 @@ class TestCommandBigIp(object):
 
         result = self.runner.invoke(toolchain, ['service', 'create', '--component', 'do',
                                                 '--declaration', './test/fake_declaration.json'])
-        assert result.output == "Toolchain component service create: Test DO create status\n"
+
+        assert result.output == json.dumps(create_response, indent=4, sort_keys=True) + '\n'
         mock_utils_core_convert.assert_has_calls(
             [call('./test/fake_declaration.json')])
 
+    # pylint: disable=unused-argument
     def test_cmd_service_delete_installed_component(self,
                                                     mocker,
-                                                    config_client_read_auth_fixture,  # pylint: disable=unused-argument
+                                                    config_client_read_auth_fixture,
                                                     mgmt_client_fixture,
-                                                    toolchain_client_fixture):  # pylint: disable=unused-argument
+                                                    toolchain_client_fixture):
         """ Command service delete of an already installed component
         Given
         - BIG-IP is up
@@ -425,14 +520,18 @@ class TestCommandBigIp(object):
         """
         mock_toolchain_client = toolchain_client_fixture
 
+        delete_response = {
+            'foo': 'bar'
+        }
+
         mock_service = MagicMock()
-        mock_service.delete.return_value = "Test DO delete status"
+        mock_service.delete.return_value = delete_response
         type(mock_toolchain_client.return_value).service = PropertyMock(
             return_value=mock_service)
 
         result = self.runner.invoke(
             toolchain, ['service', 'delete', '--component', 'do'])
-        assert result.output == "Toolchain component service delete: Test DO delete status\n"
+        assert result.output == json.dumps(delete_response, indent=4, sort_keys=True) + '\n'
 
     def test_cmd_service_unsupported_action(self):
         """ Unsupported command service action

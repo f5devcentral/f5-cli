@@ -3,6 +3,7 @@
 import os
 import yaml
 
+
 def get_docs():
     """ Get the docs """
     my_path = os.path.abspath(os.path.dirname(__file__))

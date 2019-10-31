@@ -1,7 +1,8 @@
-from click.testing import CliRunner
+""" Test Config command """
 
-# Module under test
 from f5cloudcli.commands.cmd_config import cli
+
+from ...global_test_imports import CliRunner
 
 
 class TestCommandConfig(object):
@@ -14,7 +15,6 @@ class TestCommandConfig(object):
     @classmethod
     def teardown_class(cls):
         """ Teardown func """
-        pass
 
     def test_cmd_configure_output_format_cli_dir_not_exist(self, mocker):
         """ Configure output format

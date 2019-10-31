@@ -1,21 +1,23 @@
-# pylint: disable=line-too-long
 """Below are examples of using the Cloud CLI to interact with F5 Cloud Services.
 
     1. Configure authentication to F5 Cloud Services
     ------------------------------------------------
-    The following is an example of how to configure authentication to F5 Cloud Services. Any commands that interact with F5 Cloud Services require that authentication to F5 Cloud Services already be configured. ::
+    The following is an example of how to configure authentication to F5 Cloud Services.
+    Any commands that interact with F5 Cloud Services require that authentication to
+    F5 Cloud Services already be configured. ::
 
         $ f5 cloud-services configure-auth --user user@us.com
         Password:
-        Configuring F5 Cloud Services Auth for user@us.com with ******
+        {
+            "message": "Authentication configured successfully"
+        }
 
     2. Update an F5 Cloud Services subscription
     -------------------------------------------
-    The following is an example of how to update an F5 Cloud Services subscription, such as a DNS Load Balancer. ::
+    The following is an example of how to update an F5 Cloud Services subscription,
+    such as a DNS Load Balancer. ::
 
         $ f5 cloud-services subscription update --subscription-id s-123 --declaration decl.json
-        Calling update against the s-123 subscription in F5 Cloud Services
-        Cloud Services Subscription updated:
         {
             "subscription_id": "s-123",
             ...
@@ -23,20 +25,16 @@
 
     3. Get configuration of an F5 Cloud Services subscription
     ---------------------------------------------------------
-    The following is an example of how to display or show the configuration of an existing F5 Cloud Services subscription, such as a DNS Load Balancer. ::
+    The following is an example of how to display or show the configuration of an existing
+    F5 Cloud Services subscription, such as a DNS Load Balancer. ::
 
         $ f5 cloud-services subscription show --subscription-id s-123
-        Calling show against the s-123 subscription in F5 Cloud Services
-        Cloud Services Subscription updated:
         {
             "subscription_id": "s-123",
             ...
         }
 
 """
-# pylint: enable=line-too-long
-
-import json
 
 from f5cloudsdk.cloud_services import ManagementClient
 from f5cloudsdk.cloud_services.subscriptions import SubscriptionClient
@@ -51,6 +49,7 @@ from f5cloudcli.utils import core as utils_core
 from f5cloudcli import constants
 
 HELP = docs.get_docs()
+
 
 # group: cloud-services
 @click.group('cloud-services',
@@ -69,7 +68,7 @@ def cli():
 @PASS_CONTEXT
 def configure_auth(ctx, user, password, api_endpoint):
     """ command """
-    ctx.log('Configuring F5 Cloud Services Auth for %s with ******', user)
+
     auth = {
         'username': user,
         'password': password
@@ -81,6 +80,8 @@ def configure_auth(ctx, user, password, api_endpoint):
         group_name=constants.CLOUD_SERVICES_GROUP_NAME,
         auth=auth)
     config_client.store_auth()
+
+    ctx.log('Authentication configured successfully')
 
 @cli.command('subscription',
              help=HELP['CLOUD_SERVICES_SUBSCRIPTION_HELP'])
@@ -112,10 +113,9 @@ def subscription(ctx, action, subscription_id, declaration):
     """
     # Additional option validation
     if action == 'update' and declaration is None:
-        msg = 'The --declaration option is required when updating a Cloud Services subscription'
-        raise click.ClickException(msg)
-
-    ctx.log('Calling %s against the %s subscription in F5 Cloud Services', action, subscription_id)
+        raise click.ClickException(
+            'The --declaration option is required when updating a Cloud Services subscription'
+        )
 
     auth = ConfigClient().read_auth(constants.CLOUD_SERVICES_GROUP_NAME)
     mgmt_client = ManagementClient(user=auth['username'], password=auth['password'],
@@ -123,13 +123,12 @@ def subscription(ctx, action, subscription_id, declaration):
 
     subscription_client = SubscriptionClient(mgmt_client)
     if action == 'show':
-        subscription_data = subscription_client.show(name=subscription_id)
-        click.echo(message=json.dumps(subscription_data))
+        ctx.log(subscription_client.show(name=subscription_id))
     elif action == 'update':
-        decl_location = utils_core.convert_to_absolute(declaration)
-        result = subscription_client.update(name=subscription_id, config_file=decl_location)
-        ctx.log('Cloud Services Subscription updated:')
-        click.echo(message=json.dumps(result))
+        ctx.log(subscription_client.update(
+            name=subscription_id,
+            config_file=utils_core.convert_to_absolute(declaration)
+        ))
     else:
         raise click.ClickException(f"Action {action} not implemented for 'subscription' command")
 
@@ -149,7 +148,8 @@ def subscription(ctx, action, subscription_id, declaration):
 @PASS_CONTEXT
 def dns(ctx, action, record_type, members):
     """ command """
-    ctx.log('%s DNS %s with members %s', action, record_type, members)
+
     raise click.ClickException('Command not implemented')
+
 
 click_repl.register_repl(cli)

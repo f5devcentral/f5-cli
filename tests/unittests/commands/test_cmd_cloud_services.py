@@ -1,16 +1,17 @@
-import pytest
-import click
+""" Test Cloud Services command """
+
+import json
 import os
 
-from click.testing import CliRunner
 
 from f5cloudsdk.cloud_services import ManagementClient
 from f5cloudsdk.cloud_services.subscriptions import SubscriptionClient
-from f5cloudcli.config import ConfigClient
 
-# Module under test
+from f5cloudcli.config import ConfigClient
 from f5cloudcli.commands.cmd_cloud_services import cli
 from f5cloudcli import constants
+
+from ...global_test_imports import pytest, CliRunner
 
 # Test Constants
 TEST_USER = 'TEST USER'
@@ -33,39 +34,43 @@ class TestCommandBigIp(object):
     @classmethod
     def teardown_class(cls):
         """ Teardown func """
-        pass
 
+    @staticmethod
     @pytest.fixture
-    def config_client_fixture(self, mocker):
+    def config_client_fixture(mocker):
         """ PyTest fixture returning mocked ConfigClient """
         mock_config_client = mocker.patch.object(ConfigClient, "__init__")
         mock_config_client.return_value = None
         return mock_config_client
 
+    @staticmethod
     @pytest.fixture
-    def config_client_store_auth_fixture(self, mocker):
+    def config_client_store_auth_fixture(mocker):
         """ PyTest fixture mocking ConfigClient's store_auth method """
         mock_config_client_store_auth = mocker.patch.object(
             ConfigClient, "store_auth")
         return mock_config_client_store_auth
 
+    @staticmethod
     @pytest.fixture
-    def config_client_read_auth_fixture(self, mocker):
+    def config_client_read_auth_fixture(mocker):
         """ PyTest fixture mocking ConfigClient's read_auth method """
         mock_config_client_read_auth = mocker.patch.object(
             ConfigClient, "read_auth")
         mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
         return mock_config_client_read_auth
 
+    @staticmethod
     @pytest.fixture
-    def mgmt_client_fixture(self, mocker):
+    def mgmt_client_fixture(mocker):
         """ PyTest fixture returning mocked Cloud Services Management Client """
         mock_management_client = mocker.patch.object(ManagementClient, '__init__')
         mock_management_client.return_value = None
         return mock_management_client
 
+    @staticmethod
     @pytest.fixture
-    def subscription_client_fixture(self, mocker):
+    def subscription_client_fixture(mocker):
         """ PyTest fixture returning mocked Cloud Services Subscription Client """
         mock_subscription_client = mocker.patch.object(SubscriptionClient, '__init__')
         mock_subscription_client.return_value = None
@@ -84,8 +89,8 @@ class TestCommandBigIp(object):
         """
         result = self.runner.invoke(
             cli, ['dns', 'create', 'a', 'test_members'])
-        expected_output = "create DNS a with members test_members\nError: Command not implemented\n"
-        assert result.output == expected_output
+
+        assert result.output == 'Error: Command not implemented\n'
         assert result.exception
 
     def test_cmd_cloud_services_configure_auth(self,
@@ -116,7 +121,11 @@ class TestCommandBigIp(object):
             'username': TEST_USER,
             'password': TEST_PASSWORD
         }
-        assert result.output == f"Configuring F5 Cloud Services Auth for {TEST_USER} with ******\n"
+        assert result.output == json.dumps(
+            {'message': 'Authentication configured successfully'},
+            indent=4,
+            sort_keys=True
+        ) + '\n'
 
     def test_cmd_cloud_services_configure_auth_custom_api(self,
                                                           config_client_fixture,
@@ -149,13 +158,18 @@ class TestCommandBigIp(object):
             'password': TEST_PASSWORD,
             'api_endpoint': test_api_endpoint
         }
-        assert result.output == f"Configuring F5 Cloud Services Auth for {TEST_USER} with ******\n"
+        assert result.output == json.dumps(
+            {'message': 'Authentication configured successfully'},
+            indent=4,
+            sort_keys=True
+        ) + '\n'
 
+    # pylint: disable=unused-argument
     def test_cmd_cloud_services_subscription_show(self,
                                                   mocker,
-                                                  config_client_read_auth_fixture,  # pylint: disable=unused-argument
-                                                  mgmt_client_fixture,  # pylint: disable=unused-argument
-                                                  subscription_client_fixture):  # pylint: disable=unused-argument
+                                                  config_client_read_auth_fixture,
+                                                  mgmt_client_fixture,
+                                                  subscription_client_fixture):
         """ Execute a 'show' action against an F5 Cloud Services subscription
 
         Given
@@ -171,18 +185,19 @@ class TestCommandBigIp(object):
         - A Subscription client is created
         - The show command is executed
         """
-        mock_subscription_client_show = mocker.patch.object(
-            SubscriptionClient, "show")
-        mock_subscription_client_show.return_value = {
+
+        mock_show_return = {
             'subscription_id': SUBSCRIPTION_ID,
             'account_id': 'a-123'
         }
-        click_echo = mocker.patch.object(click, 'echo')
-        self.runner.invoke(cli, ['subscription', 'show',
-                                 '--subscription-id', SUBSCRIPTION_ID])
+        mock_subscription_client_show = mocker.patch.object(
+            SubscriptionClient, "show")
+        mock_subscription_client_show.return_value = mock_show_return
 
-        expected_response = '{"subscription_id": "s-123", "account_id": "a-123"}'
-        assert click_echo.call_args[1]['message'] == expected_response
+        result = self.runner.invoke(cli, ['subscription', 'show',
+                                          '--subscription-id', SUBSCRIPTION_ID])
+
+        assert result.output == json.dumps(mock_show_return, indent=4, sort_keys=True) + '\n'
 
     def test_cmd_cloud_services_subscription_bad_action(self):
         """ Execute an unimplemented action for F5 Cloud Services subscription
@@ -216,13 +231,17 @@ class TestCommandBigIp(object):
 
         result = self.runner.invoke(cli, ['subscription', 'update', '--subscription-id', 's'])
         assert result.exception
-        assert result.output == 'Error: The --declaration option is required when updating a Cloud Services subscription\n'  # pylint: disable=line-too-long
 
+        expected_output = ("Error: The --declaration option is required when"
+                           " updating a Cloud Services subscription\n")
+        assert result.output == expected_output
+
+    # pylint: disable=unused-argument
     def test_cmd_cloud_services_subscription_update(self,
                                                     mocker,
-                                                    config_client_read_auth_fixture,  # pylint: disable=unused-argument
-                                                    mgmt_client_fixture,  # pylint: disable=unused-argument
-                                                    subscription_client_fixture):  # pylint: disable=unused-argument
+                                                    config_client_read_auth_fixture,
+                                                    mgmt_client_fixture,
+                                                    subscription_client_fixture):
         """ Execute an 'update' action against a Cloud Services subscription
 
         Given
@@ -238,16 +257,18 @@ class TestCommandBigIp(object):
         - The CLI calls the F5 Cloud SDK to update Cloud Services
         """
 
-        mock_subscription_client_update = mocker.patch.object(
-            SubscriptionClient, "update")
-        mock_subscription_client_update.return_value = {
+        mock_update_return = {
             'subscription_id': SUBSCRIPTION_ID,
             'account_id': 'a-123'
         }
+
+        mock_subscription_client_update = mocker.patch.object(
+            SubscriptionClient, "update")
+        mock_subscription_client_update.return_value = mock_update_return
 
         declaration_file = 'decl.json'
         expected_config_file = os.path.join(os.getcwd(), declaration_file)
         result = self.runner.invoke(cli, ['subscription', 'update', '--subscription-id',
                                           SUBSCRIPTION_ID, '--declaration', 'decl.json'])
-        assert "Cloud Services Subscription updated" in result.output
+        assert result.output == json.dumps(mock_update_return, indent=4, sort_keys=True) + '\n'
         assert mock_subscription_client_update.call_args[1]['config_file'] == expected_config_file
