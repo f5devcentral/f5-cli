@@ -1,6 +1,6 @@
 ## cli ##
 CLI_HELP: |
-    Welcome to the F5 Cloud command line interface.
+    Welcome to the F5 command line interface.
 
     You can do all the things here.
 VERBOSE_HELP: 'Enables verbose mode'

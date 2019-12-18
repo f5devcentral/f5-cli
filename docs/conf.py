@@ -70,7 +70,7 @@ source_encoding = 'utf-8-sig'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Cloud CLI'
+project = u'F5 CLI'
 copyright = u'2019 F5 Networks Inc'
 author = u'F5 Networks'
 

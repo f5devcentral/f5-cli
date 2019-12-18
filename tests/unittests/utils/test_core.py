@@ -4,15 +4,15 @@ import os
 import sys
 import json
 
-from f5cloudcli.constants import FORMATS, FORMATS_ENV_VAR
-from f5cloudcli.utils import core as core_utils
+from f5cli.constants import FORMATS, FORMATS_ENV_VAR
+from f5cli.utils import core as core_utils
 
 sys.path.append(os.getcwd())
 
 
 def test_convert_absolute_path(mocker):
     """ Test absolute path """
-    mock_getcwd = mocker.patch("f5cloudcli.utils.core.os.getcwd")
+    mock_getcwd = mocker.patch("f5cli.utils.core.os.getcwd")
     mock_getcwd.return_value = "/test/current/directory"
     result = core_utils.convert_to_absolute("fake.txt")
     assert result == "/test/current/directory/fake.txt"
@@ -72,7 +72,7 @@ def test_format_output_as_json(mocker):
     """
 
     mocker.patch.dict(
-        "f5cloudcli.utils.clients.os.environ",
+        "f5cli.utils.clients.os.environ",
         {
             FORMATS_ENV_VAR: FORMATS['JSON']
         }
@@ -112,7 +112,7 @@ def test_format_output_as_table(mocker):
     """
 
     mocker.patch.dict(
-        "f5cloudcli.utils.clients.os.environ",
+        "f5cli.utils.clients.os.environ",
         {
             FORMATS_ENV_VAR: FORMATS['TABLE']
         }
@@ -152,7 +152,7 @@ def test_format_output_as_table_dict(mocker):
     """
 
     mocker.patch.dict(
-        "f5cloudcli.utils.clients.os.environ",
+        "f5cli.utils.clients.os.environ",
         {
             FORMATS_ENV_VAR: FORMATS['TABLE']
         }

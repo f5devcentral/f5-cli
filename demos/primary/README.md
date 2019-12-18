@@ -17,13 +17,13 @@ pip3 install -r demos/ansible/requirements.txt
 ```bash
 export AZURE_SUBSCRIPTION_ID=''; export AZURE_CLIENT_ID=''; AZURE_SECRET=''; AZURE_TENANT=''.
 export ADMIN_PWD='<insert password>'
-ansible-playbook demos/primary/main.yml -e "admin_password=${ADMIN_PWD}" -e "env_prefix=f5cloudclidemo" -v
+ansible-playbook demos/primary/main.yml -e "admin_password=${ADMIN_PWD}" -e "env_prefix=f5clidemo" -v
 ```
 
 ### Teardown
 
 ```bash
-ansible-playbook demos/primary/teardown.yml -e "env_prefix=f5cloudclidemo" -v
+ansible-playbook demos/primary/teardown.yml -e "env_prefix=f5clidemo" -v
 ```
 
 ### Notes
@@ -50,15 +50,15 @@ export ANSIBLE_PYTHON_INTERPRETER="$(realpath ansible-env)/bin/python"
 ```bash
 export ADMIN_PWD='<insert password>'
 # run terraform plan first - optional
-terraform plan -var="env_prefix=f5cloudclidemotf" -var="admin_password=${ADMIN_PWD}"
+terraform plan -var="env_prefix=f5clidemotf" -var="admin_password=${ADMIN_PWD}"
 # apply
-terraform apply -var="env_prefix=f5cloudclidemotf" -var="admin_password=${ADMIN_PWD}" -auto-approve
+terraform apply -var="env_prefix=f5clidemotf" -var="admin_password=${ADMIN_PWD}" -auto-approve
 ```
 
 ### Teardown
 
 ```bash
-terraform destroy -var="env_prefix=f5cloudclidemotf" -var="admin_password=${ADMIN_PWD}" -auto-approve
+terraform destroy -var="env_prefix=f5clidemotf" -var="admin_password=${ADMIN_PWD}" -auto-approve
 ```
 
 ## Advanced Options

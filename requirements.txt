@@ -3,7 +3,7 @@
 click==7.0
 pyyaml==3.13
 click-repl==0.1.6
-f5-cloud-sdk==0.9.0
+f5-sdk-python==0.9.0
 # doc packages
 f5-sphinx-theme==2.0.1
 sphinx==1.8.5

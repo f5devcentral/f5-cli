@@ -5,13 +5,13 @@ import sys
 
 import click
 
-from f5cloudcli.constants import FORMATS
-from f5cloudcli import docs
-from f5cloudcli.utils.core import format_output
+from f5cli.constants import FORMATS
+from f5cli import docs
+from f5cli.utils.core import format_output
 
 DOC = docs.get_docs()
 
-CONTEXT_SETTINGS = dict(auto_envvar_prefix='F5CloudCli')
+CONTEXT_SETTINGS = dict(auto_envvar_prefix='f5cli')
 CMD_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), 'commands'))
 F5_OUTPUT_FORMAT = 'F5_OUTPUT_FORMAT_ENV'
 
@@ -58,7 +58,7 @@ class AliasedGroup(click.Group):
         ctx.fail('Too many matches: %s' % ', '.join(sorted(matches)))
 
 
-class F5CloudCLI(click.MultiCommand):
+class CLI(click.MultiCommand):
     """ Base click class for the CLI. """
 
     def list_commands(self, ctx):
@@ -75,14 +75,14 @@ class F5CloudCLI(click.MultiCommand):
             if sys.version_info[0] == 2:
                 cmd_name = cmd_name.encode('ascii', 'replace')
             cmd_name = cmd_name.replace('-', '_')
-            mod = __import__('f5cloudcli.commands.cmd_' + cmd_name, None, None, ['cli'])
+            mod = __import__('f5cli.commands.cmd_' + cmd_name, None, None, ['cli'])
         except ImportError as error:
             print(error)
             return
         return mod.cli
 
 
-@click.command(cls=F5CloudCLI,
+@click.command(cls=CLI,
                context_settings=CONTEXT_SETTINGS,
                help=DOC[('CLI_HELP')])
 @click.version_option('0.9.0')

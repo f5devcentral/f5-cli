@@ -4,8 +4,8 @@ import os
 
 import click
 
-from f5cloudsdk import provider
-from f5cloudcli.constants import AWS_PROVIDER, AZURE_PROVIDER
+from f5sdk import provider
+from f5cli.constants import AWS_PROVIDER, AZURE_PROVIDER
 
 
 def get_env_vars(env_vars):

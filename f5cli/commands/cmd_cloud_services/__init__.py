@@ -1,4 +1,4 @@
-"""Below are examples of using the Cloud CLI to interact with F5 Cloud Services.
+"""Below are examples of using the CLI to interact with F5 Cloud Services.
 
     1. Configure authentication to F5 Cloud Services
     ------------------------------------------------
@@ -36,17 +36,17 @@
 
 """
 
-from f5cloudsdk.cloud_services import ManagementClient
-from f5cloudsdk.cloud_services.subscriptions import SubscriptionClient
+from f5sdk.cloud_services import ManagementClient
+from f5sdk.cloud_services.subscriptions import SubscriptionClient
 
 import click_repl
 import click
 
-from f5cloudcli import docs
-from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
-from f5cloudcli.config import ConfigClient
-from f5cloudcli.utils import core as utils_core
-from f5cloudcli import constants
+from f5cli import docs
+from f5cli.cli import PASS_CONTEXT, AliasedGroup
+from f5cli.config import ConfigClient
+from f5cli.utils import core as utils_core
+from f5cli import constants
 
 HELP = docs.get_docs()
 

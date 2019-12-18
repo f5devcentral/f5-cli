@@ -3,7 +3,7 @@
 Prerequisites and Requirements
 ------------------------------
 
-The following are prerequisites for using the F5 Cloud CLI:
+The following are prerequisites for using the F5 CLI:
 
 - Python 3.7+. For installation instructions, see `python download docs <https://www.python.org/downloads/>`_.
 - A Python virtual environment, for details see `python venv docs <https://docs.python.org/3/tutorial/venv.html>`_.
@@ -14,12 +14,12 @@ Installation
 
 ::
 
-    pip install f5-cloud-cli --extra-index-url https://***REMOVED***/artifactory/api/pypi/f5-cloud-solutions-pypi/simple
+    pip install f5-cli --extra-index-url https://***REMOVED***/artifactory/api/pypi/f5-cloud-solutions-pypi/simple
 
 Getting Help
 ------------
 
-The F5 Cloud CLI includes a `help` option, which will display relevant help information, and can be used to provide help information for each command.
+The F5 CLI includes a `help` option, which will display relevant help information, and can be used to provide help information for each command.
 
 The CLI will provide help information for any sub-commands, as well as relevant options. For example, providing the `help` option without specifying any commands will provide information on the available commands:
 

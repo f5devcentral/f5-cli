@@ -4,12 +4,12 @@ import json
 import os
 
 
-from f5cloudsdk.cloud_services import ManagementClient
-from f5cloudsdk.cloud_services.subscriptions import SubscriptionClient
+from f5sdk.cloud_services import ManagementClient
+from f5sdk.cloud_services.subscriptions import SubscriptionClient
 
-from f5cloudcli.config import ConfigClient
-from f5cloudcli.commands.cmd_cloud_services import cli
-from f5cloudcli import constants
+from f5cli.config import ConfigClient
+from f5cli.commands.cmd_cloud_services import cli
+from f5cli import constants
 
 from ...global_test_imports import pytest, CliRunner
 
@@ -254,7 +254,7 @@ class TestCommandBigIp(object):
         - The User provides a valid declaration file
 
         Then
-        - The CLI calls the F5 Cloud SDK to update Cloud Services
+        - The CLI calls the F5 SDK to update Cloud Services
         """
 
         mock_update_return = {

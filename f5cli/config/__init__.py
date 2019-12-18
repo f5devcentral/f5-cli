@@ -4,7 +4,7 @@ import os
 import json
 import click
 
-import f5cloudcli.constants as constants
+import f5cli.constants as constants
 
 F5_AUTH_FILE_PATH = constants.F5_AUTH_FILE
 F5_CLI_DIR = constants.F5_CLI_DIR
@@ -12,7 +12,7 @@ F5_CLI_DIR = constants.F5_CLI_DIR
 
 class ConfigClient():
     """ A class used to store any required authentication
-    or configuration data used by the F5 Cloud CLI
+    or configuration data used by the F5 CLI
 
     It will store the required credentials and connection information
     needed by the CLI groups (BigIP and Cloud Services), and persist

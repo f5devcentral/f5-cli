@@ -2,9 +2,9 @@
 
 Troubleshooting
 ===============
-Below are Troubleshooting steps that can be used while working with the F5 Cloud CLI.
+Below are Troubleshooting steps that can be used while working with the F5 CLI.
 
-*Note:* Many of the Environment Variables mentioned below influence behavior within the F5 Cloud SDK, not with with F5 Cloud CLI directly.
+*Note:* Many of the Environment Variables mentioned below influence behavior within the F5 SDK, not with with F5 CLI directly.
 
 Enable Debugging
 ----------------

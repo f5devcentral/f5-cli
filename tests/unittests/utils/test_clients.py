@@ -2,7 +2,7 @@
 
 import click
 
-from f5cloudcli.utils import clients
+from f5cli.utils import clients
 
 from ...global_test_imports import pytest
 
@@ -30,7 +30,7 @@ class TestUtilsClients(object):
         Then
         - Exception is thrown
         """
-        mocker.patch.dict("f5cloudcli.utils.clients.os.environ",
+        mocker.patch.dict("f5cli.utils.clients.os.environ",
                           {
                               "BAR": "bar_value",
                               "TENANT_ID": "tenant_id_value",
@@ -52,7 +52,7 @@ class TestUtilsClients(object):
         Then
         - Values for FOO and BAR are returned
         """
-        mocker.patch.dict("f5cloudcli.utils.clients.os.environ",
+        mocker.patch.dict("f5cli.utils.clients.os.environ",
                           {"FOO": "foo_value", "BAR": "bar_value", "CLIENT_ID": "test_client_id"})
         results = clients.get_env_vars(["FOO", "BAR"])
         assert results == ["foo_value", "bar_value"]
@@ -85,14 +85,14 @@ class TestUtilsClients(object):
         Then
         - azure provider client is returned
         """
-        mocker.patch.dict("f5cloudcli.utils.clients.os.environ",
+        mocker.patch.dict("f5cli.utils.clients.os.environ",
                           {
                               'F5_CLI_PROVIDER_TENANT_ID': '1',
                               'F5_CLI_PROVIDER_CLIENT_ID': '2',
                               'F5_CLI_PROVIDER_SECRET': '3',
                               'F5_CLI_PROVIDER_SUBSCRIPTION_ID': '4'
                           })
-        mock_azure_client = mocker.patch("f5cloudcli.utils.clients.provider.azure.ProviderClient")
+        mock_azure_client = mocker.patch("f5cli.utils.clients.provider.azure.ProviderClient")
         clients.get_provider_client('azure')
         mock_azure_client.assert_called_once_with(tenant_id='1',
                                                   client_id='2',
@@ -111,13 +111,13 @@ class TestUtilsClients(object):
         Then
         - aws provider client is returned
         """
-        mocker.patch.dict("f5cloudcli.utils.clients.os.environ",
+        mocker.patch.dict("f5cli.utils.clients.os.environ",
                           {
                               'F5_CLI_PROVIDER_ACCESS_KEY': '1',
                               'F5_CLI_PROVIDER_SECRET_KEY': '2',
                               'F5_CLI_PROVIDER_REGION_NAME': '3'
                           })
-        mock_aws_client = mocker.patch("f5cloudcli.utils.clients.provider.aws.ProviderClient")
+        mock_aws_client = mocker.patch("f5cli.utils.clients.provider.aws.ProviderClient")
         clients.get_provider_client('aws')
         mock_aws_client.assert_called_once_with(access_key='1',
                                                 secret_key='2',

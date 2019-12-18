@@ -5,7 +5,7 @@ import json
 
 import click
 
-from f5cloudcli.constants import F5_CONFIG_FILE, FORMATS, FORMATS_ENV_VAR
+from f5cli.constants import F5_CONFIG_FILE, FORMATS, FORMATS_ENV_VAR
 
 
 def convert_to_absolute(file):
