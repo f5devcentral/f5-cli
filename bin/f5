@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-python3 -m f5cloudcli.cli "$@"
+python3 -m f5cli.cli "$@"

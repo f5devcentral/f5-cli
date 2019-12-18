@@ -1,4 +1,4 @@
-"""Below are examples of using the Cloud CLI to interact with a BIG-IP.
+"""Below are examples of using the CLI to interact with a BIG-IP.
 
     1. Discover BIG-IPs running in a Cloud Provider
     -----------------------------------------------
@@ -53,17 +53,17 @@
 
 # pylint: disable=too-many-arguments
 
-from f5cloudsdk.bigip import ManagementClient
-from f5cloudsdk.bigip.toolchain import ToolChainClient
+from f5sdk.bigip import ManagementClient
+from f5sdk.bigip.toolchain import ToolChainClient
 
 import click_repl
 import click
 
-from f5cloudcli import docs, constants
-from f5cloudcli.utils import clients
-from f5cloudcli.utils import core as utils_core
-from f5cloudcli.config import ConfigClient
-from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
+from f5cli import docs, constants
+from f5cli.utils import clients
+from f5cli.utils import core as utils_core
+from f5cli.config import ConfigClient
+from f5cli.cli import PASS_CONTEXT, AliasedGroup
 
 HELP = docs.get_docs()
 

@@ -3,9 +3,9 @@
 import click_repl
 import click
 
-from f5cloudcli import docs
-from f5cloudcli.utils import clients
-from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
+from f5cli import docs
+from f5cli.utils import clients
+from f5cli.cli import PASS_CONTEXT, AliasedGroup
 
 HELP = docs.get_docs()
 

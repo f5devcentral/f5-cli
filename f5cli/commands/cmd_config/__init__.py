@@ -6,9 +6,9 @@ import json
 import click_repl
 import click
 
-from f5cloudcli import docs
-from f5cloudcli.constants import F5_CLI_DIR, F5_CONFIG_FILE, FORMATS
-from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
+from f5cli import docs
+from f5cli.constants import F5_CLI_DIR, F5_CONFIG_FILE, FORMATS
+from f5cli.cli import PASS_CONTEXT, AliasedGroup
 
 HELP = docs.get_docs()
 

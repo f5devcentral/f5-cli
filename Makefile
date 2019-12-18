@@ -4,7 +4,7 @@ COVERAGE_DIR := ./code_coverage
 COVERAGE_FILE := .coverage
 DIST_DIR := dist
 EGG_DIR := f5_cloud_cli.egg-info
-PACKAGE_DIR := f5cloudcli
+PACKAGE_DIR := f5cli
 TEST_DIR := tests
 UNIT_TEST_DIR := ${TEST_DIR}/unittests
 

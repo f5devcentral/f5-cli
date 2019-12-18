@@ -1,4 +1,4 @@
-# F5 Cloud CLI
+# F5 CLI
 
 ## Table of Contents
 - [Introduction](#introduction)
@@ -12,7 +12,7 @@
 Pre-Release Note: Currently published in an artifactory repo.
 
 ```bash
-pip3 install f5-cloud-cli --extra-index-url https://***REMOVED***/artifactory/api/pypi/f5-cloud-solutions-pypi/simple
+pip3 install f5-cli --extra-index-url https://***REMOVED***/artifactory/api/pypi/f5-cloud-solutions-pypi/simple
 f5 --help
 ```
 
@@ -37,8 +37,8 @@ This project uses `Make` as a build automation tool... check out the Makefile fo
 
 ## Artifacts
 
-- Index: https://cloudsolutions.pages.***REMOVED***/f5-cloud-cli
-- Code coverage report: https://cloudsolutions.pages.***REMOVED***/f5-cloud-cli/coverage/
+- Index: https://cloudsolutions.pages.***REMOVED***/f5-cli
+- Code coverage report: https://cloudsolutions.pages.***REMOVED***/f5-cli/coverage/
 
 ## Supported Platforms
 

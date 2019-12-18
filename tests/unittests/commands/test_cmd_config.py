@@ -1,6 +1,6 @@
 """ Test Config command """
 
-from f5cloudcli.commands.cmd_config import cli
+from f5cli.commands.cmd_config import cli
 
 from ...global_test_imports import CliRunner
 
@@ -32,8 +32,8 @@ class TestCommandConfig(object):
         mock_path_exist = mocker.patch("os.path.exists")
         mock_path_exist.return_value = False
         mock_make_dir = mocker.patch("os.makedirs")
-        mocker.patch("f5cloudcli.cli.Context.log")
-        with mocker.patch('f5cloudcli.commands.cmd_config.open', new_callable=mocker.mock_open()):
+        mocker.patch("f5cli.cli.Context.log")
+        with mocker.patch('f5cli.commands.cmd_config.open', new_callable=mocker.mock_open()):
             mock_json_dump = mocker.patch("json.dump")
             self.runner.invoke(cli, ['output-format', '--output', 'json'])
             mock_json_dump.assert_called_once()
@@ -53,8 +53,8 @@ class TestCommandConfig(object):
         """
         mock_path_exist = mocker.patch("os.path.exists")
         mock_path_exist.return_value = True
-        mocker.patch("f5cloudcli.cli.Context.log")
-        with mocker.patch('f5cloudcli.commands.cmd_config.open', new_callable=mocker.mock_open()):
+        mocker.patch("f5cli.cli.Context.log")
+        with mocker.patch('f5cli.commands.cmd_config.open', new_callable=mocker.mock_open()):
             mock_json_dump = mocker.patch("json.dump")
             self.runner.invoke(cli, ['output-format', '--output', 'json'])
             mock_json_dump.assert_called_once()

@@ -6,14 +6,14 @@ DEPENDENCIES = [
     'click==7.0',
     'pyyaml==3.13',
     'click-repl==0.1.6',
-    'f5-cloud-sdk==0.9.0'
+    'f5-sdk-python==0.9.0'
 ]
 
 setup(
-    name='f5-cloud-cli',
+    name='f5-cli',
     version='0.9.0',
-    description='F5 Cloud CLI',
-    url='http://github.com/F5Networks/f5-cloud-cli',
+    description='F5 CLI',
+    url='http://github.com/F5Networks/f5-cli',
     author='F5 Ecosystems Group',
     author_email='solutionsfeedback@f5.com',
     license='MIT',
@@ -21,7 +21,7 @@ setup(
     package_data={'': ['*.json', '*.yaml', '*.md', '*.rst']},
     entry_points={
         'console_scripts': [
-            'f5 = f5cloudcli.cli:cli'
+            'f5 = f5cli.cli:cli'
         ]
     },
     dependency_links=[

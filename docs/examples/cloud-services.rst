@@ -1,1 +1,1 @@
-.. automodule:: f5cloudcli.commands.cmd_cloud_services
+.. automodule:: f5cli.commands.cmd_cloud_services

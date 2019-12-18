@@ -5,9 +5,9 @@ import json
 
 import click
 
-from f5cloudcli.constants import F5_CONFIG_FILE, FORMATS, FORMATS_ENV_VAR
-from f5cloudcli.cli import PASS_CONTEXT, AliasedGroup
-from f5cloudcli import cli
+from f5cli.constants import F5_CONFIG_FILE, FORMATS, FORMATS_ENV_VAR
+from f5cli.cli import PASS_CONTEXT, AliasedGroup
+from f5cli import cli
 
 from ..global_test_imports import pytest, CliRunner
 
@@ -29,14 +29,14 @@ class TestContext(object):
         """Test fixture """
 
         mocker.patch.dict(
-            "f5cloudcli.utils.clients.os.environ",
+            "f5cli.utils.clients.os.environ",
             {
                 FORMATS_ENV_VAR: FORMATS['JSON']
             }
         )
-        mock_format_output = mocker.patch("f5cloudcli.cli.format_output")
+        mock_format_output = mocker.patch("f5cli.cli.format_output")
         mock_format_output.side_effect = TestContext.format_output_side_effect
-        mock_click_echo = mocker.patch("f5cloudcli.cli.click.echo")
+        mock_click_echo = mocker.patch("f5cli.cli.click.echo")
         return mock_click_echo
 
     @staticmethod
@@ -88,18 +88,18 @@ class TestContext(object):
         - Message is logged in specific format
         """
 
-        mock_output_format_env = mocker.patch("f5cloudcli.utils.core.os.environ.get")
+        mock_output_format_env = mocker.patch("f5cli.utils.core.os.environ.get")
         mock_output_format_env.return_value = None
-        mock_os_path_isfile = mocker.patch("f5cloudcli.utils.core.os.path.isfile")
+        mock_os_path_isfile = mocker.patch("f5cli.utils.core.os.path.isfile")
         mock_os_path_isfile.return_value = True
         mock_open_config_file = mocker.patch(
-            "f5cloudcli.utils.core.open", mocker.mock_open(read_data='json'))
-        mock_json_load = mocker.patch("f5cloudcli.utils.core.json.load")
+            "f5cli.utils.core.open", mocker.mock_open(read_data='json'))
+        mock_json_load = mocker.patch("f5cli.utils.core.json.load")
         mock_json_load.return_value = {"output": "json"}
 
-        mock_format_output = mocker.patch("f5cloudcli.utils.core.format_output")
+        mock_format_output = mocker.patch("f5cli.utils.core.format_output")
         mock_format_output.side_effect = TestContext.format_output_side_effect
-        mock_click_echo = mocker.patch("f5cloudcli.cli.click.echo")
+        mock_click_echo = mocker.patch("f5cli.cli.click.echo")
         self.context.log("Test message")
         mock_click_echo.assert_called_once_with(
             '{\n    "message": "Test message"\n}', file=sys.stderr
@@ -119,15 +119,15 @@ class TestContext(object):
         Then
         - Message is logged in specific format
         """
-        mock_output_format_env = mocker.patch("f5cloudcli.cli.os.environ.get")
+        mock_output_format_env = mocker.patch("f5cli.cli.os.environ.get")
         mock_output_format_env.return_value = "-1"
-        mock_os_path_isfile = mocker.patch("f5cloudcli.cli.os.path.isfile")
+        mock_os_path_isfile = mocker.patch("f5cli.cli.os.path.isfile")
         mock_os_path_isfile.return_value = False
-        mocker.patch("f5cloudcli.cli.open", mocker.mock_open(read_data='json'))
+        mocker.patch("f5cli.cli.open", mocker.mock_open(read_data='json'))
 
-        mock_format_output = mocker.patch("f5cloudcli.cli.format_output")
+        mock_format_output = mocker.patch("f5cli.cli.format_output")
         mock_format_output.side_effect = TestContext.format_output_side_effect
-        mock_click_echo = mocker.patch("f5cloudcli.cli.click.echo")
+        mock_click_echo = mocker.patch("f5cli.cli.click.echo")
         self.context.log("Test message")
         mock_click_echo.assert_called_once_with('Test message', file=sys.stderr)
 

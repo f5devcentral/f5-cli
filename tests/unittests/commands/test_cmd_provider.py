@@ -2,7 +2,7 @@
 
 import json
 
-from f5cloudcli.commands.cmd_provider import cli
+from f5cli.commands.cmd_provider import cli
 
 from ...global_test_imports import CliRunner
 
@@ -30,7 +30,7 @@ class TestCommandProvider(object):
         - Login is successful
         """
         mock_provider_client = mocker.patch(
-            'f5cloudcli.commands.cmd_provider.clients.get_provider_client'
+            'f5cli.commands.cmd_provider.clients.get_provider_client'
         )
         mock_provider_client.return_value.is_logged_in.return_value = True
 
@@ -51,7 +51,7 @@ class TestCommandProvider(object):
         - Login is successful
         """
         mock_provider_client = mocker.patch(
-            'f5cloudcli.commands.cmd_provider.clients.get_provider_client'
+            'f5cli.commands.cmd_provider.clients.get_provider_client'
         )
         mock_provider_client.return_value.is_logged_in.return_value = False
 

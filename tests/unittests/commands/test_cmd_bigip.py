@@ -2,12 +2,12 @@
 
 import json
 
-from f5cloudsdk.bigip import ManagementClient
+from f5sdk.bigip import ManagementClient
 
-from f5cloudcli.config import ConfigClient
-from f5cloudcli.utils import clients
-from f5cloudcli.commands.cmd_bigip import cli, toolchain
-from f5cloudcli import constants
+from f5cli.config import ConfigClient
+from f5cli.utils import clients
+from f5cli.commands.cmd_bigip import cli, toolchain
+from f5cli import constants
 
 from ...global_test_imports import MagicMock, call, PropertyMock, pytest, CliRunner
 
@@ -43,7 +43,7 @@ class TestCommandBigIp(object):
     def toolchain_client_fixture(mocker):
         """Test fixture """
         mock_toolchain_client = mocker.patch(
-            "f5cloudcli.commands.cmd_bigip.ToolChainClient")
+            "f5cli.commands.cmd_bigip.ToolChainClient")
 
         mock = MagicMock()
         mock.is_installed.return_value = MOCK_IS_INSTALLED_RETURN_VALUE
@@ -229,7 +229,7 @@ class TestCommandBigIp(object):
         - Installed version information 'do' toolchain component is logged
         """
         mock_toolchain_client = mocker.patch(
-            "f5cloudcli.commands.cmd_bigip.ToolChainClient")
+            "f5cli.commands.cmd_bigip.ToolChainClient")
 
         mock_is_installed_return_value = {
             'installed': False,
@@ -285,7 +285,7 @@ class TestCommandBigIp(object):
         -  Successfully installed 'do' component message is logged
         """
         mock_toolchain_client = mocker.patch(
-            "f5cloudcli.commands.cmd_bigip.ToolChainClient")
+            "f5cli.commands.cmd_bigip.ToolChainClient")
 
         mock = MagicMock()
         mock.is_installed.return_value = {
@@ -319,7 +319,7 @@ class TestCommandBigIp(object):
         - Uninstalled 'do' component message is logged
         """
         mock_toolchain_client = mocker.patch(
-            "f5cloudcli.commands.cmd_bigip.ToolChainClient")
+            "f5cli.commands.cmd_bigip.ToolChainClient")
 
         mock = MagicMock()
         mock.is_installed.return_value = {'installed': True}
@@ -351,7 +351,7 @@ class TestCommandBigIp(object):
         -  Already uninstalled 'do' component message is logged
         """
         mock_toolchain_client = mocker.patch(
-            "f5cloudcli.commands.cmd_bigip.ToolChainClient")
+            "f5cli.commands.cmd_bigip.ToolChainClient")
 
         mock = MagicMock()
         mock.is_installed.return_value = {'installed': False}
@@ -380,7 +380,7 @@ class TestCommandBigIp(object):
         -  Non-implemented action exception is thrown
         """
         mock_toolchain_client = mocker.patch(
-            "f5cloudcli.commands.cmd_bigip.ToolChainClient")
+            "f5cli.commands.cmd_bigip.ToolChainClient")
 
         mock = MagicMock()
         mock.is_installed.return_value = {'installed': False}
@@ -408,7 +408,7 @@ class TestCommandBigIp(object):
         """
 
         mock_toolchain_client = mocker.patch(
-            "f5cloudcli.commands.cmd_bigip.ToolChainClient")
+            "f5cli.commands.cmd_bigip.ToolChainClient")
 
         show_response = {
             'foo': 'bar'
@@ -440,7 +440,7 @@ class TestCommandBigIp(object):
         -  Current status message of 'do' component is logged
         """
         mock_toolchain_client = mocker.patch(
-            "f5cloudcli.commands.cmd_bigip.ToolChainClient")
+            "f5cli.commands.cmd_bigip.ToolChainClient")
 
         is_installed_response = {
             'installed': False
@@ -493,7 +493,7 @@ class TestCommandBigIp(object):
             return_value=mock_service)
 
         mock_utils_core_convert = mocker.patch(
-            "f5cloudcli.commands.cmd_bigip.utils_core.convert_to_absolute")
+            "f5cli.commands.cmd_bigip.utils_core.convert_to_absolute")
         mock_utils_core_convert.return_value = "fake location"
 
         result = self.runner.invoke(toolchain, ['service', 'create', '--component', 'do',

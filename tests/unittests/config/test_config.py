@@ -2,8 +2,8 @@
 
 import click
 
-from f5cloudcli.config import ConfigClient
-from f5cloudcli import constants
+from f5cli.config import ConfigClient
+from f5cli import constants
 
 from ...global_test_imports import pytest
 
@@ -15,14 +15,14 @@ class TestConfigClient(object):
     @pytest.fixture
     def json_load_fixture(mocker):
         """ PyTest fixture returning mocked json load() """
-        mock_json_load = mocker.patch('f5cloudcli.config.json.load')
+        mock_json_load = mocker.patch('f5cli.config.json.load')
         return mock_json_load
 
     @staticmethod
     @pytest.fixture
     def os_path_exists_fixture(mocker):
         """ PyTest fixture returning mocked os.path.exists object """
-        mock_exists = mocker.patch('f5cloudcli.config.os.path.exists')
+        mock_exists = mocker.patch('f5cli.config.os.path.exists')
         mock_exists.return_value = True
         return mock_exists
 
@@ -30,7 +30,7 @@ class TestConfigClient(object):
     @pytest.fixture
     def os_path_isfile_fixture(mocker):
         """ PyTest fixture returning mocked os.path.isfile object """
-        mock_isfile = mocker.patch('f5cloudcli.config.os.path.isfile')
+        mock_isfile = mocker.patch('f5cli.config.os.path.isfile')
         mock_isfile.return_value = True
         return mock_isfile
 
@@ -57,7 +57,7 @@ class TestConfigClient(object):
             group_name: {'username': 'me@home.com', 'password': 'pass123'}
         }
 
-        with mocker.patch('f5cloudcli.config.open', new_callable=mocker.mock_open()):
+        with mocker.patch('f5cli.config.open', new_callable=mocker.mock_open()):
             result = client.read_auth(group_name)
         assert result == mock_json_load.return_value[group_name]
         mock_json_load.assert_called_once()
@@ -107,7 +107,7 @@ class TestConfigClient(object):
             group_name: {'username': 'me@home.com', 'password': 'pass123'}}
 
         with pytest.raises(click.exceptions.ClickException) as error:
-            with mocker.patch('f5cloudcli.config.open', new_callable=mocker.mock_open()):
+            with mocker.patch('f5cli.config.open', new_callable=mocker.mock_open()):
                 client.read_auth('temp')
         assert error.value.args[0] == "Command failed. You must configure authentication for temp!"
 
@@ -129,8 +129,8 @@ class TestConfigClient(object):
         client = ConfigClient()
         mock_path_isfile = os_path_isfile_fixture
         mock_path_isfile.return_value = False
-        mock_json_dump = mocker.patch("f5cloudcli.config.json.dump")
-        with mocker.patch('f5cloudcli.config.open', new_callable=mocker.mock_open()):
+        mock_json_dump = mocker.patch("f5cli.config.json.dump")
+        with mocker.patch('f5cli.config.open', new_callable=mocker.mock_open()):
             client.store_auth()
             mock_json_dump.assert_called_once()
 
@@ -165,8 +165,8 @@ class TestConfigClient(object):
             'CLOUD_SERVICES': cloud_services_auth
         }
 
-        mock_json_dump = mocker.patch("f5cloudcli.config.json.dump")
-        with mocker.patch('f5cloudcli.config.open', new_callable=mocker.mock_open()):
+        mock_json_dump = mocker.patch("f5cli.config.json.dump")
+        with mocker.patch('f5cli.config.open', new_callable=mocker.mock_open()):
             client.store_auth()
             mock_json_dump.assert_called_once()
         mock_json_dump_wrote = mock_json_dump.call_args_list[0][0][0]
@@ -194,7 +194,7 @@ class TestConfigClient(object):
         mock_path_is_file = os_path_isfile_fixture
         mock_path_is_file.return_value = False
 
-        mock_make_dir = mocker.patch("f5cloudcli.config.os.makedirs")
+        mock_make_dir = mocker.patch("f5cli.config.os.makedirs")
         auth = {
             'username': 'me@home.com',
             'password': '1234'
@@ -204,8 +204,8 @@ class TestConfigClient(object):
             auth=auth
         )
 
-        mock_json_dump = mocker.patch("f5cloudcli.config.json.dump")
-        with mocker.patch('f5cloudcli.config.open', new_callable=mocker.mock_open()):
+        mock_json_dump = mocker.patch("f5cli.config.json.dump")
+        with mocker.patch('f5cli.config.open', new_callable=mocker.mock_open()):
             client.store_auth()
         mock_json_dump.assert_called_once()
         mock_make_dir.assert_called_once()

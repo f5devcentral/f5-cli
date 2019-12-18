@@ -9,7 +9,7 @@ stages:
     - publish_test
 
 variables:
-    FUNCTIONAL_TEST_PREFIX: 'f5cloudclitest'
+    FUNCTIONAL_TEST_PREFIX: 'f5clitest'
     PYTHONWARNINGS: 'ignore:Unverified HTTPS request'
     TERRAFORM_PKG_URL: 'https://releases.hashicorp.com/terraform/0.11.14/terraform_0.11.14_linux_386.zip'
     PRIMARY_DEMO_DIR: demos/primary
@@ -169,7 +169,7 @@ publish_egg_to_artifactory:
         - make build
         - EGG_FILE=$(ls dist/*.gz)
         - EGG_NAME=$(basename $EGG_FILE)
-        - URL=${ARTIFACTORY_BASE_URL}/f5-cloud-solutions-pypi/f5-cloud-cli/${EGG_NAME}
+        - URL=${ARTIFACTORY_BASE_URL}/f5-cloud-solutions-pypi/f5-cli/${EGG_NAME}
         - echo ${URL}
         - >-
           UPLOAD_RESULT=$(curl -H "Authorization: Bearer ${ARTIFACTORY_TOKEN}" -X PUT --data-binary @${EGG_FILE} ${URL})
@@ -206,7 +206,7 @@ publish_test_internal_install:
     stage: publish_test
     script:
         # install packages - first wait until it is available after a recent publish
-        - bash scripts/wait_for_resp.sh ${ARTIFACTORY_BASE_URL}/api/pypi/f5-cloud-solutions-pypi/simple/f5-cloud-cli/
-        - pip3 install f5-cloud-cli --extra-index-url ${ARTIFACTORY_BASE_URL}/api/pypi/f5-cloud-solutions-pypi/simple
+        - bash scripts/wait_for_resp.sh ${ARTIFACTORY_BASE_URL}/api/pypi/f5-cloud-solutions-pypi/simple/f5-cli/
+        - pip3 install f5-cli --extra-index-url ${ARTIFACTORY_BASE_URL}/api/pypi/f5-cloud-solutions-pypi/simple
     tags:
         - cm-official-docker-executor
