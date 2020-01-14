@@ -1,4 +1,5 @@
-.. _quickstart:
+Quick Start
+===========
 
 Prerequisites and Requirements
 ------------------------------
@@ -15,6 +16,20 @@ Installation
 ::
 
     pip install f5-cli --extra-index-url https://***REMOVED***/artifactory/api/pypi/f5-cloud-solutions-pypi/simple
+
+Quick Start
+-----------
+
+This example shows how to configure authentication with an existing BIG-IP system, and query the BIG-IP to determine whether or not the AS3 Toolchain component is already installed.
+
+::
+
+    $ f5 bigip configure-auth --host 54.224.182.104 --user myuser
+    Password:
+    Configuring BIG-IP Auth to 54.224.182.104 as myuser with ******
+
+    $ f5 bigip toolchain package verify --component as3
+    Toolchain component package installed: False
 
 Getting Help
 ------------
@@ -61,18 +76,3 @@ The CLI will also provide help information for any commands, such as the describ
     --declaration TEXT
     --install-component
     --help                          Show this message and exit.
-
-
-Quick Start
------------
-
-This example shows how to configure authentication with an existing BIG-IP system, and query the BIG-IP to determine whether or not the AS3 Toolchain component is already installed.
-
-::
-
-    $ f5 bigip configure-auth --host 54.224.182.104 --user myuser
-    Password:
-    Configuring BIG-IP Auth to 54.224.182.104 as myuser with ******
-
-    $ f5 bigip toolchain package verify --component as3
-    Toolchain component package installed: False

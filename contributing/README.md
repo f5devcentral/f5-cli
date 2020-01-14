@@ -28,7 +28,7 @@ In short this is a set of rules to ensure users of the CLI find it intuitive and
 
 ## State
 
-This project maintains state...
+This project maintains stateful configuration, in general below is the files that may exist.
 
 - `~/.f5cli/` - root state directory (inside user's home directory)
     - `config.json`

@@ -13,8 +13,6 @@ SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 PAPER         =
 BUILDDIR      = docs/_build
-
-# Sphinx Internal variables
 PAPEROPT_a4     = -D latex_paper_size=a4
 PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) ./docs
@@ -32,17 +30,18 @@ lint:
 coverage: unit_test
 	echo "Generating code coverage documentation"
 	coverage html
+html:
+	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
+docs: html
+	cp -R ${BUILDDIR}/ ${CODE_DOCS_DIR}
+	@echo "Docs finished. The are located in $(CODE_DOCS_DIR)"
 clean:
 	echo "Removing artifacts"
 	rm -rf ${BUILD_DIR}
+	rm -rf ${CODE_DOCS_DIR}
 	rm -rf ${DIST_DIR}
 	rm -rf ${EGG_DIR}
 	rm -rf ${COVERAGE_DIR}
 	rm -rf ${COVERAGE_FILE}
 	find . -type d -name __pycache__ -exec rm -r {} \+
-html:
-	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
-	@echo
-	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
-	cp -R docs/_build ${CODE_DOCS_DIR}
 .PHONY: clean
