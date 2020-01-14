@@ -6,6 +6,8 @@ from os.path import expanduser, join
 VERSION = '0.9.0'  # should consolidate with setup version
 USER_AGENT = 'f5cli/%s' % (VERSION)
 TMP_DIR = tempfile.gettempdir()
+
+# Stateful file constants
 F5_CLI_DIR = join(expanduser("~"), ".f5_cli")
 F5_CONFIG_FILE = join(F5_CLI_DIR, "config.json")
 F5_AUTH_FILE = join(F5_CLI_DIR, "auth.json")

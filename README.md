@@ -37,15 +37,14 @@ This project uses `Make` as a build automation tool... check out the Makefile fo
 
 ## Artifacts
 
-- Index: https://cloudsolutions.pages.***REMOVED***/f5-cli
-- Code coverage report: https://cloudsolutions.pages.***REMOVED***/f5-cli/coverage/
+- Index: https://automation-sdk.pages.***REMOVED***/f5-cli/
+- User Documentation: https://automation-sdk.pages.***REMOVED***/f5-cli/code-docs/
+- Code coverage report: https://automation-sdk.pages.***REMOVED***/f5-cli/coverage/
 
 ## Supported Platforms
 
-The CLI provides support for the following platforms.
+The CLI supports the following platforms:
 
 - Linux (Ubuntu)
-- Mac OS
-- Windows
 
 Pre-Release Note: This list is the intended goal, the project needs to include automated testing for each platform.
