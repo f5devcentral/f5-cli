@@ -144,7 +144,7 @@ docs_code:
         - pip install -r requirements.txt
         - pip install .
         # generate docs
-        - make html
+        - make docs
     tags:
         - cm-official-docker-executor
     artifacts:
