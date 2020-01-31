@@ -6,7 +6,7 @@ from f5sdk.bigip import ManagementClient
 
 from f5cli.config import ConfigClient
 from f5cli.utils import clients
-from f5cli.commands.cmd_bigip import cli, toolchain
+from f5cli.commands.cmd_bigip import cli, extension
 from f5cli import constants
 
 from ...global_test_imports import MagicMock, call, PropertyMock, pytest, CliRunner
@@ -40,15 +40,15 @@ class TestCommandBigIp(object):
 
     @staticmethod
     @pytest.fixture
-    def toolchain_client_fixture(mocker):
+    def extension_client_fixture(mocker):
         """Test fixture """
-        mock_toolchain_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.ToolChainClient")
+        mock_extension_client = mocker.patch(
+            "f5cli.commands.cmd_bigip.ExtensionClient")
 
         mock = MagicMock()
         mock.is_installed.return_value = MOCK_IS_INSTALLED_RETURN_VALUE
-        type(mock_toolchain_client.return_value).package = PropertyMock(return_value=mock)
-        return mock_toolchain_client
+        type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
+        return mock_extension_client
 
     @staticmethod
     @pytest.fixture
@@ -189,24 +189,24 @@ class TestCommandBigIp(object):
         assert result.output == json.dumps(virtual_machines, indent=4, sort_keys=True) + '\n'
 
     # pylint: disable=unused-argument
-    def test_cmd_package_verify_existing_toolchain_component(self,
+    def test_cmd_package_verify_existing_extension_component(self,
                                                              mocker,
                                                              mgmt_client_fixture,
                                                              config_client_read_auth_fixture,
-                                                             toolchain_client_fixture):
-        """ Command package verify an existing toolchain component
+                                                             extension_client_fixture):
+        """ Command package verify an existing extension component
         Given
         - BIG-IP is up
-        - 'do' toolchain component is installed
+        - 'do' extension component is installed
         When
-        - User attempts to verify status of the install 'do' toolchain component
+        - User attempts to verify status of the install 'do' extension component
         Then
-        - Installed version information 'do' toolchain component is logged
+        - Installed version information 'do' extension component is logged
         """
         mock_management_client = mgmt_client_fixture
 
         result = self.runner.invoke(
-            toolchain, ['package', 'verify', '--component', 'do', '--version', '1.3.0'])
+            extension, ['package', 'verify', '--component', 'do', '--version', '1.3.0'])
         mock_management_client.assert_called_once()
         assert result.output == json.dumps(
             MOCK_IS_INSTALLED_RETURN_VALUE,
@@ -215,7 +215,7 @@ class TestCommandBigIp(object):
         ) + '\n'
 
     # pylint: disable=unused-argument
-    def test_cmd_package_verify_nonexist_toolchain_component(self,
+    def test_cmd_package_verify_nonexist_extension_component(self,
                                                              mocker,
                                                              config_client_read_auth_fixture,
                                                              mgmt_client_fixture):
@@ -226,10 +226,10 @@ class TestCommandBigIp(object):
         When
         - User attempts to verify status of the install 'do' component
         Then
-        - Installed version information 'do' toolchain component is logged
+        - Installed version information 'do' extension component is logged
         """
-        mock_toolchain_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.ToolChainClient")
+        mock_extension_client = mocker.patch(
+            "f5cli.commands.cmd_bigip.ExtensionClient")
 
         mock_is_installed_return_value = {
             'installed': False,
@@ -239,20 +239,20 @@ class TestCommandBigIp(object):
 
         mock = MagicMock()
         mock.is_installed.return_value = mock_is_installed_return_value
-        type(mock_toolchain_client.return_value).package = PropertyMock(return_value=mock)
+        type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
 
         result = self.runner.invoke(
-            toolchain, ['package', 'verify', '--component', 'do', '--version', '1.3.0'])
+            extension, ['package', 'verify', '--component', 'do', '--version', '1.3.0'])
         assert result.output == json.dumps(
             mock_is_installed_return_value, indent=4, sort_keys=True
         ) + '\n'
 
     # pylint: disable=unused-argument
-    def test_cmd_package_install_existing_toolchain_component(self,
+    def test_cmd_package_install_existing_extension_component(self,
                                                               mocker,
                                                               config_client_read_auth_fixture,
                                                               mgmt_client_fixture,
-                                                              toolchain_client_fixture):
+                                                              extension_client_fixture):
         """ Command package install an existing package
         Given
         - BIG-IP is up
@@ -263,15 +263,15 @@ class TestCommandBigIp(object):
         - Already installed 'do' component message is logged
         """
         result = self.runner.invoke(
-            toolchain, ['package', 'install', '--component', 'do', '--version', '1.3.0'])
+            extension, ['package', 'install', '--component', 'do', '--version', '1.3.0'])
         assert result.output == json.dumps(
-            {'message': 'Toolchain component package do version 1.3.0 is already installed'},
+            {'message': 'Extension component package do version 1.3.0 is already installed'},
             indent=4,
             sort_keys=True
         ) + '\n'
 
     # pylint: disable=unused-argument
-    def test_cmd_package_install_non_existing_toolchain_component(self,
+    def test_cmd_package_install_non_existing_extension_component(self,
                                                                   mocker,
                                                                   config_client_read_auth_fixture,
                                                                   mgmt_client_fixture):
@@ -284,8 +284,8 @@ class TestCommandBigIp(object):
         Then
         -  Successfully installed 'do' component message is logged
         """
-        mock_toolchain_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.ToolChainClient")
+        mock_extension_client = mocker.patch(
+            "f5cli.commands.cmd_bigip.ExtensionClient")
 
         mock = MagicMock()
         mock.is_installed.return_value = {
@@ -294,18 +294,18 @@ class TestCommandBigIp(object):
             'latest_version': '1.3.0'
         }
         mock.install.return_value = None
-        type(mock_toolchain_client.return_value).package = PropertyMock(return_value=mock)
+        type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
 
         result = self.runner.invoke(
-            toolchain, ['package', 'install', '--component', 'do', '--version', '1.3.0'])
+            extension, ['package', 'install', '--component', 'do', '--version', '1.3.0'])
         assert result.output == json.dumps(
-            {'message': 'Toolchain component package do installed'},
+            {'message': 'Extension component package do installed'},
             indent=4,
             sort_keys=True
         ) + '\n'
 
     # pylint: disable=unused-argument
-    def test_cmd_package_uninstall_existing_toolchain_component(self,
+    def test_cmd_package_uninstall_existing_extension_component(self,
                                                                 mocker,
                                                                 config_client_read_auth_fixture,
                                                                 mgmt_client_fixture):
@@ -318,26 +318,26 @@ class TestCommandBigIp(object):
         Then
         - Uninstalled 'do' component message is logged
         """
-        mock_toolchain_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.ToolChainClient")
+        mock_extension_client = mocker.patch(
+            "f5cli.commands.cmd_bigip.ExtensionClient")
 
         mock = MagicMock()
         mock.is_installed.return_value = {'installed': True}
         mock.uninstall.return_value = None
-        type(mock_toolchain_client.return_value).package = PropertyMock(
+        type(mock_extension_client.return_value).package = PropertyMock(
             return_value=mock
         )
 
         result = self.runner.invoke(
-            toolchain, ['package', 'uninstall', '--component', 'do', '--version', '1.3.0'])
+            extension, ['package', 'uninstall', '--component', 'do', '--version', '1.3.0'])
         assert result.output == json.dumps(
-            {'message': 'Toolchain component package do uninstalled'},
+            {'message': 'Extension component package do uninstalled'},
             indent=4,
             sort_keys=True
         ) + '\n'
 
     # pylint: disable=unused-argument
-    def test_cmd_package_uninstall_non_existing_toolchain_component(self,
+    def test_cmd_package_uninstall_non_existing_extension_component(self,
                                                                     mocker,
                                                                     config_client_read_auth_fixture,
                                                                     mgmt_client_fixture):
@@ -350,17 +350,17 @@ class TestCommandBigIp(object):
         Then
         -  Already uninstalled 'do' component message is logged
         """
-        mock_toolchain_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.ToolChainClient")
+        mock_extension_client = mocker.patch(
+            "f5cli.commands.cmd_bigip.ExtensionClient")
 
         mock = MagicMock()
         mock.is_installed.return_value = {'installed': False}
-        type(mock_toolchain_client.return_value).package = PropertyMock(return_value=mock)
+        type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
 
         result = self.runner.invoke(
-            toolchain, ['package', 'uninstall', '--component', 'do', '--version', '1.3.0'])
+            extension, ['package', 'uninstall', '--component', 'do', '--version', '1.3.0'])
         assert result.output == json.dumps(
-            {'message': 'Toolchain component package do is already uninstalled'},
+            {'message': 'Extension component package do is already uninstalled'},
             indent=4,
             sort_keys=True
         ) + '\n'
@@ -379,15 +379,15 @@ class TestCommandBigIp(object):
         Then
         -  Non-implemented action exception is thrown
         """
-        mock_toolchain_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.ToolChainClient")
+        mock_extension_client = mocker.patch(
+            "f5cli.commands.cmd_bigip.ExtensionClient")
 
         mock = MagicMock()
         mock.is_installed.return_value = {'installed': False}
-        type(mock_toolchain_client.return_value).package = PropertyMock(return_value=mock)
+        type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
 
         result = self.runner.invoke(
-            toolchain, ['package', 'upgrade', '--component', 'do'])
+            extension, ['package', 'upgrade', '--component', 'do'])
         assert result.exception
         assert result.output == "Error: Action upgrade not implemented\n"
 
@@ -396,7 +396,7 @@ class TestCommandBigIp(object):
                                                   mocker,
                                                   config_client_read_auth_fixture,
                                                   mgmt_client_fixture,
-                                                  toolchain_client_fixture):
+                                                  extension_client_fixture):
         """ Command service show an already installed component
         Given
         - BIG-IP is up
@@ -407,8 +407,8 @@ class TestCommandBigIp(object):
         -  Current status message of 'do' component is logged
         """
 
-        mock_toolchain_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.ToolChainClient")
+        mock_extension_client = mocker.patch(
+            "f5cli.commands.cmd_bigip.ExtensionClient")
 
         show_response = {
             'foo': 'bar'
@@ -416,11 +416,11 @@ class TestCommandBigIp(object):
 
         mock_service = MagicMock()
         mock_service.show.return_value = show_response
-        type(mock_toolchain_client.return_value).service = PropertyMock(
+        type(mock_extension_client.return_value).service = PropertyMock(
             return_value=mock_service)
 
         result = self.runner.invoke(
-            toolchain, ['service', 'show', '--component', 'do', '--version', '1.3.0'])
+            extension, ['service', 'show', '--component', 'do', '--version', '1.3.0'])
         assert result.output == json.dumps(show_response, indent=4, sort_keys=True) + '\n'
 
     # pylint: disable=unused-argument
@@ -439,8 +439,8 @@ class TestCommandBigIp(object):
         - 'do' component is available
         -  Current status message of 'do' component is logged
         """
-        mock_toolchain_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.ToolChainClient")
+        mock_extension_client = mocker.patch(
+            "f5cli.commands.cmd_bigip.ExtensionClient")
 
         is_installed_response = {
             'installed': False
@@ -452,16 +452,16 @@ class TestCommandBigIp(object):
         mock_package = MagicMock()
         mock_package.is_installed.return_value = is_installed_response
         mock_package.install.return_value = None
-        type(mock_toolchain_client.return_value).package = PropertyMock(
+        type(mock_extension_client.return_value).package = PropertyMock(
             return_value=mock_package)
         mock_service = MagicMock()
         mock_service.show.return_value = show_response
         mock_service.is_available.return_value = None
-        type(mock_toolchain_client.return_value).service = PropertyMock(
+        type(mock_extension_client.return_value).service = PropertyMock(
             return_value=mock_service)
 
         result = self.runner.invoke(
-            toolchain,
+            extension,
             ['service', 'show', '--component', 'do', '--version', '1.3.0', '--install-component']
         )
         assert result.output == json.dumps(show_response, indent=4, sort_keys=True) + '\n'
@@ -471,7 +471,7 @@ class TestCommandBigIp(object):
                                                                 mocker,
                                                                 config_client_read_auth_fixture,
                                                                 mgmt_client_fixture,
-                                                                toolchain_client_fixture):
+                                                                extension_client_fixture):
         """ Command service create declaration of an installed component
         Given
         - BIG-IP is up
@@ -488,15 +488,15 @@ class TestCommandBigIp(object):
         }
 
         mock_service.create.return_value = create_response
-        mock_toolchain_client = toolchain_client_fixture
-        type(mock_toolchain_client.return_value).service = PropertyMock(
+        mock_extension_client = extension_client_fixture
+        type(mock_extension_client.return_value).service = PropertyMock(
             return_value=mock_service)
 
         mock_utils_core_convert = mocker.patch(
             "f5cli.commands.cmd_bigip.utils_core.convert_to_absolute")
         mock_utils_core_convert.return_value = "fake location"
 
-        result = self.runner.invoke(toolchain, ['service', 'create', '--component', 'do',
+        result = self.runner.invoke(extension, ['service', 'create', '--component', 'do',
                                                 '--declaration', './test/fake_declaration.json'])
 
         assert result.output == json.dumps(create_response, indent=4, sort_keys=True) + '\n'
@@ -508,7 +508,7 @@ class TestCommandBigIp(object):
                                                     mocker,
                                                     config_client_read_auth_fixture,
                                                     mgmt_client_fixture,
-                                                    toolchain_client_fixture):
+                                                    extension_client_fixture):
         """ Command service delete of an already installed component
         Given
         - BIG-IP is up
@@ -518,7 +518,7 @@ class TestCommandBigIp(object):
         Then
         -  deleted status of 'do' service is logged
         """
-        mock_toolchain_client = toolchain_client_fixture
+        mock_extension_client = extension_client_fixture
 
         delete_response = {
             'foo': 'bar'
@@ -526,11 +526,11 @@ class TestCommandBigIp(object):
 
         mock_service = MagicMock()
         mock_service.delete.return_value = delete_response
-        type(mock_toolchain_client.return_value).service = PropertyMock(
+        type(mock_extension_client.return_value).service = PropertyMock(
             return_value=mock_service)
 
         result = self.runner.invoke(
-            toolchain, ['service', 'delete', '--component', 'do'])
+            extension, ['service', 'delete', '--component', 'do'])
         assert result.output == json.dumps(delete_response, indent=4, sort_keys=True) + '\n'
 
     def test_cmd_service_unsupported_action(self):
@@ -545,6 +545,6 @@ class TestCommandBigIp(object):
         """
 
         result = self.runner.invoke(
-            toolchain, ['service', 'remove', '--component', 'do'])
+            extension, ['service', 'remove', '--component', 'do'])
         assert "invalid choice: remove" in result.output
         assert result.exception
