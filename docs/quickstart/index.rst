@@ -28,8 +28,8 @@ This example shows how to configure authentication with an existing BIG-IP syste
     Password:
     Configuring BIG-IP Auth to 54.224.182.104 as myuser with ******
 
-    $ f5 bigip toolchain package verify --component as3
-    Toolchain component package installed: False
+    $ f5 bigip extension package verify --component as3
+    Extension component package installed: False
 
 Getting Help
 ------------
@@ -60,17 +60,17 @@ The CLI will provide help information for any sub-commands, as well as relevant 
     provider        Configure provider environment
     config          Configure client
 
-The CLI will also provide help information for any commands, such as the describing how to use the `bigip toolchain service` command:
+The CLI will also provide help information for any commands, such as the describing how to use the `bigip extension service` command:
 
 ::
 
-    $ f5 bigip toolchain service --help
-    Usage: f5 bigip toolchain service [OPTIONS] [create|delete|show]
+    $ f5 bigip extension service --help
+    Usage: f5 bigip extension service [OPTIONS] [create|delete|show]
 
-    Create, delete and verify Automation Toolchain services
+    Create, delete and verify BIG-IP extension services, such as Automation Toolchain
 
     Options:
-    --component [do|as3|ts|failover]
+    --component [do|as3|ts|cf]
                                     [required]
     --version TEXT
     --declaration TEXT
