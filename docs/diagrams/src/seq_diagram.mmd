@@ -1,0 +1,20 @@
+sequenceDiagram
+    participant D as DEVOPS
+    participant C as CLI
+    participant S as SDK
+    participant SVC as SERVICES
+
+    D->>C: Run command
+
+    alt auth is not configured
+        C-->>D: Prompt user to configure credential
+    else auth is configured
+        C->>C: Process command
+        C->>S: Invoke API
+        S->>S: Process Request
+        S->>SVC: Update services
+        SVC-->>S: Services response to SDK
+        S-->>C: SDK response to CLI
+        C-->>D: CLI response to client
+    end
+
