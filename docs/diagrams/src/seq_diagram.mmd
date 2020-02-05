@@ -10,9 +10,9 @@ sequenceDiagram
         C-->>D: Prompt user to configure credential
     else auth is configured
         C->>C: Process command
-        C->>S: Invoke API
+        C->>S: Invoke SDK API
         S->>S: Process Request
-        S->>SVC: Update services
+        S->>SVC: Call RESTful API
         SVC-->>S: Services response to SDK
         S-->>C: SDK response to CLI
         C-->>D: CLI response to client
