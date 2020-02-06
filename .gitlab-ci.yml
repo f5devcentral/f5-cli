@@ -81,6 +81,18 @@ test_functional_tf:
         expire_in: 1 day
         when: always
 
+# dependency security check
+test_security_check:
+    stage: test
+    script:
+        # install packages
+        - pip install -r requirements.txt
+        - pip install .
+        # run dependency check
+        - safety check -r requirements.txt
+    tags:
+        - cm-official-docker-executor
+
 # functional tests: demo teardown (ansible variation)
 test_functional_teardown:
     stage: test_functional_teardown
