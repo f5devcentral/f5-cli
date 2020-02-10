@@ -31,9 +31,9 @@
     The following is an example of how to install the Declarative Onboarding package
     onto a BIG-IP. ::
 
-        $ f5 bigip toolchain package install --component do
+        $ f5 bigip extension package install --component do
         {
-            "message": "Toolchain component package do installed"
+            "message": "Extension component package do installed"
         }
 
 
@@ -41,7 +41,7 @@
     ------------------------------------------
     The following is an example of how to configure a new service using AS3 ::
 
-        $ f5 bigip toolchain service --component as3 --declaration as3_decl.json create
+        $ f5 bigip extension service --component as3 --declaration as3_decl.json create
         {
             "declaration": {
                 ...
@@ -54,7 +54,7 @@
 # pylint: disable=too-many-arguments
 
 from f5sdk.bigip import ManagementClient
-from f5sdk.bigip.toolchain import ToolChainClient
+from f5sdk.bigip.extension import ExtensionClient
 
 import click_repl
 import click
@@ -124,21 +124,21 @@ def discover(ctx, provider, provider_tag):
     ctx.log(virtual_machines)
 
 
-# group: toolchain - package, service
-TOOLCHAIN_COMPONENTS = ['do', 'as3', 'ts', 'failover']
-@cli.group('toolchain',
-           help=HELP['BIGIP_TOOLCHAIN_HELP'])
-def toolchain():
+# group: extension - package, service
+EXTENSION_COMPONENTS = ['do', 'as3', 'ts', 'cf']
+@cli.group('extension',
+           help=HELP['BIGIP_EXTENSION_HELP'])
+def extension():
     """ group """
 
-@toolchain.command('package',
-                   help=HELP['BIGIP_TOOLCHAIN_PACKAGE_HELP'])
+@extension.command('package',
+                   help=HELP['BIGIP_EXTENSION_PACKAGE_HELP'])
 @click.argument('action',
                 required=True,
                 type=click.Choice(['install', 'uninstall', 'upgrade', 'verify']))
 @click.option('--component',
               required=True,
-              type=click.Choice(TOOLCHAIN_COMPONENTS))
+              type=click.Choice(EXTENSION_COMPONENTS))
 @click.option('--version',
               required=False)
 @PASS_CONTEXT
@@ -151,35 +151,35 @@ def package(ctx, action, component, version):
     kwargs = {}
     if version:
         kwargs['version'] = version
-    toolchain_client = ToolChainClient(client, component, **kwargs)
+    extension_client = ExtensionClient(client, component, **kwargs)
 
-    component_info = toolchain_client.package.is_installed()
+    component_info = extension_client.package.is_installed()
     if action == 'verify':
         ctx.log(component_info)
     elif action == 'install':
         if not component_info['installed']:
-            toolchain_client.package.install()
-            ctx.log('Toolchain component package %s installed', component)
+            extension_client.package.install()
+            ctx.log('Extension component package %s installed', component)
         else:
-            ctx.log('Toolchain component package %s version %s is already installed',
+            ctx.log('Extension component package %s version %s is already installed',
                     component, component_info['installed_version'])
     elif action == 'uninstall':
         if not component_info['installed']:
-            ctx.log('Toolchain component package %s is already uninstalled', component)
+            ctx.log('Extension component package %s is already uninstalled', component)
         else:
-            toolchain_client.package.uninstall()
-            ctx.log('Toolchain component package %s uninstalled', component)
+            extension_client.package.uninstall()
+            ctx.log('Extension component package %s uninstalled', component)
     else:
         raise click.ClickException('Action {} not implemented'.format(action))
 
-@toolchain.command('service',
-                   help=HELP['BIGIP_TOOLCHAIN_SERVICE_HELP'])
+@extension.command('service',
+                   help=HELP['BIGIP_EXTENSION_SERVICE_HELP'])
 @click.argument('action',
                 required=True,
                 type=click.Choice(['create', 'delete', 'show']))
 @click.option('--component',
               required=True,
-              type=click.Choice(TOOLCHAIN_COMPONENTS))
+              type=click.Choice(EXTENSION_COMPONENTS))
 @click.option('--version',
               required=False)
 @click.option('--declaration',
@@ -196,23 +196,23 @@ def service(ctx, action, component, version, declaration, install_component):
     kwargs = {}
     if version:
         kwargs['version'] = version
-    toolchain_client = ToolChainClient(client, component, **kwargs)
+    extension_client = ExtensionClient(client, component, **kwargs)
 
     # intent based - support install in 'service' sub-command
-    # install toolchain component if requested (and not installed)
-    installed = toolchain_client.package.is_installed()['installed']
+    # install extension component if requested (and not installed)
+    installed = extension_client.package.is_installed()['installed']
     if install_component and not installed:
-        toolchain_client.package.install()
-        toolchain_client.service.is_available()
+        extension_client.package.install()
+        extension_client.service.is_available()
 
     if action == 'show':
-        ctx.log(toolchain_client.service.show())
+        ctx.log(extension_client.service.show())
     elif action == 'create':
-        ctx.log(toolchain_client.service.create(
+        ctx.log(extension_client.service.create(
             config_file=utils_core.convert_to_absolute(declaration)
         ))
     elif action == 'delete':
-        ctx.log(toolchain_client.service.delete())
+        ctx.log(extension_client.service.delete())
     else:
         raise click.ClickException('Action not implemented')
 

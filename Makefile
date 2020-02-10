@@ -32,7 +32,7 @@ coverage: unit_test
 	coverage html
 html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
-docs: html
+code_docs: html
 	cp -R ${BUILDDIR}/ ${CODE_DOCS_DIR}
 	@echo "Docs finished. The are located in $(CODE_DOCS_DIR)"
 clean:

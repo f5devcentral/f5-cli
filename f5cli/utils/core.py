@@ -66,8 +66,6 @@ def format_output(data):
         ----------
         data : dict
             output data in a machine readable format
-        output_format : str
-            specify the output format of input data
         Returns
         -------
         str
@@ -110,10 +108,6 @@ def format_output(data):
                 }
             }
     """
-
-    if not data:
-        raise click.ClickException('Data must be provided!')
-
     output_format = _get_output_format()
 
     # it is typical that data is machine readable, however
