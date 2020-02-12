@@ -141,7 +141,7 @@ def extension():
               type=click.Choice(EXTENSION_COMPONENTS))
 @click.option('--version',
               required=False)
-@click.option('-lm', '--use-latest-metadata', is_flag=True)
+@click.option('-lm', '--use_latest_metadata', is_flag=True)
 @PASS_CONTEXT
 def package(ctx, action, component, version, use_latest_metadata):
     """ command """
@@ -153,7 +153,7 @@ def package(ctx, action, component, version, use_latest_metadata):
     if version:
         kwargs['version'] = version
     if use_latest_metadata:
-        kwargs['use-latest-metadata'] = use_latest_metadata
+        kwargs['use_latest_metadata'] = use_latest_metadata
     extension_client = ExtensionClient(client, component, **kwargs)
 
     component_info = extension_client.package.is_installed()
