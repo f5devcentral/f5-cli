@@ -93,7 +93,7 @@ resource "azurerm_virtual_machine" "deployment" {
     product   = "${var.offer}"
     name      = "${var.sku}"
   }
-  
+
   storage_os_disk {
     name              = "osdisk"
     caching           = "ReadWrite"
@@ -121,7 +121,7 @@ resource "null_resource" "delay_three_minutes" {
 
 resource "null_resource" "configure_auth" {
   provisioner "local-exec" {
-    command = "f5 bigip configure-auth --host ${azurerm_public_ip.deployment.ip_address} --user ${var.admin_username} --password ${var.admin_password}"
+    command = "f5 config auth create --name bigipTest --authentication-provider bigip --host ${azurerm_public_ip.deployment.ip_address} --user ${var.admin_username} --password ${var.admin_password} --set-default"
   }
   triggers = {
     # prefer fileexists + file here, when available (TF v0.12): https://www.terraform.io/docs/configuration/functions/fileexists.html

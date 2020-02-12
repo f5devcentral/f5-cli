@@ -14,19 +14,7 @@
             ...
         }
 
-    2. Configure authentication to a BIG-IP
-    ---------------------------------------
-    The following is an example of how to configure authentication for a BIG-IP. Any commands
-    that interact with a BIG-IP require that authentication to that BIG-IP is already configured. ::
-
-        $ f5 bigip configure-auth --host 54.224.182.104 --port 443 --user myuser
-        Password:
-        {
-            "message": "Authentication configured successfully"
-        }
-
-
-    3. Install or upgrade an Automation Toolchain package
+    2. Install or upgrade an Automation Toolchain package
     ------------------------------------------
     The following are the examples of how to install, uninstall, upgrade, and verify the Declarative
     Onboarding package onto a BIG-IP.  ::
@@ -53,7 +41,7 @@
         }
 
 
-    4. Install an Automation Toolchain service
+    3. Install an Automation Toolchain service
     ------------------------------------------
     The following is an example of how to configure a new service using AS3 ::
 
@@ -91,34 +79,6 @@ HELP = docs.get_docs()
              cls=AliasedGroup)
 def cli():
     """ group """
-
-@cli.command('configure-auth',
-             help=HELP['BIGIP_CONFIGURE_AUTH_HELP'])
-@click.option('--host',
-              required=True,
-              metavar='<HOST>')
-@click.option('--port',
-              required=False,
-              metavar='<PORT>')
-@click.option('--user', **constants.CLI_OPTIONS_USER_AUTH)
-@click.password_option('--password',
-                       **constants.CLI_OPTIONS_PASSWORD_AUTH,
-                       metavar='<BIGIP_PASSWORD>')
-@PASS_CONTEXT
-def configure_auth(ctx, host, port, user, password):
-    """ command """
-
-    config_client = ConfigClient(
-        group_name=constants.BIGIP_GROUP_NAME,
-        auth={
-            'username': user,
-            'password': password,
-            'host': host,
-            'port': port
-        })
-    config_client.store_auth()
-
-    ctx.log('Authentication configured successfully')
 
 @cli.command('discover',
              help=HELP['BIGIP_DISCOVER_HELP'])
@@ -161,8 +121,8 @@ def extension():
 @PASS_CONTEXT
 def package(ctx, action, component, version):
     """ command """
-    auth = ConfigClient().read_auth(constants.BIGIP_GROUP_NAME)
-    management_kwargs = dict(port=auth['port'], user=auth['username'], password=auth['password'])
+    auth = ConfigClient().read_auth(constants.AUTHENTICATION_PROVIDERS['BIGIP'])
+    management_kwargs = dict(port=auth['port'], user=auth['user'], password=auth['password'])
     client = ManagementClient(auth['host'], **management_kwargs)
 
     kwargs = {}
@@ -198,8 +158,8 @@ def package(ctx, action, component, version):
 @PASS_CONTEXT
 def service(ctx, action, component, version, declaration, install_component):
     """ command """
-    auth = ConfigClient().read_auth(constants.BIGIP_GROUP_NAME)
-    management_kwargs = dict(port=auth['port'], user=auth['username'], password=auth['password'])
+    auth = ConfigClient().read_auth(constants.AUTHENTICATION_PROVIDERS['BIGIP'])
+    management_kwargs = dict(port=auth['port'], user=auth['user'], password=auth['password'])
     client = ManagementClient(auth['host'], **management_kwargs)
     kwargs = {}
     if version:
