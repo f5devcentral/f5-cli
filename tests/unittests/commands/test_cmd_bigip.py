@@ -20,8 +20,8 @@ MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE = {
 
 MOCK_IS_INSTALLED_RETURN_VALUE = {
     'installed': True,
-    'installed_version': '1.3.0',
-    'latest_version': '1.3.0'
+    'installed_version': '1.10.0',
+    'latest_version': '1.10.0'
 }
 
 # pylint: disable=too-many-public-methods
@@ -192,8 +192,7 @@ class TestCommandBigIp(object):
     def test_cmd_package_verify_existing_extension_component(self,
                                                              mocker,
                                                              mgmt_client_fixture,
-                                                             config_client_read_auth_fixture,
-                                                             extension_client_fixture):
+                                                             config_client_read_auth_fixture):
         """ Command package verify an existing extension component
         Given
         - BIG-IP is up
@@ -203,11 +202,13 @@ class TestCommandBigIp(object):
         Then
         - Installed version information 'do' extension component is logged
         """
-        mock_management_client = mgmt_client_fixture
-
+        mock_extension_client = mocker.patch(
+            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
+        mock = MagicMock()
+        mock.is_installed.return_value = MOCK_IS_INSTALLED_RETURN_VALUE
+        type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
         result = self.runner.invoke(
-            extension, ['package', 'verify', '--component', 'do', '--version', '1.3.0'])
-        mock_management_client.assert_called_once()
+            extension, ['package', 'verify', '--component', 'do', '--version', '1.10.0'])
         assert result.output == json.dumps(
             MOCK_IS_INSTALLED_RETURN_VALUE,
             indent=4,
@@ -229,12 +230,12 @@ class TestCommandBigIp(object):
         - Installed version information 'do' extension component is logged
         """
         mock_extension_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.ExtensionClient")
+            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
 
         mock_is_installed_return_value = {
             'installed': False,
             'installed_version': '',
-            'latest_version': '1.3.0'
+            'latest_version': '1.10.0'
         }
 
         mock = MagicMock()
@@ -242,7 +243,7 @@ class TestCommandBigIp(object):
         type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
 
         result = self.runner.invoke(
-            extension, ['package', 'verify', '--component', 'do', '--version', '1.3.0'])
+            extension, ['package', 'verify', '--component', 'do', '--version', '1.10.0'])
         assert result.output == json.dumps(
             mock_is_installed_return_value, indent=4, sort_keys=True
         ) + '\n'
@@ -251,8 +252,7 @@ class TestCommandBigIp(object):
     def test_cmd_package_install_existing_extension_component(self,
                                                               mocker,
                                                               config_client_read_auth_fixture,
-                                                              mgmt_client_fixture,
-                                                              extension_client_fixture):
+                                                              mgmt_client_fixture):
         """ Command package install an existing package
         Given
         - BIG-IP is up
@@ -262,10 +262,19 @@ class TestCommandBigIp(object):
         Then
         - Already installed 'do' component message is logged
         """
+        mock_extension_client = mocker.patch(
+            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
+        mock = MagicMock()
+        mock.is_installed.return_value = {
+            'installed': True,
+            'installed_version': '1.10.0',
+            'latest_version': '1.10.0'
+        }
+        type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
         result = self.runner.invoke(
-            extension, ['package', 'install', '--component', 'do', '--version', '1.3.0'])
+            extension, ['package', 'install', '--component', 'do', '--version', '1.10.0'])
         assert result.output == json.dumps(
-            {'message': 'Extension component package do version 1.3.0 is already installed'},
+            {"message": "Extension component package 'do' version '1.10.0' is already installed"},
             indent=4,
             sort_keys=True
         ) + '\n'
@@ -285,21 +294,20 @@ class TestCommandBigIp(object):
         -  Successfully installed 'do' component message is logged
         """
         mock_extension_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.ExtensionClient")
-
+            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
         mock = MagicMock()
         mock.is_installed.return_value = {
             'installed': False,
             'installed_version': '',
-            'latest_version': '1.3.0'
+            'latest_version': '1.10.0'
         }
-        mock.install.return_value = None
+        mock.install.return_value = {'version': '1.10.0'}
         type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
 
         result = self.runner.invoke(
-            extension, ['package', 'install', '--component', 'do', '--version', '1.3.0'])
+            extension, ['package', 'install', '--component', 'do', '--version', '1.10.0'])
         assert result.output == json.dumps(
-            {'message': 'Extension component package do installed'},
+            {"message": "Extension component package 'do' successfully installed version '1.10.0'"},
             indent=4,
             sort_keys=True
         ) + '\n'
@@ -319,19 +327,22 @@ class TestCommandBigIp(object):
         - Uninstalled 'do' component message is logged
         """
         mock_extension_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.ExtensionClient")
-
+            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
         mock = MagicMock()
-        mock.is_installed.return_value = {'installed': True}
+        mock.is_installed.return_value = {
+            'installed': True,
+            'installed_version': '1.10.0',
+        }
         mock.uninstall.return_value = None
         type(mock_extension_client.return_value).package = PropertyMock(
             return_value=mock
         )
 
         result = self.runner.invoke(
-            extension, ['package', 'uninstall', '--component', 'do', '--version', '1.3.0'])
+            extension, ['package', 'uninstall', '--component', 'do', '--version', '1.10.0'])
         assert result.output == json.dumps(
-            {'message': 'Extension component package do uninstalled'},
+            {"message": "Successfully uninstalled extension component package 'do' "
+                        "version '1.10.0'"},
             indent=4,
             sort_keys=True
         ) + '\n'
@@ -351,45 +362,197 @@ class TestCommandBigIp(object):
         -  Already uninstalled 'do' component message is logged
         """
         mock_extension_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.ExtensionClient")
-
+            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
         mock = MagicMock()
-        mock.is_installed.return_value = {'installed': False}
+        mock.is_installed.return_value = {
+            'installed': False,
+            'installed_version': ''
+        }
         type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
 
         result = self.runner.invoke(
-            extension, ['package', 'uninstall', '--component', 'do', '--version', '1.3.0'])
+            extension, ['package', 'uninstall', '--component', 'do', '--version', '1.10.0'])
         assert result.output == json.dumps(
-            {'message': 'Extension component package do is already uninstalled'},
+            {"message": "Extension component package 'do' is already uninstalled"},
             indent=4,
             sort_keys=True
         ) + '\n'
 
     # pylint: disable=unused-argument
-    def test_cmd_package_unsupported_action(self,
-                                            mocker,
-                                            config_client_read_auth_fixture,
-                                            mgmt_client_fixture):
-        """ Unsupported command package action
+    def test_cmd_package_upgrade_existing_extension_component(self,
+                                                              mocker,
+                                                              config_client_read_auth_fixture,
+                                                              mgmt_client_fixture):
+        """ Command package upgrade to a latest version
         Given
         - BIG-IP is up
-        - 'do' component is not installed
+        - 'do' component is installed
         When
-        - User attempts to perform 'upgrade' action on 'do' component
+        - User attempts to upgrade 'do' component
         Then
-        -  Non-implemented action exception is thrown
+        - Upgraded 'do' component message is logged
         """
         mock_extension_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.ExtensionClient")
-
+            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
         mock = MagicMock()
-        mock.is_installed.return_value = {'installed': False}
+        mock.is_installed.return_value = {
+            'installed': True,
+            'installed_version': '1.8.0',
+            'latest_version': '1.10.0'
+        }
+        type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
+
+        mock_extension_client = mocker.patch(
+            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
+        mock = MagicMock()
+        mock.is_installed.return_value = {
+            'installed': False,
+            'installed_version': ''
+        }
+        mock.uninstall.return_value = None
+        type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
+
+        mock_extension_client = mocker.patch(
+            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
+        mock = MagicMock()
+        mock.is_installed.return_value = {
+            'installed': True,
+            'installed_version': '1.8.0',
+            'latest_version': '1.10.0'
+        }
+        mock.install.return_value = None
         type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
 
         result = self.runner.invoke(
             extension, ['package', 'upgrade', '--component', 'do'])
-        assert result.exception
-        assert result.output == "Error: Action upgrade not implemented\n"
+        assert result.output == json.dumps(
+            {"message": "Successfully upgraded extension component package 'do' to "
+                        "version '1.10.0'"},
+            indent=4,
+            sort_keys=True
+        ) + '\n'
+
+    # pylint: disable=unused-argument
+    def test_cmd_package_upgrade_existing_extension_component_ver(self,
+                                                                  mocker,
+                                                                  config_client_read_auth_fixture,
+                                                                  mgmt_client_fixture):
+        """ Command package upgrade to a specific version
+        Given
+        - BIG-IP is up
+        - 'do' component is installed
+        When
+        - User attempts to upgrade 'do' component --version 1.9.0
+        Then
+        - Upgraded 'do' component message is logged
+        """
+        mock_extension_client = mocker.patch(
+            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
+        mock = MagicMock()
+        mock.is_installed.return_value = {
+            'installed': True,
+            'installed_version': '1.8.0',
+            'latest_version': '1.10.0'
+        }
+        type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
+
+        mock_extension_client = mocker.patch(
+            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
+        mock = MagicMock()
+        mock.is_installed.return_value = {
+            'installed': False,
+            'installed_version': ''
+        }
+        mock.uninstall.return_value = None
+        type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
+
+        mock_extension_client = mocker.patch(
+            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
+        mock = MagicMock()
+        mock.is_installed.return_value = {
+            'installed': True,
+            'installed_version': '1.9.0',
+            'latest_version': '1.10.0'
+        }
+        mock.install.return_value = None
+        type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
+
+        result = self.runner.invoke(
+            extension, ['package', 'upgrade', '--version', '1.9.0', '--component', 'do'])
+        assert result.output == json.dumps(
+            {"message": "Successfully upgraded extension component package 'do' to "
+                        "version '1.9.0'"},
+            indent=4,
+            sort_keys=True
+        ) + '\n'
+
+    # pylint: disable=unused-argument
+    def test_cmd_package_upgrade_installed_vers_equals_latest_vers(self,
+                                                                   mocker,
+                                                                   config_client_read_auth_fixture,
+                                                                   mgmt_client_fixture):
+        """ Command package upgrade to a version already latest
+        Given
+        - BIG-IP is up
+        - 'do' component is installed
+        When
+        - User attempts to upgrade to a version already installed
+        Then
+        - Upgraded 'do' component message is logged
+        """
+        mock_extension_client = mocker.patch(
+            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
+
+        mock = MagicMock()
+        mock.is_installed.return_value = {
+            'installed': True,
+            'installed_version': '1.10.0',
+            'latest_version': '1.10.0'
+        }
+        type(mock_extension_client.return_value).package = PropertyMock(
+            return_value=mock
+        )
+
+        result = self.runner.invoke(
+            extension, ['package', 'upgrade', '--component', 'do'])
+        assert result.output == json.dumps(
+            {"message": "Extension component package 'do' version '1.10.0' "
+                        "is already installed"},
+            indent=4,
+            sort_keys=True
+        ) + '\n'
+
+    # pylint: disable=unused-argument
+    def test_cmd_package_upgrade_uninstalled_extension_component(self,
+                                                                 mocker,
+                                                                 config_client_read_auth_fixture,
+                                                                 mgmt_client_fixture):
+        """ Command package upgrade uninstalled extension component
+        Given
+        - BIG-IP is up
+        - 'do' component is not installed
+        When
+        - User attempts to upgrade 'do' component
+        Then
+        - Already uninstalled 'do', re-run install message is logged
+        """
+        mock_extension_client = mocker.patch(
+            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
+        mock = MagicMock()
+        mock.is_installed.return_value = {
+            'installed': False,
+            'installed_version': '',
+            'latest_version': '1.10.0'
+        }
+        type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
+
+        result = self.runner.invoke(
+            extension, ['package', 'upgrade', '--component', 'do'])
+        assert result.output == json.dumps(
+            {"message": "Extension component package 'do' is uninstalled, re-run install command"},
+            indent=4,
+            sort_keys=True
+        ) + '\n'
 
     # pylint: disable=unused-argument
     def test_cmd_service_show_installed_component(self,

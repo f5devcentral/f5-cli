@@ -26,14 +26,30 @@
         }
 
 
-    3. Install an Automation Toolchain package
+    3. Install or upgrade an Automation Toolchain package
     ------------------------------------------
-    The following is an example of how to install the Declarative Onboarding package
-    onto a BIG-IP. ::
-
+    The following are the examples of how to install, uninstall, upgrade, and verify the Declarative
+    Onboarding package onto a BIG-IP.  ::
         $ f5 bigip extension package install --component do
         {
-            "message": "Extension component package do installed"
+            "message": "Extension component package 'do' successfully installed version '1.10.0'"
+        }
+
+        $ f5 bigip extension package verify --component do
+        {
+            "installed": true,
+            "installed_version": "1.10.0",
+            "latest_version": "1.10.0"
+        }
+
+        $ f5 bigip extension package uninstall --component do
+        {
+           "message": "Successfully uninstalled extension component package 'do' version '1.10.0'"
+        }
+
+        $ f5 bigip extension package upgrade --component do --version 1.9.0
+        {
+            "message": "Successfully upgraded extension component package 'do' to version '1.9.0'"
         }
 
 
@@ -62,6 +78,7 @@ import click
 from f5cli import docs, constants
 from f5cli.utils import clients
 from f5cli.utils import core as utils_core
+from f5cli.commands.cmd_bigip import extension_operations
 from f5cli.config import ConfigClient
 from f5cli.cli import PASS_CONTEXT, AliasedGroup
 
@@ -156,22 +173,14 @@ def package(ctx, action, component, version, use_latest_metadata):
         kwargs['use_latest_metadata'] = use_latest_metadata
     extension_client = ExtensionClient(client, component, **kwargs)
 
-    component_info = extension_client.package.is_installed()
     if action == 'verify':
-        ctx.log(component_info)
+        ctx.log(extension_operations.verify_package(client, component, **kwargs))
     elif action == 'install':
-        if not component_info['installed']:
-            extension_client.package.install()
-            ctx.log('Extension component package %s installed', component)
-        else:
-            ctx.log('Extension component package %s version %s is already installed',
-                    component, component_info['installed_version'])
+        ctx.log(extension_operations.install_package(client, component, **kwargs))
     elif action == 'uninstall':
-        if not component_info['installed']:
-            ctx.log('Extension component package %s is already uninstalled', component)
-        else:
-            extension_client.package.uninstall()
-            ctx.log('Extension component package %s uninstalled', component)
+        ctx.log(extension_operations.uninstall_package(client, component, **kwargs))
+    elif action == 'upgrade':
+        ctx.log(extension_operations.upgrade_package(client, component, version))
     else:
         raise click.ClickException('Action {} not implemented'.format(action))
 
@@ -211,9 +220,12 @@ def service(ctx, action, component, version, declaration, install_component):
     if action == 'show':
         ctx.log(extension_client.service.show())
     elif action == 'create':
-        ctx.log(extension_client.service.create(
-            config_file=utils_core.convert_to_absolute(declaration)
-        ))
+        if not installed:
+            ctx.log("Package is not installed, run command "
+                    "'f5 bigip extension package install --component %s'" % component)
+        else:
+            ctx.log(extension_client.service.create(
+                config_file=utils_core.convert_to_absolute(declaration)))
     elif action == 'delete':
         ctx.log(extension_client.service.delete())
     else:
