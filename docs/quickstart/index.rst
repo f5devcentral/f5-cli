@@ -60,7 +60,7 @@ The CLI will provide help information for any sub-commands, as well as relevant 
     provider        Configure provider environment
     config          Configure client
 
-The CLI will also provide help information for any commands, such as the describing how to use the `bigip extension service` command:
+The CLI will also provide help information for any commands, such as the describing how to use the `bigip extension service|package` command:
 
 ::
 
@@ -70,9 +70,18 @@ The CLI will also provide help information for any commands, such as the describ
     Create, delete and verify BIG-IP extension services, such as Automation Toolchain
 
     Options:
-    --component [do|as3|ts|cf]
-                                    [required]
+    --component [do|as3|ts|cf]  [required]
     --version TEXT
     --declaration TEXT
     --install-component
-    --help                          Show this message and exit.
+    --help                      Show this message and exit.
+
+    $ f5 bigip extension package --help
+    Usage: f5 bigip extension package [OPTIONS] [install|uninstall|upgrade|verify]
+
+    Install, uninstall, upgrade and verify extension packages
+
+    Options:
+    --component [do|as3|ts|cf]  [required]
+    --version TEXT
+    --help                      Show this message and exit.
