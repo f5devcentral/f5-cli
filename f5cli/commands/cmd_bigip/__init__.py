@@ -208,15 +208,14 @@ def service(ctx, action, component, version, declaration, install_component):
 
     # intent based - support install in 'service' sub-command
     # install extension component if requested (and not installed)
-    installed = extension_client.package.is_installed()['installed']
-    if install_component and not installed:
+    if install_component and not extension_client.package.is_installed()['installed']:
         extension_client.package.install()
         extension_client.service.is_available()
 
     if action == 'show':
         ctx.log(extension_client.service.show())
     elif action == 'create':
-        if not installed:
+        if not extension_client.package.is_installed()['installed']:
             ctx.log("Package is not installed, run command "
                     "'f5 bigip extension package install --component %s'" % component)
         else:
