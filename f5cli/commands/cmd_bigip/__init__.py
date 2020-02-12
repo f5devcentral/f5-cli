@@ -142,8 +142,6 @@ def extension():
 @click.option('--version',
               required=False)
 @click.option('-lm', '--use-latest-metadata', is_flag=True)
-# @click.option('--use_latest_metadata',
-#               required=False)
 @PASS_CONTEXT
 def package(ctx, action, component, version, use_latest_metadata):
     """ command """
@@ -154,7 +152,6 @@ def package(ctx, action, component, version, use_latest_metadata):
     kwargs = {}
     if version:
         kwargs['version'] = version
-    # TODO: add another check for use_latest_metadata and append if necessary
     if use_latest_metadata:
         kwargs['use-latest-metadata'] = use_latest_metadata
     extension_client = ExtensionClient(client, component, **kwargs)
