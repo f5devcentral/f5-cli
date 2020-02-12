@@ -12,8 +12,8 @@ sequenceDiagram
         C->>C: Process command
         C->>S: Invoke SDK API
         S->>S: Process Request
-        S->>SVC: Call RESTful API
-        SVC-->>S: Services response to SDK
+        S->>SVC: Call RESTful API [HTTP/S]
+        SVC-->>S: Services response to SDK [HTTP/S]
         S-->>C: SDK response to CLI
         C-->>D: CLI response to client
     end
