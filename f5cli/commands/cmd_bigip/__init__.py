@@ -158,7 +158,7 @@ def extension():
               type=click.Choice(EXTENSION_COMPONENTS))
 @click.option('--version',
               required=False)
-@click.option('-lm', '--use_latest_metadata', is_flag=True)
+@click.option('--use-latest-metadata', is_flag=True)
 @PASS_CONTEXT
 def package(ctx, action, component, version, use_latest_metadata):
     """ command """
