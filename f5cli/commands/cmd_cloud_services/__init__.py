@@ -1,18 +1,6 @@
 """Below are examples of using the CLI to interact with F5 Cloud Services.
 
-    1. Configure authentication to F5 Cloud Services
-    ------------------------------------------------
-    The following is an example of how to configure authentication to F5 Cloud Services.
-    Any commands that interact with F5 Cloud Services require that authentication to
-    F5 Cloud Services already be configured. ::
-
-        $ f5 cloud-services configure-auth --user user@us.com
-        Password:
-        {
-            "message": "Authentication configured successfully"
-        }
-
-    2. Update an F5 Cloud Services subscription
+    1. Update an F5 Cloud Services subscription
     -------------------------------------------
     The following is an example of how to update an F5 Cloud Services subscription,
     such as a DNS Load Balancer. ::
@@ -23,7 +11,7 @@
             ...
         }
 
-    3. Get configuration of an F5 Cloud Services subscription
+    2. Get configuration of an F5 Cloud Services subscription
     ---------------------------------------------------------
     The following is an example of how to display or show the configuration of an existing
     F5 Cloud Services subscription, such as a DNS Load Balancer. ::
@@ -58,30 +46,6 @@ HELP = docs.get_docs()
 def cli():
     """ group """
 
-@cli.command('configure-auth',
-             help=HELP['CLOUD_SERVICES_CONFIGURE_AUTH_HELP'])
-@click.option('--user', **constants.CLI_OPTIONS_USER_AUTH)
-@click.password_option('--password',
-                       **constants.CLI_OPTIONS_PASSWORD_AUTH,
-                       metavar='<CLOUD_SERVICES_PASSWORD>')
-@click.option('--api-endpoint', required=False, metavar='<CLOUD_SERVICES_API_ENDPOINT>')
-@PASS_CONTEXT
-def configure_auth(ctx, user, password, api_endpoint):
-    """ command """
-
-    auth = {
-        'username': user,
-        'password': password
-    }
-    if api_endpoint is not None:
-        auth['api_endpoint'] = api_endpoint
-
-    config_client = ConfigClient(
-        group_name=constants.CLOUD_SERVICES_GROUP_NAME,
-        auth=auth)
-    config_client.store_auth()
-
-    ctx.log('Authentication configured successfully')
 
 @cli.command('subscription',
              help=HELP['CLOUD_SERVICES_SUBSCRIPTION_HELP'])
@@ -117,8 +81,9 @@ def subscription(ctx, action, subscription_id, declaration):
             'The --declaration option is required when updating a Cloud Services subscription'
         )
 
-    auth = ConfigClient().read_auth(constants.CLOUD_SERVICES_GROUP_NAME)
-    mgmt_client = ManagementClient(user=auth['username'], password=auth['password'],
+    auth = ConfigClient().read_auth(
+        constants.AUTHENTICATION_PROVIDERS[constants.CLOUD_SERVICES_GROUP_NAME])
+    mgmt_client = ManagementClient(user=auth['user'], password=auth['password'],
                                    api_endpoint=auth.pop('api_endpoint', None))
 
     subscription_client = SubscriptionClient(mgmt_client)
@@ -132,8 +97,9 @@ def subscription(ctx, action, subscription_id, declaration):
     else:
         raise click.ClickException(f"Action {action} not implemented for 'subscription' command")
 
+
 @cli.command('dns',
-             help=HELP['CLOUD_SERVICES_DNS_HELP'],)
+             help=HELP['CLOUD_SERVICES_DNS_HELP'], )
 @click.argument('action',
                 required=True,
                 type=click.Choice(['create', 'delete', 'update']),

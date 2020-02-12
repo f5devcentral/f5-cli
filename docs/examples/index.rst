@@ -2,6 +2,13 @@ Examples
 ========
 Below are examples of interacting with various F5 products and services by using the F5 CLI.
 
+Config Examples
+---------------
+.. toctree::
+   :maxdepth: 4
+
+    config.rst
+
 BIG-IP Examples
 ---------------
 .. toctree::

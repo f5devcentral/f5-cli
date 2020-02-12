@@ -9,7 +9,6 @@ from f5sdk.cloud_services.subscriptions import SubscriptionClient
 
 from f5cli.config import ConfigClient
 from f5cli.commands.cmd_cloud_services import cli
-from f5cli import constants
 
 from ...global_test_imports import pytest, CliRunner
 
@@ -19,7 +18,7 @@ TEST_PASSWORD = 'TEST PASSWORD'
 SUBSCRIPTION_ID = 's-123'
 
 MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE = {
-    'username': 'test_user',
+    'user': 'test_user',
     'password': 'test_password'
 }
 
@@ -93,77 +92,6 @@ class TestCommandBigIp(object):
         assert result.output == 'Error: Command not implemented\n'
         assert result.exception
 
-    def test_cmd_cloud_services_configure_auth(self,
-                                               config_client_fixture,
-                                               config_client_store_auth_fixture):
-        """ Configure authentication to F5 Cloud Services
-
-        Given
-        - Cloud Services is available, and end-user has an account
-
-        When
-        - User configures Cloud Services authentication with user/password credentials
-
-        Then
-        - Credentials are passed to the ConfigClient
-        - The ConfigClient is instructured to save the credentials
-        """
-        mock_config_client = config_client_fixture
-        mock_config_client_store_auth = config_client_store_auth_fixture
-
-        result = self.runner.invoke(cli, ['configure-auth', '--user', TEST_USER,
-                                          '--password', TEST_PASSWORD])
-
-        mock_config_client_store_auth.assert_called_once()
-        mock_config_client_args = mock_config_client.call_args_list[0][1]
-        assert mock_config_client_args['group_name'] == constants.CLOUD_SERVICES_GROUP_NAME
-        assert mock_config_client_args['auth'] == {
-            'username': TEST_USER,
-            'password': TEST_PASSWORD
-        }
-        assert result.output == json.dumps(
-            {'message': 'Authentication configured successfully'},
-            indent=4,
-            sort_keys=True
-        ) + '\n'
-
-    def test_cmd_cloud_services_configure_auth_custom_api(self,
-                                                          config_client_fixture,
-                                                          config_client_store_auth_fixture):
-        """ Configure authentication to F5 Cloud Services using a custom API endpoint
-
-        Given
-        - Cloud Services is available, and end-user has an account
-
-        When
-        - User configures Cloud Services authentication with user/password credentials
-        - And a custom API endpoint is provided
-
-        Then
-        - Credentials are passed to the ConfigClient
-        - The ConfigClient is instructured to save the credentials and API endpoint
-        """
-        mock_config_client = config_client_fixture
-        mock_config_client_store_auth = config_client_store_auth_fixture
-
-        test_api_endpoint = 'my-f5.api.com'
-        result = self.runner.invoke(cli, ['configure-auth', '--user', TEST_USER,
-                                          '--password', TEST_PASSWORD,
-                                          '--api-endpoint', test_api_endpoint])
-        mock_config_client_store_auth.assert_called_once()
-        mock_config_client_args = mock_config_client.call_args_list[0][1]
-        assert mock_config_client_args['group_name'] == constants.CLOUD_SERVICES_GROUP_NAME
-        assert mock_config_client_args['auth'] == {
-            'username': TEST_USER,
-            'password': TEST_PASSWORD,
-            'api_endpoint': test_api_endpoint
-        }
-        assert result.output == json.dumps(
-            {'message': 'Authentication configured successfully'},
-            indent=4,
-            sort_keys=True
-        ) + '\n'
-
     # pylint: disable=unused-argument
     def test_cmd_cloud_services_subscription_show(self,
                                                   mocker,
@@ -181,7 +109,7 @@ class TestCommandBigIp(object):
 
         Then
         - Authentication data is read from disk
-        - A Management client is createddd
+        - A Management client is created
         - A Subscription client is created
         - The show command is executed
         """

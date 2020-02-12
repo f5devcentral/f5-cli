@@ -4,21 +4,25 @@ CLI_HELP: |
 
     You can do all the things here.
 VERBOSE_HELP: 'Enables verbose mode'
-CONFIG_CLI_HELP: 'Configure client'
 FORMAT_HELP: 'Configure output format'
 OUTPUT_HELP: 'Specify output format. Allowed values: json, table.'
 ### f5 bigip ###
-BIGIP_HELP: Configure BIG-IP
-BIGIP_CONFIGURE_AUTH_HELP: Configure BIG-IP authentication
+BIGIP_HELP: Configure BIG-IP provider
 BIGIP_DISCOVER_HELP: Discover BIG-IP's with a specific key/value tag
 BIGIP_EXTENSION_HELP: Configure extension packages and services
 BIGIP_EXTENSION_PACKAGE_HELP: Install, uninstall, upgrade and verify extension packages
 BIGIP_EXTENSION_SERVICE_HELP: Create, delete and verify extension services
 ### f5 cloud-services ###
-CLOUD_SERVICES_HELP: Configure F5 Cloud Services
-CLOUD_SERVICES_CONFIGURE_AUTH_HELP: Configure F5 Cloud Services authentication
+CLOUD_SERVICES_HELP: Configure F5 Cloud Services provider
 CLOUD_SERVICES_DNS_HELP: Create, update, and delete DNS records
 CLOUD_SERVICES_SUBSCRIPTION_HELP: Update or show F5 Cloud Services subscription information
 ### f5 provider ###
 PROVIDER_HELP: Configure provider environment
 PROVIDER_LOGIN_HELP: Login to a provider environment
+### f5 account auth ###
+CONFIG_HELP: Configure authentication for providers and manage CLI configuration
+AUTH_HELP: Manage F5 BIG-IP or F5 Cloud Services authentication
+CONFIGURE_AUTH_HELP: Create a BIG-IP or CLOUD SERVICES authentication account
+UPDATE_AUTH_HELP: Update a BIG-IP or CLOUD SERVICES authentication account
+DELETE_AUTH_HELP: Delete a BIG-IP or CLOUD SERVICES authentication account
+LIST_AUTH_HELP: List all configured authentication accounts
