@@ -31,6 +31,14 @@ This example shows how to configure authentication with an existing BIG-IP syste
     $ f5 bigip extension package verify --component as3
     Extension component package installed: False
 
+By default, the F5 CLI uses a local metadata file in the SDK to query package components (AS3, DO, TS, etc) information to perform an action. This local metadata file could be out of date with the latest published version. If users want to use the latest version of a published component, a flag `--use-latest-metadata` can be utilized to fetch the latest metadata from an official F5 CDN. For example, the following command will use the metadata in F5 CDN and install the latest AS3 package
+
+::
+    $ f5 bigip extension package install --component as3 --use-latest-metadata
+    {
+        "message": "Extension component package 'as3' successfully installed version 'x.x.x'"
+    }
+
 Getting Help
 ------------
 
@@ -85,3 +93,4 @@ The CLI will also provide help information for any commands, such as the describ
     --component [do|as3|ts|cf]  [required]
     --version TEXT
     --help                      Show this message and exit.
+
