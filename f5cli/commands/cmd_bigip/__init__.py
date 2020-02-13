@@ -171,7 +171,6 @@ def package(ctx, action, component, version, use_latest_metadata):
         kwargs['version'] = version
     if use_latest_metadata:
         kwargs['use_latest_metadata'] = use_latest_metadata
-    extension_client = ExtensionClient(client, component, **kwargs)
 
     if action == 'verify':
         ctx.log(extension_operations.verify_package(client, component, **kwargs))
