@@ -16,6 +16,7 @@ HELP = docs.get_docs()
 def cli():
     """ group """
 
+
 @cli.command('login',
              help=HELP['PROVIDER_LOGIN_HELP'])
 @click.option('--environment',

@@ -33,11 +33,15 @@ This project maintains stateful configuration, in general below is the files tha
 - `~/.f5cli/` - root state directory (inside user's home directory)
     - `config.json`
         - Purpose: Any stateful configuration settings for the CLI, such as default output format, telemetry choice, etc.
-    - `auth.json`
-        - Purpose: Authentication tokens, etc. derived from `configure-auth` command(s)
+    - `auth.yaml`
+        - Purpose: Authentication tokens, etc. derived from `config auth` command(s)
 
-### Authentication configuration
+## Authentication configuration
 
 This flowchart describes the high-level decisions around authentication behavior.
 
 ![diagram](../docs/diagrams/auth_decision_tree.png)
+
+###Creating a profile for authentication
+
+`f5 config auth create --authentication-provider bigip --name bigip-2 --host 192.0.2.10 --user myuser --password mypassword --set-default`

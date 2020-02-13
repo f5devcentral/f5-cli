@@ -24,9 +24,9 @@ This example shows how to configure authentication with an existing BIG-IP syste
 
 ::
 
-    $ f5 bigip configure-auth --host 54.224.182.104 --user myuser
+    $ f5 config auth create --authentication-provider bigip --name bigip-1 --host 192.0.2.10 --user myuser --set-default
     Password:
-    Configuring BIG-IP Auth to 54.224.182.104 as myuser with ******
+    Configuring BIG-IP Auth to 192.0.2.10 as myuser with ******
 
     $ f5 bigip extension package verify --component as3
     Extension component package installed: False
@@ -51,22 +51,23 @@ The CLI will provide help information for any sub-commands, as well as relevant 
     $ f5 --help
     Usage: f5 [OPTIONS] COMMAND [ARGS]...
 
-    Welcome to the F5 Cloud command line interface.
+      Welcome to the F5 command line interface.
 
-    You can do all the things here.
+      You can do all the things here.
 
     Options:
-    --version      Show the version and exit.
-    --verbose      Enables verbose mode
-    --output TEXT  Specify output format. Allowed values: json, table.
-                    [default: json]
-    --help         Show this message and exit.
+      --version      Show the version and exit.
+      --verbose      Enables verbose mode
+      --output TEXT  Specify output format. Allowed values: json, table.
+                     [default: json]
+      --help         Show this message and exit.
 
     Commands:
-    bigip           Configure BIG-IP
-    cloud-services  Configure F5 Cloud Services
-    provider        Configure provider environment
-    config          Configure client
+      bigip           Configure BIG-IP provider
+      cloud-services  Configure F5 Cloud Services provider
+      provider        Configure provider environment
+      config          Configure authentication for providers and manage CLI configuration
+
 
 The CLI will also provide help information for any commands, such as the describing how to use the `bigip extension service|package` command:
 
@@ -93,4 +94,3 @@ The CLI will also provide help information for any commands, such as the describ
     --component [do|as3|ts|cf]  [required]
     --version TEXT
     --help                      Show this message and exit.
-
