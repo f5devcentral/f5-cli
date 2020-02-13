@@ -118,8 +118,9 @@ def extension():
               type=click.Choice(EXTENSION_COMPONENTS))
 @click.option('--version',
               required=False)
+@click.option('--use-latest-metadata', is_flag=True)
 @PASS_CONTEXT
-def package(ctx, action, component, version):
+def package(ctx, action, component, version, use_latest_metadata):
     """ command """
     auth = ConfigClient().read_auth(constants.AUTHENTICATION_PROVIDERS['BIGIP'])
     management_kwargs = dict(port=auth['port'], user=auth['user'], password=auth['password'])
@@ -128,6 +129,8 @@ def package(ctx, action, component, version):
     kwargs = {}
     if version:
         kwargs['version'] = version
+    if use_latest_metadata:
+        kwargs['use_latest_metadata'] = use_latest_metadata
 
     if action == 'verify':
         ctx.log(extension_operations.verify_package(client, component, **kwargs))
