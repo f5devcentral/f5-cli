@@ -147,7 +147,8 @@ def package(ctx, action, component, version, use_latest_metadata):
                    help=HELP['BIGIP_EXTENSION_SERVICE_HELP'])
 @click.argument('action',
                 required=True,
-                type=click.Choice(['create', 'delete', 'show', 'info', 'trigger', 'inspect', 'reset', 'trigger-failover']))
+                type=click.Choice(['create', 'delete', 'show', 'show-info',
+                                   'show-failover', 'show-inspect', 'reset', 'trigger-failover']))
 @click.option('--component',
               required=True,
               type=click.Choice(EXTENSION_COMPONENTS))
@@ -194,21 +195,15 @@ def service(ctx, action, component, version, declaration, install_component):
                 config_file=utils_core.convert_to_absolute(declaration)))
     elif action == 'delete':
         ctx.log(extension_client.service.delete())
-    elif action == 'info':
-        #ctx.log("info executed")
+    elif action == 'show-info':
         ctx.log(extension_client.service.show_info())
-
-    elif action == 'trigger':
-        # ctx.log("trigger executed")
-        ctx.log(extension_client.service.show_trigger())
+    elif action == 'show-failover':
+        ctx.log(extension_client.service.show_failover())
     elif action == 'trigger-failover':
-        # ctx.log("trigger executed")
         ctx.log(extension_client.service.trigger())
-    elif action == 'inspect':
-        # ctx.log("inspect executed")
+    elif action == 'show-inspect':
         ctx.log(extension_client.service.show_inspect())
     elif action == 'reset':
-        # ctx.log("inspect executed")
         ctx.log(extension_client.service.reset())
     else:
         raise click.ClickException('Action not implemented')
