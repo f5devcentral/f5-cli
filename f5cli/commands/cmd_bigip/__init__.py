@@ -80,6 +80,7 @@ HELP = docs.get_docs()
 def cli():
     """ group """
 
+
 @cli.command('discover',
              help=HELP['BIGIP_DISCOVER_HELP'])
 @click.option('--provider',
@@ -103,10 +104,13 @@ def discover(ctx, provider, provider_tag):
 
 # group: extension - package, service
 EXTENSION_COMPONENTS = ['do', 'as3', 'ts', 'cf']
+
+
 @cli.group('extension',
            help=HELP['BIGIP_EXTENSION_HELP'])
 def extension():
     """ group """
+
 
 @extension.command('package',
                    help=HELP['BIGIP_EXTENSION_PACKAGE_HELP'])
@@ -142,6 +146,7 @@ def package(ctx, action, component, version, use_latest_metadata):
         ctx.log(extension_operations.upgrade_package(client, component, version))
     else:
         raise click.ClickException('Action {} not implemented'.format(action))
+
 
 @extension.command('service',
                    help=HELP['BIGIP_EXTENSION_SERVICE_HELP'])
@@ -187,12 +192,7 @@ def service(ctx, action, component, version, declaration, install_component):
     if action == 'show':
         ctx.log(extension_client.service.show())
     elif action == 'create':
-        if not extension_client.package.is_installed()['installed']:
-            ctx.log("Package is not installed, run command "
-                    "'f5 bigip extension package install --component %s'" % component)
-        else:
-            ctx.log(extension_client.service.create(
-                config_file=utils_core.convert_to_absolute(declaration)))
+        ctx.log(_process_create(component, extension_client, declaration))
     elif action == 'delete':
         ctx.log(extension_client.service.delete())
     elif action == 'show-info':
@@ -207,6 +207,14 @@ def service(ctx, action, component, version, declaration, install_component):
         ctx.log(extension_client.service.reset(content=declaration))
     else:
         raise click.ClickException('Action not implemented')
+
+
+def _process_create(component, extension_client, declaration):
+    if not extension_client.package.is_installed()['installed']:
+        return ("Package is not installed, run command "
+                "'f5 bigip extension package install --component %s'" % component)
+    return extension_client.service.create(
+        config_file=utils_core.convert_to_absolute(declaration))
 
 
 click_repl.register_repl(cli)
