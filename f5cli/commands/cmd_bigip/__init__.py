@@ -57,11 +57,11 @@
 
 # pylint: disable=too-many-arguments
 
-from f5sdk.bigip import ManagementClient
-from f5sdk.bigip.extension import ExtensionClient
-
 import click_repl
 import click
+
+from f5sdk.bigip import ManagementClient
+from f5sdk.bigip.extension import ExtensionClient
 
 from f5cli import docs, constants
 from f5cli.utils import clients

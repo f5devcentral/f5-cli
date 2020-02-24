@@ -554,7 +554,7 @@ class TestCommandBigIp(object):
         assert result.output == json.dumps(show_response, indent=4, sort_keys=True) + '\n'
 
     # pylint: disable=unused-argument
-    def test_cmd_service_create_declaraVion_installed_component(self,
+    def test_cmd_service_create_declaration_installed_component(self,
                                                                 mocker,
                                                                 config_client_read_auth_fixture,
                                                                 mgmt_client_fixture,
@@ -622,10 +622,10 @@ class TestCommandBigIp(object):
 
     # pylint: disable=unused-argument
     def test_cmd_service_show_failover_cf_component(self,
-                                                                mocker,
-                                                                config_client_read_auth_fixture,
-                                                                mgmt_client_fixture,
-                                                                extension_client_fixture):
+                                                    mocker,
+                                                    config_client_read_auth_fixture,
+                                                    mgmt_client_fixture,
+                                                    extension_client_fixture):
         """ Command service show failover (/GET trigger) from CF extension
         Given
         - BIG-IP is up
@@ -652,10 +652,10 @@ class TestCommandBigIp(object):
 
     # pylint: disable=unused-argument
     def test_cmd_service_show_info_cf_component(self,
-                                                    mocker,
-                                                    config_client_read_auth_fixture,
-                                                    mgmt_client_fixture,
-                                                    extension_client_fixture):
+                                                mocker,
+                                                config_client_read_auth_fixture,
+                                                mgmt_client_fixture,
+                                                extension_client_fixture):
         """ Command service show-info of CF extension component
         Given
         - BIG-IP is up
@@ -682,10 +682,10 @@ class TestCommandBigIp(object):
 
     # pylint: disable=unused-argument
     def test_cmd_service_show_inspect_cf_component(self,
-                                                mocker,
-                                                config_client_read_auth_fixture,
-                                                mgmt_client_fixture,
-                                                extension_client_fixture):
+                                                   mocker,
+                                                   config_client_read_auth_fixture,
+                                                   mgmt_client_fixture,
+                                                   extension_client_fixture):
         """ Command service show-inspect of CF extension component
         Given
         - BIG-IP is up
@@ -712,10 +712,10 @@ class TestCommandBigIp(object):
 
     # pylint: disable=unused-argument
     def test_cmd_service_reset_cf_component(self,
-                                                   mocker,
-                                                   config_client_read_auth_fixture,
-                                                   mgmt_client_fixture,
-                                                   extension_client_fixture):
+                                            mocker,
+                                            config_client_read_auth_fixture,
+                                            mgmt_client_fixture,
+                                            extension_client_fixture):
         """ Command service reset of CF extension component
         Given
         - BIG-IP is up
