@@ -200,11 +200,11 @@ def service(ctx, action, component, version, declaration, install_component):
     elif action == 'show-failover':
         ctx.log(extension_client.service.show_failover())
     elif action == 'trigger-failover':
-        ctx.log(extension_client.service.trigger())
+        ctx.log(extension_client.service.trigger(content=declaration))
     elif action == 'show-inspect':
         ctx.log(extension_client.service.show_inspect())
     elif action == 'reset':
-        ctx.log(extension_client.service.reset())
+        ctx.log(extension_client.service.reset(content=declaration))
     else:
         raise click.ClickException('Action not implemented')
 
