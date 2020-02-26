@@ -9,6 +9,13 @@ Config Examples
 
     config.rst
 
+Login Examples
+---------------
+.. toctree::
+   :maxdepth: 4
+
+    login.rst
+
 BIG-IP Examples
 ---------------
 .. toctree::
