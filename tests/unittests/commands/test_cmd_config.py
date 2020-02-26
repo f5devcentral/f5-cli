@@ -141,7 +141,7 @@ class TestCommandConfig(object):
 
         test_host = 'TEST HOST'
         test_user = 'TEST USER'
-        test_port = 'TEST PORT'
+        test_port = 8080
         test_password = 'TEST PASSWORD'
         result = self.runner.invoke(cli, [
             'auth',

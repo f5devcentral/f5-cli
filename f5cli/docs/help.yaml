@@ -26,3 +26,4 @@ CONFIGURE_AUTH_HELP: Create a BIG-IP or CLOUD SERVICES authentication account
 UPDATE_AUTH_HELP: Update a BIG-IP or CLOUD SERVICES authentication account
 DELETE_AUTH_HELP: Delete a BIG-IP or CLOUD SERVICES authentication account
 LIST_AUTH_HELP: List all configured authentication accounts
+LOGIN_HELP: Login with BIG-IP or CLOUD SERVICES authentication credentials

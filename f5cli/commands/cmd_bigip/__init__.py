@@ -143,6 +143,7 @@ def package(ctx, action, component, version, use_latest_metadata):
     else:
         raise click.ClickException('Action {} not implemented'.format(action))
 
+
 @extension.command('service',
                    help=HELP['BIGIP_EXTENSION_SERVICE_HELP'])
 @click.argument('action',

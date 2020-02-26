@@ -24,12 +24,9 @@ This example shows how to configure authentication with an existing BIG-IP syste
 
 ::
 
-    $ f5 config auth create --authentication-provider bigip --name bigip-1 --host 192.0.2.10 --user myuser --set-default
-    Password:
-    Configuring BIG-IP Auth to 192.0.2.10 as myuser with ******
+    $ f5 login --authentication-provider bigip --host 192.0.2.10 --user myuser
 
     $ f5 bigip extension package verify --component as3
-    Extension component package installed: False
 
 By default, the F5 CLI uses a local metadata file in the SDK to query package components (AS3, DO, TS, etc) information to perform an action. This local metadata file could be out of date with the latest published version. If users want to use the latest version of a published component, a flag `--use-latest-metadata` can be utilized to fetch the latest metadata from an official F5 CDN. For example, the following command will use the metadata in F5 CDN and install the latest AS3 package
 

@@ -121,7 +121,7 @@ resource "null_resource" "delay_three_minutes" {
 
 resource "null_resource" "configure_auth" {
   provisioner "local-exec" {
-    command = "f5 config auth create --name bigipTest --authentication-provider bigip --host ${azurerm_public_ip.deployment.ip_address} --user ${var.admin_username} --password ${var.admin_password} --set-default"
+    command = "f5 login --authentication-provider bigip --host ${azurerm_public_ip.deployment.ip_address} --user ${var.admin_username} --password ${var.admin_password}"
   }
   triggers = {
     # prefer fileexists + file here, when available (TF v0.12): https://www.terraform.io/docs/configuration/functions/fileexists.html
