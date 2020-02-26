@@ -3,9 +3,12 @@
 import os
 import sys
 import json
+import click
 
 from f5cli.constants import FORMATS, FORMATS_ENV_VAR
 from f5cli.utils import core as core_utils
+
+from ...global_test_imports import pytest
 
 sys.path.append(os.getcwd())
 
@@ -72,7 +75,7 @@ def test_format_output_as_json(mocker):
     """
 
     mocker.patch.dict(
-        "f5cli.utils.clients.os.environ",
+        "os.environ",
         {
             FORMATS_ENV_VAR: FORMATS['JSON']
         }
@@ -112,7 +115,7 @@ def test_format_output_as_table(mocker):
     """
 
     mocker.patch.dict(
-        "f5cli.utils.clients.os.environ",
+        "os.environ",
         {
             FORMATS_ENV_VAR: FORMATS['TABLE']
         }
@@ -152,7 +155,7 @@ def test_format_output_as_table_dict(mocker):
     """
 
     mocker.patch.dict(
-        "f5cli.utils.clients.os.environ",
+        "os.environ",
         {
             FORMATS_ENV_VAR: FORMATS['TABLE']
         }
@@ -168,3 +171,27 @@ def test_format_output_as_table_dict(mocker):
         "my_first_value\t\t"
     )
     assert core_utils.format_output(data) == expected_result
+
+
+def test_invalid_format_output(mocker):
+    """ Invalid format output environment variable value
+    Given
+    - FORMATS_ENV_VAR contains invalid value
+
+    When
+    - data is requested to be formatted
+
+    Then
+    - 'ClickException' error is raised
+    """
+
+    mocker.patch.dict(
+        "os.environ",
+        {
+            FORMATS_ENV_VAR: 'foo'
+        }
+    )
+
+    with pytest.raises(click.exceptions.ClickException) as error:
+        core_utils.format_output({'foo': 'bar'})
+    assert error.value.args[0] == "Unsupported format foo"

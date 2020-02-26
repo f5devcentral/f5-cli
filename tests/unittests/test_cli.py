@@ -29,7 +29,7 @@ class TestContext(object):
         """Test fixture """
 
         mocker.patch.dict(
-            "f5cli.utils.clients.os.environ",
+            "os.environ",
             {
                 FORMATS_ENV_VAR: FORMATS['JSON']
             }
