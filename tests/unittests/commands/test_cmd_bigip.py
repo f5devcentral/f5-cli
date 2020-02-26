@@ -5,8 +5,7 @@ import json
 from f5sdk.bigip import ManagementClient
 
 from f5cli.config import ConfigClient
-from f5cli.utils import clients
-from f5cli.commands.cmd_bigip import cli, extension
+from f5cli.commands.cmd_bigip import extension
 
 from ...global_test_imports import MagicMock, call, PropertyMock, pytest, CliRunner
 
@@ -73,44 +72,6 @@ class TestCommandBigIp(object):
         mock_management_client = mocker.patch.object(ManagementClient, '__init__')
         mock_management_client.return_value = None
         return mock_management_client
-
-    def test_cmd_discover_azure_resources(self, mocker):
-        """ Discover azure resources
-        Given
-        - Cloud provider is Azure
-        - BIG-IP is up
-        - 2 VMs are tagged by "test_key/test_value" tag
-        - Output format is JSON
-
-        When
-        - User attempts to discover resources with tag test_key/test_value
-
-        Then
-        - Azure resources are retrieved
-        """
-
-        virtual_machines = [
-            {
-                "id": "a1",
-                "name": "f5bigip1"
-            },
-            {
-                "id": "b2",
-                "name": "f5bigip2"
-            }
-        ]
-
-        mock_clients = mocker.patch.object(clients, "get_provider_client")
-        mock_list = MagicMock()
-        mock_list.list.return_value = virtual_machines
-        type(mock_clients.return_value).virtual_machines = PropertyMock(
-            return_value=mock_list)
-
-        result = self.runner.invoke(
-            cli,
-            ['discover', '--provider', 'azure', '--provider-tag', 'test_key:test_value']
-        )
-        assert result.output == json.dumps(virtual_machines, indent=4, sort_keys=True) + '\n'
 
     # pylint: disable=unused-argument
     def test_cmd_package_verify_existing_extension_component(self,

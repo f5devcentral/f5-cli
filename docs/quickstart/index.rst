@@ -62,7 +62,6 @@ The CLI will provide help information for any sub-commands, as well as relevant 
     Commands:
       bigip           Configure BIG-IP provider
       cloud-services  Configure F5 Cloud Services provider
-      provider        Configure provider environment
       config          Configure authentication for providers and manage CLI configuration
 
 
