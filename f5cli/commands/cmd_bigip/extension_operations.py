@@ -25,7 +25,6 @@ def install_package(client, component, **kwargs):
 
 def uninstall_package(client, component, **kwargs):
     """ Uninstall extension package"""
-    message = ""
     extension_client = ExtensionClient(client, component, **kwargs)
     component_info = extension_client.package.is_installed()
     if not component_info['installed']:

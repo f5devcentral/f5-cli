@@ -116,6 +116,7 @@ def auth():
               metavar='<HOST>')
 @click.option('--port',
               required=False,
+              default=constants.DEFAULT_BIGIP_PORT,
               metavar='<PORT>')
 @click.option('--set-default',
               required=False,
@@ -161,9 +162,7 @@ def auth_create(ctx,  # pylint: disable=too-many-arguments
     else:
         if host is not None:
             auth_info['host'] = host
-            auth_info['port'] = constants.DEFAULT_BIGIP_PORT
-        if port is not None:
-            auth_info['port'] = port
+        auth_info['port'] = port
 
     config_client = ConfigClient(auth=auth_info)
     config_client.store_auth('create')

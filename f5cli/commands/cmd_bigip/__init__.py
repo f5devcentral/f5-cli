@@ -1,20 +1,7 @@
 """Below are examples of using the CLI to interact with a BIG-IP.
 
-    1. Discover BIG-IPs running in a Cloud Provider
-    -----------------------------------------------
-    The following is an example of how to discover information about a BIG-IP,
-    including IP addresses, running in a cloud provider. ::
 
-        $ export F5_CLI_PROVIDER_ACCESS_KEY=<aws_access_key_id>
-        $ export F5_CLI_PROVIDER_SECRET_KEY=<aws_secret_access_key>
-        $ export F5_CLI_PROVIDER_REGION_NAME=<region>
-        $ f5 bigip discover --provider aws --provider-tag "MyTagKey:value1"
-        {
-            "id": "i-0e331f5ca76ad231d",
-            ...
-        }
-
-    2. Install or upgrade an Automation Toolchain package
+    1. Install or upgrade an Automation Toolchain package
     ------------------------------------------
     The following are the examples of how to install, uninstall, upgrade, and verify the Declarative
     Onboarding package onto a BIG-IP.  ::
@@ -41,7 +28,7 @@
         }
 
 
-    3. Install an Automation Toolchain service
+    2. Install an Automation Toolchain service
     ------------------------------------------
     The following is an example of how to configure a new service using AS3 ::
 
@@ -64,7 +51,6 @@ from f5sdk.bigip import ManagementClient
 from f5sdk.bigip.extension import ExtensionClient
 
 from f5cli import docs, constants
-from f5cli.utils import clients
 from f5cli.utils import core as utils_core
 from f5cli.commands.cmd_bigip import extension_operations
 from f5cli.config import ConfigClient
@@ -79,28 +65,6 @@ HELP = docs.get_docs()
              cls=AliasedGroup)
 def cli():
     """ group """
-
-
-@cli.command('discover',
-             help=HELP['BIGIP_DISCOVER_HELP'])
-@click.option('--provider',
-              required=True,
-              type=click.Choice(['aws', 'azure', 'gcp']),
-              metavar='<PROVIDER>')
-@click.option('--provider-tag',
-              required=True,
-              metavar='<PROVIDER TAG>')
-@PASS_CONTEXT
-def discover(ctx, provider, provider_tag):
-    """ command """
-
-    # get provider client
-    provider_client = clients.get_provider_client(provider)
-    # list virtual machines
-    virtual_machines = provider_client.virtual_machines.list(filter_tag=provider_tag)
-
-    ctx.log(virtual_machines)
-
 
 # group: extension - package, service
 EXTENSION_COMPONENTS = ['do', 'as3', 'ts', 'cf']
