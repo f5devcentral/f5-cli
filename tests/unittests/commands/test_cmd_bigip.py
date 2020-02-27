@@ -589,7 +589,6 @@ class TestCommandBigIp(object):
                                                     extension_client_fixture):
         """ Command service show failover (/GET trigger) from CF extension
         Given
-        - BIG-IP is up
         - 'cf' component is installed
         When
         - User attempts to show-failover
