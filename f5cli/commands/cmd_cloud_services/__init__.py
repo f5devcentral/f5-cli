@@ -24,11 +24,10 @@
 
 """
 
-from f5sdk.cloud_services import ManagementClient
-from f5sdk.cloud_services.subscriptions import SubscriptionClient
-
 import click_repl
 import click
+from f5sdk.cloud_services import ManagementClient
+from f5sdk.cloud_services.subscriptions import SubscriptionClient
 
 from f5cli import docs
 from f5cli.cli import PASS_CONTEXT, AliasedGroup

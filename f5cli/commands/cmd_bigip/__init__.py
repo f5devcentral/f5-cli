@@ -44,11 +44,11 @@
 
 # pylint: disable=too-many-arguments
 
-from f5sdk.bigip import ManagementClient
-from f5sdk.bigip.extension import ExtensionClient
-
 import click_repl
 import click
+
+from f5sdk.bigip import ManagementClient
+from f5sdk.bigip.extension import ExtensionClient
 
 from f5cli import docs, constants
 from f5cli.utils import core as utils_core
@@ -69,10 +69,12 @@ def cli():
 
 # group: extension - package, service
 EXTENSION_COMPONENTS = ['do', 'as3', 'ts', 'cf']
+
 @cli.group('extension',
            help=HELP['BIGIP_EXTENSION_HELP'])
 def extension():
     """ group """
+
 
 @extension.command('package',
                    help=HELP['BIGIP_EXTENSION_PACKAGE_HELP'])
@@ -114,7 +116,8 @@ def package(ctx, action, component, version, use_latest_metadata):
                    help=HELP['BIGIP_EXTENSION_SERVICE_HELP'])
 @click.argument('action',
                 required=True,
-                type=click.Choice(['create', 'delete', 'show']))
+                type=click.Choice(['create', 'delete', 'show', 'show-info',
+                                   'show-failover', 'show-inspect', 'reset', 'trigger-failover']))
 @click.option('--component',
               required=True,
               type=click.Choice(EXTENSION_COMPONENTS))
@@ -145,16 +148,31 @@ def service(ctx, action, component, version, declaration, install_component):
     if action == 'show':
         ctx.log(extension_client.service.show())
     elif action == 'create':
-        if not extension_client.package.is_installed()['installed']:
-            ctx.log("Package is not installed, run command "
-                    "'f5 bigip extension package install --component %s'" % component)
-        else:
-            ctx.log(extension_client.service.create(
-                config_file=utils_core.convert_to_absolute(declaration)))
+        ctx.log(_process_create(component, extension_client, declaration))
     elif action == 'delete':
         ctx.log(extension_client.service.delete())
+    elif action == 'show-info':
+        ctx.log(extension_client.service.show_info())
+    elif action == 'show-failover':
+        ctx.log(extension_client.service.show_trigger())
+    elif action == 'trigger-failover':
+        ctx.log(extension_client.service.trigger(
+            config_file=utils_core.convert_to_absolute(declaration)))
+    elif action == 'show-inspect':
+        ctx.log(extension_client.service.show_inspect())
+    elif action == 'reset':
+        ctx.log(extension_client.service.reset(
+            config_file=utils_core.convert_to_absolute(declaration)))
     else:
         raise click.ClickException('Action not implemented')
+
+
+def _process_create(component, extension_client, declaration):
+    if not extension_client.package.is_installed()['installed']:
+        return ("Package is not installed, run command "
+                "'f5 bigip extension package install --component %s'" % component)
+    return extension_client.service.create(
+        config_file=utils_core.convert_to_absolute(declaration))
 
 
 click_repl.register_repl(cli)

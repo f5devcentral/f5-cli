@@ -581,6 +581,155 @@ class TestCommandBigIp(object):
             extension, ['service', 'delete', '--component', 'do'])
         assert result.output == json.dumps(delete_response, indent=4, sort_keys=True) + '\n'
 
+    # pylint: disable=unused-argument
+    def test_cmd_service_show_failover_cf_component(self,
+                                                    mocker,
+                                                    config_client_read_auth_fixture,
+                                                    mgmt_client_fixture,
+                                                    extension_client_fixture):
+        """ Command service show failover (/GET trigger) from CF extension
+        Given
+        - 'cf' component is installed
+        When
+        - User attempts to show-failover
+        Then
+        -  result status of show-failover
+        """
+        mock_service = MagicMock()
+
+        show_failover_response = {
+            'foo': 'bar'
+        }
+
+        mock_service.show_trigger.return_value = show_failover_response
+        mock_extension_client = extension_client_fixture
+        type(mock_extension_client.return_value).service = PropertyMock(
+            return_value=mock_service)
+
+        result = self.runner.invoke(extension, ['service', 'show-failover', '--component', 'cf'])
+
+        assert result.output == json.dumps(show_failover_response, indent=4, sort_keys=True) + '\n'
+
+    # pylint: disable=unused-argument
+    def test_cmd_service_show_info_cf_component(self,
+                                                mocker,
+                                                config_client_read_auth_fixture,
+                                                mgmt_client_fixture,
+                                                extension_client_fixture):
+        """ Command service show-info of CF extension component
+        Given
+        - BIG-IP is up
+        - 'cf' component is installed
+        When
+        - User attempts to show-info
+        Then
+        -  result status of show-info
+        """
+        mock_service = MagicMock()
+
+        show_info_response = {
+            'foo': 'bar'
+        }
+
+        mock_service.show_info.return_value = show_info_response
+        mock_extension_client = extension_client_fixture
+        type(mock_extension_client.return_value).service = PropertyMock(
+            return_value=mock_service)
+
+        result = self.runner.invoke(extension, ['service', 'show-info', '--component', 'cf'])
+
+        assert result.output == json.dumps(show_info_response, indent=4, sort_keys=True) + '\n'
+
+    # pylint: disable=unused-argument
+    def test_cmd_service_show_inspect_cf_component(self,
+                                                   mocker,
+                                                   config_client_read_auth_fixture,
+                                                   mgmt_client_fixture,
+                                                   extension_client_fixture):
+        """ Command service show-inspect of CF extension component
+        Given
+        - BIG-IP is up
+        - 'cf' component is installed
+        When
+        - User attempts to show-inspect
+        Then
+        -  result status of show-inspect
+        """
+        mock_service = MagicMock()
+
+        show_inspect_response = {
+            'foo': 'bar'
+        }
+
+        mock_service.show_inspect.return_value = show_inspect_response
+        mock_extension_client = extension_client_fixture
+        type(mock_extension_client.return_value).service = PropertyMock(
+            return_value=mock_service)
+
+        result = self.runner.invoke(extension, ['service', 'show-inspect', '--component', 'cf'])
+
+        assert result.output == json.dumps(show_inspect_response, indent=4, sort_keys=True) + '\n'
+
+    # pylint: disable=unused-argument
+    def test_cmd_service_reset_cf_component(self,
+                                            mocker,
+                                            config_client_read_auth_fixture,
+                                            mgmt_client_fixture,
+                                            extension_client_fixture):
+        """ Command service reset of CF extension component
+        Given
+        - BIG-IP is up
+        - 'cf' component is installed
+        When
+        - User attempts to reset
+        Then
+        -  result status of reset
+        """
+        mock_service = MagicMock()
+
+        reset_response = {
+            'foo': 'bar'
+        }
+
+        mock_service.reset.return_value = reset_response
+        mock_extension_client = extension_client_fixture
+        type(mock_extension_client.return_value).service = PropertyMock(
+            return_value=mock_service)
+
+        result = self.runner.invoke(extension, ['service', 'reset', '--component', 'cf'])
+
+        assert result.output == json.dumps(reset_response, indent=4, sort_keys=True) + '\n'
+
+    # pylint: disable=unused-argument
+    def test_cmd_service_trigger_cf_component(self,
+                                              mocker,
+                                              config_client_read_auth_fixture,
+                                              mgmt_client_fixture,
+                                              extension_client_fixture):
+        """ Command service trigger failover of CF extension component
+        Given
+        - BIG-IP is up
+        - 'cf' component is installed
+        When
+        - User attempts to trigger
+        Then
+        -  result status of trigger
+        """
+        mock_service = MagicMock()
+
+        trigger_response = {
+            'foo': 'bar'
+        }
+
+        mock_service.trigger.return_value = trigger_response
+        mock_extension_client = extension_client_fixture
+        type(mock_extension_client.return_value).service = PropertyMock(
+            return_value=mock_service)
+
+        result = self.runner.invoke(extension, ['service', 'trigger-failover', '--component', 'cf'])
+
+        assert result.output == json.dumps(trigger_response, indent=4, sort_keys=True) + '\n'
+
     def test_cmd_service_unsupported_action(self):
         """ Unsupported command service action
         Given

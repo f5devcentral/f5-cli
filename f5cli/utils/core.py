@@ -10,7 +10,9 @@ from f5cli.constants import F5_CONFIG_FILE, FORMATS, FORMATS_ENV_VAR
 
 def convert_to_absolute(file):
     """Convert file to absolute path """
-    return os.path.abspath(os.path.join(os.getcwd(), file))
+    if file is not None:
+        return os.path.abspath(os.path.join(os.getcwd(), file))
+    return None
 
 
 def _get_output_format():
