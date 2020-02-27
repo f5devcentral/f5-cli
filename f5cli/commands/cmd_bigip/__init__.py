@@ -128,14 +128,6 @@ def package(ctx, action, component, version, use_latest_metadata):
 @click.option('--install-component',
               required=False,
               is_flag=True)
-# @click.option('--info',
-#               required=False)
-# @click.option('--trigger',
-#               required=False)
-# @click.option('--inspect',
-#               required=False)
-# @click.option('--reset',
-#               required=False)
 @PASS_CONTEXT
 def service(ctx, action, component, version, declaration, install_component):
     """ command """
