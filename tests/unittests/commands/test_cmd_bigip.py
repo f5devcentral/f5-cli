@@ -701,6 +701,36 @@ class TestCommandBigIp(object):
 
         assert result.output == json.dumps(reset_response, indent=4, sort_keys=True) + '\n'
 
+    # pylint: disable=unused-argument
+    def test_cmd_service_trigger_cf_component(self,
+                                            mocker,
+                                            config_client_read_auth_fixture,
+                                            mgmt_client_fixture,
+                                            extension_client_fixture):
+        """ Command service trigger failover of CF extension component
+        Given
+        - BIG-IP is up
+        - 'cf' component is installed
+        When
+        - User attempts to trigger
+        Then
+        -  result status of trigger
+        """
+        mock_service = MagicMock()
+
+        trigger_response = {
+            'foo': 'bar'
+        }
+
+        mock_service.trigger.return_value = trigger_response
+        mock_extension_client = extension_client_fixture
+        type(mock_extension_client.return_value).service = PropertyMock(
+            return_value=mock_service)
+
+        result = self.runner.invoke(extension, ['service', 'trigger-failover', '--component', 'cf'])
+
+        assert result.output == json.dumps(trigger_response, indent=4, sort_keys=True) + '\n'
+
     def test_cmd_service_unsupported_action(self):
         """ Unsupported command service action
         Given
