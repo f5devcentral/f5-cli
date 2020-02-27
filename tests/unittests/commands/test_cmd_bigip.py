@@ -702,10 +702,10 @@ class TestCommandBigIp(object):
 
     # pylint: disable=unused-argument
     def test_cmd_service_trigger_cf_component(self,
-                                            mocker,
-                                            config_client_read_auth_fixture,
-                                            mgmt_client_fixture,
-                                            extension_client_fixture):
+                                              mocker,
+                                              config_client_read_auth_fixture,
+                                              mgmt_client_fixture,
+                                              extension_client_fixture):
         """ Command service trigger failover of CF extension component
         Given
         - BIG-IP is up
