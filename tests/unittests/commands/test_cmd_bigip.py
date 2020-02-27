@@ -602,7 +602,7 @@ class TestCommandBigIp(object):
             'foo': 'bar'
         }
 
-        mock_service.show_failover.return_value = show_failover_response
+        mock_service.show_trigger.return_value = show_failover_response
         mock_extension_client = extension_client_fixture
         type(mock_extension_client.return_value).service = PropertyMock(
             return_value=mock_service)
