@@ -14,7 +14,7 @@ In short this is a set of rules to ensure users of the CLI find it intuitive and
 - All commands must support standard options
 - Prefer long options over short, --output instead of -o.
 - Make use of aliasing and auto complete, where possible
-- For Leaf endpoints of a resource, the verb use does not have to conform to be CRUD operation and does not require a command subgroup.
+- For Leaf endpoints of a resource, the verb use does not have to conform to be CRUD operation and does not require a command subgroup. For examples, see cf extension CRUD operations.
 
 ## Standard options
 
