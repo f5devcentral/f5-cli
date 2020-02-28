@@ -145,26 +145,29 @@ def service(ctx, action, component, version, declaration, install_component):
         extension_client.package.install()
         extension_client.service.is_available()
 
-    if action == 'show':
-        ctx.log(extension_client.service.show())
-    elif action == 'create':
-        ctx.log(_process_create(component, extension_client, declaration))
-    elif action == 'delete':
-        ctx.log(extension_client.service.delete())
-    elif action == 'show-info':
-        ctx.log(extension_client.service.show_info())
-    elif action == 'show-failover':
-        ctx.log(extension_client.service.show_trigger())
-    elif action == 'trigger-failover':
-        ctx.log(extension_client.service.trigger(
-            config_file=utils_core.convert_to_absolute(declaration)))
-    elif action == 'show-inspect':
-        ctx.log(extension_client.service.show_inspect())
-    elif action == 'reset':
-        ctx.log(extension_client.service.reset(
-            config_file=utils_core.convert_to_absolute(declaration)))
-    else:
-        raise click.ClickException('Action not implemented')
+    try:
+        if action == 'show':
+            ctx.log(extension_client.service.show())
+        elif action == 'create':
+            ctx.log(_process_create(component, extension_client, declaration))
+        elif action == 'delete':
+            ctx.log(extension_client.service.delete())
+        elif action == 'show-info':
+            ctx.log(extension_client.service.show_info())
+        elif action == 'show-failover':
+            ctx.log(extension_client.service.show_trigger())
+        elif action == 'trigger-failover':
+            ctx.log(extension_client.service.trigger(
+                config_file=utils_core.convert_to_absolute(declaration)))
+        elif action == 'show-inspect':
+            ctx.log(extension_client.service.show_inspect())
+        elif action == 'reset':
+            ctx.log(extension_client.service.reset(
+                config_file=utils_core.convert_to_absolute(declaration)))
+        else:
+            raise click.ClickException('Action not implemented')
+    except Exception as error:
+        raise click.ClickException(error)
 
 
 def _process_create(component, extension_client, declaration):
