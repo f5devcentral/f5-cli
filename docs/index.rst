@@ -24,4 +24,5 @@ User Guide Index
    quickstart/index
    examples/index
    configuration/index
+   faq/index
    troubleshooting/index

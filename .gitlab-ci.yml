@@ -20,6 +20,8 @@ variables:
     ARM_CLIENT_SECRET: "$AZURE_CLIENT_SECRET"
     ARM_SUBSCRIPTION_ID: "$AZURE_SUBSCRIPTION_ID"
     ARM_TENANT_ID: "$AZURE_TENANT_ID"
+    # disable analytics during functional test
+    F5_ALLOW_ANALYTICS: "false"
 
 # unit tests: python 3.x (preferred)
 test_unit:
@@ -53,6 +55,7 @@ test_functional:
         variables:
             # enable this job
             - $RUN_FUNCTIONAL_TESTS == "true"
+            - $CI_COMMIT_MESSAGE =~ /smart:run_functional_tests/
 
 # functional tests: demo (terraform variation)
 test_functional_tf:
@@ -74,6 +77,7 @@ test_functional_tf:
         variables:
             # enable this job
             - $RUN_FUNCTIONAL_TESTS == "true"
+            - $CI_COMMIT_MESSAGE =~ /smart:run_functional_tests/
     # terraform destroy command needs the state from apply
     artifacts:
         paths:
@@ -111,6 +115,7 @@ test_functional_teardown:
         variables:
             # enable this job
             - $RUN_FUNCTIONAL_TESTS == "true"
+            - $CI_COMMIT_MESSAGE =~ /smart:run_functional_tests/
 
 # functional tests: demo teardown (terraform variation)
 test_functional_teardown_tf:
@@ -131,6 +136,7 @@ test_functional_teardown_tf:
         variables:
             # enable this job
             - $RUN_FUNCTIONAL_TESTS == "true"
+            - $CI_COMMIT_MESSAGE =~ /smart:run_functional_tests/
 
 # generate code coverage docs
 docs_code_coverage:

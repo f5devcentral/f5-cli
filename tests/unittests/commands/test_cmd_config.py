@@ -1,7 +1,8 @@
 """ Test Config command """
 import json
 
-from f5cli.config import ConfigClient
+from f5cli.constants import FORMATS, ENV_VARS
+from f5cli.config import AuthConfigurationClient
 from f5cli.commands.cmd_config import cli
 
 from ...global_test_imports import pytest, CliRunner
@@ -32,40 +33,40 @@ class TestCommandConfig(object):
     @staticmethod
     @pytest.fixture
     def config_client_read_auth_fixture(mocker):
-        """ PyTest fixture mocking ConfigClient's read_auth method """
+        """ PyTest fixture mocking AuthConfigurationClient's read_auth method """
         mock_config_client_read_auth = mocker.patch.object(
-            ConfigClient, "read_auth")
+            AuthConfigurationClient, "read_auth")
         mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
 
     @staticmethod
     @pytest.fixture
     def config_client_store_auth_fixture(mocker):
-        """ PyTest fixture mocking ConfigClient's store_auth method """
+        """ PyTest fixture mocking AuthConfigurationClient's store_auth method """
         mock_config_client_store_auth = mocker.patch.object(
-            ConfigClient, "store_auth")
+            AuthConfigurationClient, "store_auth")
         return mock_config_client_store_auth
 
     @staticmethod
     @pytest.fixture
     def config_client_delete_auth_fixture(mocker):
-        """ PyTest fixture mocking ConfigClient's store_auth method """
+        """ PyTest fixture mocking AuthConfigurationClient's delete_auth method """
         mock_config_client_delete_auth = mocker.patch.object(
-            ConfigClient, "delete_auth")
+            AuthConfigurationClient, "delete_auth")
         return mock_config_client_delete_auth
 
     @staticmethod
     @pytest.fixture
     def config_client_list_auth_fixture(mocker):
-        """ PyTest fixture mocking ConfigClient's store_auth method """
+        """ PyTest fixture mocking AuthConfigurationClient's list_auth method """
         mock_config_client_list_auth = mocker.patch.object(
-            ConfigClient, "list_auth")
+            AuthConfigurationClient, "list_auth")
         return mock_config_client_list_auth
 
     @staticmethod
     @pytest.fixture
     def config_client_fixture(mocker):
-        """ PyTest fixture returning mocked ConfigClient """
-        mock_config_client = mocker.patch.object(ConfigClient, "__init__")
+        """ PyTest fixture returning mocked AuthConfigurationClient """
+        mock_config_client = mocker.patch.object(AuthConfigurationClient, "__init__")
         mock_config_client.return_value = None
         return mock_config_client
 
@@ -86,12 +87,12 @@ class TestCommandConfig(object):
         - User to configure auth with a BIGIP
 
         Then
-        - Credentials are passed to the ConfigClient
-        - The ConfigClient is instructed to save the credentials
+        - Credentials are passed to the AuthConfigurationClient
+        - The AuthConfigurationClient is instructed to save the credentials
         """
         mock_config_client = config_client_fixture
         mock_config_client_store_auth = mocker.patch.object(
-            ConfigClient, "store_auth")
+            AuthConfigurationClient, "store_auth")
 
         test_host = 'TEST HOST'
         test_user = 'TEST USER'
@@ -132,12 +133,12 @@ class TestCommandConfig(object):
         - User to configure auth with a BIGIP against a specific port
 
         Then
-        - Credentials as well as the host and port information is passed to the ConfigClient
-        - The ConfigClient is instructed to save the credentials
+        - Credentials, host and port information is passed to the AuthConfigurationClient
+        - The AuthConfigurationClient is instructed to save the credentials
         """
         mock_config_client = config_client_fixture
         mock_config_client_store_auth = mocker.patch.object(
-            ConfigClient, "store_auth")
+            AuthConfigurationClient, "store_auth")
 
         test_host = 'TEST HOST'
         test_user = 'TEST USER'
@@ -183,8 +184,8 @@ class TestCommandConfig(object):
         - User configures Cloud Services authentication with user/password credentials
 
         Then
-        - Credentials are passed to the ConfigClient
-        - The ConfigClient is instructed to save the credentials
+        - Credentials are passed to the AuthConfigurationClient
+        - The AuthConfigurationClient is instructed to save the credentials
         """
         mock_config_client = config_client_fixture
         mock_config_client_store_auth = config_client_store_auth_fixture
@@ -226,8 +227,8 @@ class TestCommandConfig(object):
         - And a custom API endpoint is provided
 
         Then
-        - Credentials are passed to the ConfigClient
-        - The ConfigClient is instructed to save the credentials and API endpoint
+        - Credentials are passed to the AuthConfigurationClient
+        - The AuthConfigurationClient is instructed to save the credentials and API endpoint
         """
         mock_config_client = config_client_fixture
         mock_config_client_store_auth = config_client_store_auth_fixture
@@ -254,6 +255,7 @@ class TestCommandConfig(object):
             'api_endpoint': test_api_endpoint
         }
         self._assert_two_dicts(mock_config_client_args['auth'], expected_result)
+        assert result.exit_code == 0, result.exception
         assert result.output == json.dumps(
             {'message': 'Authentication configured successfully'},
             indent=4,
@@ -353,8 +355,8 @@ class TestCommandConfig(object):
     def test_cmd_configure_output_format_cli_dir_not_exist(self, mocker):
         """ Configure output format
         Given
-        - BIG IP is up
         - F5_CLI_DIR not exists
+        - F5 CLI configuration file does not exist
 
         When
         - User attempts to configure output format as JSON_FORMAT
@@ -363,21 +365,23 @@ class TestCommandConfig(object):
         - F5_CLI_DIR is created
         - JSON_FORMAT is written into F5_CONFIG_FILE
         """
-        mock_path_exist = mocker.patch("os.path.exists")
-        mock_path_exist.return_value = False
+        mocker.patch("os.path.exists").return_value = False
+        mocker.patch("os.path.isfile").return_value = False
         mock_make_dir = mocker.patch("os.makedirs")
-        mocker.patch("f5cli.cli.Context.log")
-        with mocker.patch('f5cli.commands.cmd_config.open', new_callable=mocker.mock_open()):
-            mock_yaml_dump = mocker.patch("yaml.safe_dump")
-            self.runner.invoke(cli, ['output-format', '--output', 'json'])
-            mock_yaml_dump.assert_called_once()
-            mock_make_dir.assert_called_once()
+        mocker.patch('f5cli.config.core.open', mocker.mock_open())
+        mock_yaml_dump = mocker.patch("yaml.safe_dump")
+
+        result = self.runner.invoke(cli, ['set-defaults', '--output', 'json'])
+
+        assert result.exit_code == 0, result.exception
+        assert mock_make_dir.called
+        assert mock_yaml_dump.call_args_list[0][0][0] == ({'output': 'json'})
 
     def test_cmd_configure_output_format_cli_dir_exist(self, mocker):
         """ Configure output format
         Given
-        - BIG IP is up
         - F5_CLI_DIR exists
+        - F5 CLI configuration file does not exist
 
         When
         - User attempts to configure output format as JSON_FORMAT
@@ -385,10 +389,44 @@ class TestCommandConfig(object):
         Then
         - JSON_FORMAT is written into F5_CONFIG_FILE
         """
-        mock_path_exist = mocker.patch("os.path.exists")
-        mock_path_exist.return_value = True
-        mocker.patch("f5cli.cli.Context.log")
-        with mocker.patch('f5cli.commands.cmd_config.open', new_callable=mocker.mock_open()):
-            mock_yaml_dump = mocker.patch("yaml.safe_dump")
-            self.runner.invoke(cli, ['output-format', '--output', 'json'])
-            mock_yaml_dump.assert_called_once()
+        mocker.patch("os.path.exists").return_value = True
+        mocker.patch("os.path.isfile").return_value = False
+        mocker.patch('f5cli.commands.cmd_config.open', mocker.mock_open())
+        mock_yaml_dump = mocker.patch("yaml.safe_dump")
+
+        result = self.runner.invoke(cli, ['set-defaults', '--output', 'json'])
+
+        assert result.exit_code == 0, result.exception
+        assert mock_yaml_dump.call_args_list[0][0][0] == ({'output': 'json'})
+
+    def test_cmd_config_list_defaults(self, mocker):
+        """ Test list-defaults
+        Given
+        - F5 CLI configuration file does not exist
+
+        When
+        - User attempts to list defaults
+
+        Then
+        - All defaults from the configuration file should be returned
+        """
+        mocker.patch("os.path.exists").return_value = True
+        mocker.patch("os.path.isfile").return_value = True
+        mocker.patch(
+            'f5cli.config.core.open',
+            mocker.mock_open(read_data='output: json')
+        )
+        mocker.patch.dict(
+            "os.environ",
+            {
+                ENV_VARS['OUTPUT_FORMAT']: FORMATS['JSON']
+            }
+        )
+
+        result = self.runner.invoke(cli, ['list-defaults'])
+        assert result.exit_code == 0, result.exception
+        assert result.output == json.dumps(
+            {'output': 'json'},
+            indent=4,
+            sort_keys=True
+        ) + '\n'

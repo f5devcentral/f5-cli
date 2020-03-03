@@ -3,7 +3,7 @@
 import copy
 import click
 
-from f5cli.config import ConfigClient
+from f5cli.config import AuthConfigurationClient
 from f5cli import constants
 
 from ...global_test_imports import pytest
@@ -41,14 +41,21 @@ TYPICAL_AUTH_CONTENTS = [
 ]
 
 
-class TestConfigClient(object):
+class TestAuthConfigurationClient(object):
     """ Test Class: configure client """
 
     @staticmethod
     @pytest.fixture
-    def yaml_load_fixture(mocker):
+    def yaml_load_fixture_core(mocker):
         """ PyTest fixture returning mocked json load() """
         mock_yaml_load = mocker.patch('f5cli.config.core.yaml.load')
+        return mock_yaml_load
+
+    @staticmethod
+    @pytest.fixture
+    def yaml_load_fixture_auth(mocker):
+        """ PyTest fixture returning mocked json load() """
+        mock_yaml_load = mocker.patch('f5cli.config.auth.yaml.load')
         return mock_yaml_load
 
     @staticmethod
@@ -69,7 +76,7 @@ class TestConfigClient(object):
 
     @staticmethod
     def test_read_exist_auth(mocker,
-                             yaml_load_fixture,
+                             yaml_load_fixture_auth,
                              os_path_exists_fixture,  # pylint: disable=unused-argument
                              os_path_isfile_fixture):  # pylint: disable=unused-argument
         """ Read an existing Auth file
@@ -82,19 +89,18 @@ class TestConfigClient(object):
         Then
         - The appropriate credentials are returned
         """
-        client = ConfigClient()
-        mock_yaml_load = yaml_load_fixture
-        mock_yaml_load.return_value = [
+        client = AuthConfigurationClient()
+        yaml_load_fixture_auth.return_value = [
             {'username': 'me@home.com',
              'authentication-type': 'cloud-services',
              'password': 'pass123',
              'default': True
              }]
 
-        with mocker.patch('f5cli.config.core.open', new_callable=mocker.mock_open()):
+        with mocker.patch('f5cli.config.auth.open', new_callable=mocker.mock_open()):
             result = client.read_auth('cloud-services')
-        assert result == mock_yaml_load.return_value[0]
-        mock_yaml_load.assert_called_once()
+        assert result == yaml_load_fixture_auth.return_value[0]
+        yaml_load_fixture_auth.assert_called_once()
 
     @staticmethod
     def test_read_nonexist_auth(os_path_exists_fixture,  # pylint: disable=unused-argument
@@ -109,7 +115,7 @@ class TestConfigClient(object):
         Then
         - Exception is thrown
         """
-        client = ConfigClient()
+        client = AuthConfigurationClient()
         mock_path_is_file = os_path_isfile_fixture
         mock_path_is_file.return_value = False
 
@@ -120,7 +126,7 @@ class TestConfigClient(object):
 
     @staticmethod
     def test_read_auth_without_key(mocker,
-                                   yaml_load_fixture,
+                                   yaml_load_fixture_auth,
                                    os_path_exists_fixture,  # pylint: disable=unused-argument
                                    os_path_isfile_fixture):  # pylint: disable=unused-argument
         """ Attempt to read an Auth file that exists, but does not contain the required key
@@ -134,16 +140,15 @@ class TestConfigClient(object):
         Then
         - Exception is thrown
         """
-        client = ConfigClient()
-        mock_yaml_load = yaml_load_fixture
+        client = AuthConfigurationClient()
 
         group_name = 'CLOUD_SERVICES'
-        mock_yaml_load.return_value = [
+        yaml_load_fixture_auth.return_value = [
             {'name': 'temp', 'username': 'me@home.com', 'type': 'BIGIP', 'password': 'pass123'}
         ]
 
         with pytest.raises(click.exceptions.ClickException) as error:
-            with mocker.patch('f5cli.config.core.open', new_callable=mocker.mock_open()):
+            with mocker.patch('f5cli.config.auth.open', new_callable=mocker.mock_open()):
                 client.read_auth(group_name)
         assert error.value.args[0] == f"Command failed. You must configure a default " \
                                       f"authentication for {group_name}!"
@@ -163,7 +168,7 @@ class TestConfigClient(object):
         Then
         - The credentials are written to the Auth file
         """
-        client = ConfigClient(auth={'name': 'blah'})
+        client = AuthConfigurationClient(auth={'name': 'blah'})
         mock_path_isfile = os_path_isfile_fixture
         mock_path_isfile.return_value = False
         mock_yaml_safe_dump = mocker.patch("f5cli.config.core.yaml.safe_dump")
@@ -173,7 +178,7 @@ class TestConfigClient(object):
 
     @staticmethod
     def test_write_to_existing_auth_file(mocker,
-                                         yaml_load_fixture,
+                                         yaml_load_fixture_auth,
                                          os_path_exists_fixture,  # pylint: disable=unused-argument
                                          os_path_isfile_fixture):  # pylint: disable=unused-argument
         """ Write credentials to an existing Auth file
@@ -197,13 +202,13 @@ class TestConfigClient(object):
             'type': 'BIGIP',
             'default': 'true'
         }
-        client = ConfigClient(auth=bigip_auth)
+        client = AuthConfigurationClient(auth=bigip_auth)
         cloud_services_auth = {'name': 'cloud_services_auth',
                                'username': 'me@home.com',
                                'password': '123',
                                'type': 'CLOUD_SERVICES',
                                'default': 'true'}
-        yaml_load_fixture.return_value = [cloud_services_auth]
+        yaml_load_fixture_auth.return_value = [cloud_services_auth]
 
         mock_yaml_safe_dump = mocker.patch("f5cli.config.core.yaml.safe_dump")
         with mocker.patch('f5cli.config.core.open', new_callable=mocker.mock_open()):
@@ -240,7 +245,7 @@ class TestConfigClient(object):
             'username': 'me@home.com',
             'password': '1234'
         }
-        client = ConfigClient(
+        client = AuthConfigurationClient(
             auth=auth
         )
 
@@ -253,7 +258,7 @@ class TestConfigClient(object):
 
     @staticmethod
     def test_create_pre_existing_account(mocker,
-                                         yaml_load_fixture,
+                                         yaml_load_fixture_auth,
                                          os_path_exists_fixture,  # pylint: disable=unused-argument
                                          os_path_isfile_fixture):  # pylint: disable=unused-argument
         """ Attempt to perform crate auth account when an auth
@@ -271,8 +276,8 @@ class TestConfigClient(object):
             'name': 'cs1'
         }
         copy_typical_auth_contents = copy.deepcopy(TYPICAL_AUTH_CONTENTS)
-        yaml_load_fixture.return_value = copy_typical_auth_contents
-        client = ConfigClient(auth=new_account)
+        yaml_load_fixture_auth.return_value = copy_typical_auth_contents
+        client = AuthConfigurationClient(auth=new_account)
         with pytest.raises(click.exceptions.ClickException) as error:
             with mocker.patch('f5cli.config.core.open', new_callable=mocker.mock_open()):
                 client.store_auth('create')
@@ -281,7 +286,7 @@ class TestConfigClient(object):
 
     @staticmethod
     def test_update_no_auth_file(mocker,
-                                 yaml_load_fixture,
+                                 yaml_load_fixture_auth,
                                  os_path_exists_fixture,  # pylint: disable=unused-argument
                                  os_path_isfile_fixture):  # pylint: disable=unused-argument
         """ Attempt to perform update auth account when no auth accounts have been configured yet
@@ -297,17 +302,17 @@ class TestConfigClient(object):
         new_account = {
             'name': 'bigip4'
         }
-        yaml_load_fixture.return_value = None
-        client = ConfigClient(auth=new_account)
+        yaml_load_fixture_auth.return_value = None
+        client = AuthConfigurationClient(auth=new_account)
         with pytest.raises(click.exceptions.ClickException) as error:
-            with mocker.patch('f5cli.config.core.open', new_callable=mocker.mock_open()):
+            with mocker.patch('f5cli.config.auth.open', new_callable=mocker.mock_open()):
                 client.store_auth('update')
             assert error.value.args[0] == f"Update command failed. " \
                                           f"No accounts have been configured yet"
 
     @staticmethod
     def test_update_non_existing_account(mocker,
-                                         yaml_load_fixture,
+                                         yaml_load_fixture_auth,
                                          os_path_exists_fixture,  # pylint: disable=unused-argument
                                          os_path_isfile_fixture):  # pylint: disable=unused-argument
         """ Update non-existing account
@@ -324,17 +329,17 @@ class TestConfigClient(object):
             'name': 'bigip4'
         }
         copy_typical_auth_contents = copy.deepcopy(TYPICAL_AUTH_CONTENTS)
-        yaml_load_fixture.return_value = copy_typical_auth_contents
-        client = ConfigClient(auth=new_account)
+        yaml_load_fixture_auth.return_value = copy_typical_auth_contents
+        client = AuthConfigurationClient(auth=new_account)
         with pytest.raises(click.exceptions.ClickException) as error:
-            with mocker.patch('f5cli.config.core.open', new_callable=mocker.mock_open()):
+            with mocker.patch('f5cli.config.auth.open', new_callable=mocker.mock_open()):
                 client.store_auth('update')
         assert error.value.args[0] == f"Update command failed." \
                                       f" A account of bigip4 name does not exist."
 
     @staticmethod
     def test_update_existing_account(mocker,
-                                     yaml_load_fixture,
+                                     yaml_load_fixture_auth,
                                      os_path_exists_fixture,  # pylint: disable=unused-argument
                                      os_path_isfile_fixture):  # pylint: disable=unused-argument
         """ Update an existing account
@@ -358,8 +363,8 @@ class TestConfigClient(object):
 
         mock_yaml_safe_dump = mocker.patch("f5cli.config.core.yaml.safe_dump")
         copy_typical_auth_contents = copy.deepcopy(TYPICAL_AUTH_CONTENTS)
-        yaml_load_fixture.return_value = copy_typical_auth_contents
-        client = ConfigClient(auth=new_account)
+        yaml_load_fixture_auth.return_value = copy_typical_auth_contents
+        client = AuthConfigurationClient(auth=new_account)
         with mocker.patch('f5cli.config.core.open', new_callable=mocker.mock_open()):
             client.store_auth('update')
         mock_yaml_safe_dump.assert_called_once()
@@ -375,7 +380,7 @@ class TestConfigClient(object):
 
     @staticmethod
     def test_delete_non_default(mocker,
-                                yaml_load_fixture,
+                                yaml_load_fixture_auth,
                                 os_path_exists_fixture,  # pylint: disable=unused-argument
                                 os_path_isfile_fixture):  # pylint: disable=unused-argument
         """ Delete a account that is not configured as a default account
@@ -392,8 +397,8 @@ class TestConfigClient(object):
 
         mock_yaml_safe_dump = mocker.patch("f5cli.config.core.yaml.safe_dump")
         copy_typical_auth_contents = copy.deepcopy(TYPICAL_AUTH_CONTENTS)
-        yaml_load_fixture.return_value = copy_typical_auth_contents
-        client = ConfigClient()
+        yaml_load_fixture_auth.return_value = copy_typical_auth_contents
+        client = AuthConfigurationClient()
         with mocker.patch('f5cli.config.core.open', new_callable=mocker.mock_open()):
             client.delete_auth('bigip3')
         mock_yaml_safe_dump.assert_called_once()
@@ -403,7 +408,7 @@ class TestConfigClient(object):
 
     @staticmethod
     def test_deleting_default_account(mocker,
-                                      yaml_load_fixture,
+                                      yaml_load_fixture_auth,
                                       os_path_exists_fixture,  # pylint: disable=unused-argument
                                       os_path_isfile_fixture):  # pylint: disable=unused-argument
         """ Delete a account that is configiured as a default account
@@ -421,9 +426,8 @@ class TestConfigClient(object):
 
         mock_yaml_safe_dump = mocker.patch("f5cli.config.core.yaml.safe_dump")
         copy_typical_auth_contents = copy.deepcopy(TYPICAL_AUTH_CONTENTS)
-        mock_yaml_load = yaml_load_fixture
-        mock_yaml_load.return_value = copy_typical_auth_contents
-        client = ConfigClient()
+        yaml_load_fixture_auth.return_value = copy_typical_auth_contents
+        client = AuthConfigurationClient()
         with mocker.patch('f5cli.config.core.open', new_callable=mocker.mock_open()):
             client.delete_auth('bigip2')
         mock_yaml_safe_dump.assert_called_once()
@@ -433,7 +437,7 @@ class TestConfigClient(object):
 
     @staticmethod
     def test_deleting_non_exist_account(mocker,
-                                        yaml_load_fixture,
+                                        yaml_load_fixture_auth,
                                         os_path_exists_fixture,  # pylint: disable=unused-argument
                                         os_path_isfile_fixture):  # pylint: disable=unused-argument
         """ Delete a account that is hasn't been configured
@@ -449,17 +453,16 @@ class TestConfigClient(object):
         """
 
         copy_typical_auth_contents = copy.deepcopy(TYPICAL_AUTH_CONTENTS)
-        mock_yaml_load = yaml_load_fixture
-        mock_yaml_load.return_value = copy_typical_auth_contents
-        client = ConfigClient()
+        yaml_load_fixture_auth.return_value = copy_typical_auth_contents
+        client = AuthConfigurationClient()
         with pytest.raises(click.exceptions.ClickException) as error:
-            with mocker.patch('f5cli.config.core.open', new_callable=mocker.mock_open()):
+            with mocker.patch('f5cli.config.auth.open', new_callable=mocker.mock_open()):
                 client.delete_auth('blah')
             assert error.value.args[0] == f"Delete command failed. No account named blah found"
 
     @staticmethod
     def test_list_accounts(mocker,
-                           yaml_load_fixture,
+                           yaml_load_fixture_auth,
                            os_path_exists_fixture,  # pylint: disable=unused-argument
                            os_path_isfile_fixture):  # pylint: disable=unused-argument
         """ List all accounts that have been configured
@@ -474,9 +477,8 @@ class TestConfigClient(object):
         """
 
         copy_typical_auth_contents = copy.deepcopy(TYPICAL_AUTH_CONTENTS)
-        mock_yaml_load = yaml_load_fixture
-        mock_yaml_load.return_value = copy_typical_auth_contents
-        client = ConfigClient()
+        yaml_load_fixture_auth.return_value = copy_typical_auth_contents
+        client = AuthConfigurationClient()
         with mocker.patch('f5cli.config.core.open', new_callable=mocker.mock_open()):
             result = client.list_auth()
         assert len(result) == 5

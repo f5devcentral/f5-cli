@@ -5,7 +5,8 @@ import json
 
 import click
 
-from f5cli.constants import F5_CONFIG_FILE, FORMATS, FORMATS_ENV_VAR
+from f5cli.constants import FORMATS, ENV_VARS
+from f5cli.config import ConfigurationClient
 
 
 def convert_to_absolute(file):
@@ -18,15 +19,16 @@ def convert_to_absolute(file):
 def _get_output_format():
     """Get output format """
 
+    config_client = ConfigurationClient()
+
     # format discovery priority is as follows:
     # 1) environment variable
     # 2) config file
     # 3) default format
-    if FORMATS_ENV_VAR in os.environ:
-        output_format = os.environ[FORMATS_ENV_VAR]
-    elif os.path.isfile(F5_CONFIG_FILE):
-        with open(F5_CONFIG_FILE, 'r') as config_file:
-            output_format = json.load(config_file)['output']
+    if ENV_VARS['OUTPUT_FORMAT'] in os.environ:
+        output_format = os.environ[ENV_VARS['OUTPUT_FORMAT']]
+    elif config_client.list().get('output', None):
+        output_format = config_client.list().get('output', None)
     else:
         output_format = FORMATS['DEFAULT']
 

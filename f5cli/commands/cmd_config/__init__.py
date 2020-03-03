@@ -44,25 +44,21 @@
 
         $ f5 config auth update --name cs-1 --set-default
 
-    6. Setting global config
+    6. Setting global config (output format, enable/disable CLI telemetry, etc.)
     ------------------------------------------
-    The following is an example of how to set the global output format setting ::
+    The following is an example of how to configure global settings ::
 
-        $ f5 config output-format --output json
+        $ f5 config set-defaults --output json --allow-telemetry true
 
 
 """
 
-import os
-
-import yaml
 import click_repl
 import click
 
 from f5cli import docs, constants
-from f5cli.constants import F5_CLI_DIR, F5_CONFIG_FILE, FORMATS
 from f5cli.cli import PASS_CONTEXT, AliasedGroup
-from f5cli.config import ConfigClient
+from f5cli.config import ConfigurationClient, AuthConfigurationClient
 
 HELP = docs.get_docs()
 
@@ -71,30 +67,40 @@ HELP = docs.get_docs()
 @click.group('config',
              help=HELP['CONFIG_HELP'],
              cls=AliasedGroup)
-def cli():
+@PASS_CONTEXT
+def cli(ctx):
     """ group """
 
+    ctx.config_client = ConfigurationClient()
 
-@cli.command('output-format',
-             help=HELP['FORMAT_HELP'])
+
+@cli.command('set-defaults',
+             help=HELP['SET_DEFAULTS_HELP'])
 @click.option('--output',
-              default=FORMATS['DEFAULT'],
-              help=HELP['OUTPUT_HELP'],
-              show_default=True)
+              help=HELP['OUTPUT_FORMAT_HELP'])
+@click.option('--allow-telemetry',
+              help=HELP['ALLOW_TELEMETRY_HELP'])
 @PASS_CONTEXT
-def output_format(ctx, output):
+def set_defaults(ctx, output, allow_telemetry):
     """ command """
-    ctx.log('Configure client')
-    # Create configuration directory if not exists
-    if not os.path.exists(F5_CLI_DIR):
-        os.makedirs(F5_CLI_DIR)
-    # Create/overwrite F5 cli configuration file
-    config_content = {
-        'output': output
-    }
-    with open(F5_CONFIG_FILE, 'w') as outfile:
-        yaml.safe_dump(config_content, outfile, indent=4, sort_keys=True)
+    # Process any changed defaults
+    new_defaults = {}
+    for i in [
+            {'key': 'output', 'inputValue': output},
+            {'key': 'allowTelemetry', 'inputValue': allow_telemetry}
+    ]:
+        if i['inputValue'] is not None:
+            new_defaults[i['key']] = i['inputValue']
+    # Create/update configuration file
+    ctx.config_client.create_or_update(new_defaults)
+    ctx.log('CLI defaults updated successfully')
 
+@cli.command('list-defaults',
+             help=HELP['LIST_DEFAULTS_HELP'])
+@PASS_CONTEXT
+def list_defaults(ctx):
+    """ command """
+    ctx.log(ctx.config_client.list())
 
 @cli.group('auth',
            help=HELP['AUTH_HELP'])
@@ -164,8 +170,8 @@ def auth_create(ctx,  # pylint: disable=too-many-arguments
             auth_info['host'] = host
         auth_info['port'] = port
 
-    config_client = ConfigClient(auth=auth_info)
-    config_client.store_auth('create')
+    auth_client = AuthConfigurationClient(auth=auth_info)
+    auth_client.store_auth('create')
 
     ctx.log('Authentication configured successfully')
 
@@ -225,8 +231,8 @@ def auth_update(ctx,  # pylint: disable=too-many-arguments
         auth_info.update({
             'user': user,
             'password': password})
-    config_client = ConfigClient(auth=auth_info)
-    config_client.store_auth('update')
+    auth_client = AuthConfigurationClient(auth=auth_info)
+    auth_client.store_auth('update')
 
     ctx.log('Authentication updated successfully')
 
@@ -240,8 +246,8 @@ def auth_update(ctx,  # pylint: disable=too-many-arguments
 def auth_delete(ctx, name):
     """ command """
 
-    config_client = ConfigClient()
-    config_client.delete_auth(name)
+    auth_client = AuthConfigurationClient()
+    auth_client.delete_auth(name)
 
     ctx.log(f"Successfully deleted auth: {name} contents")
 
@@ -252,7 +258,7 @@ def auth_delete(ctx, name):
 def auth_list(ctx):
     """ command """
 
-    ctx.log(ConfigClient().list_auth())
+    ctx.log(AuthConfigurationClient().list_auth())
 
 
 click_repl.register_repl(cli)

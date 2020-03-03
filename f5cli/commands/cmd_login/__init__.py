@@ -26,7 +26,7 @@ from f5sdk.cloud_services import ManagementClient as CSManagementClient
 from f5sdk.bigip import ManagementClient as BigipManagementClient
 
 from f5cli import docs, constants
-from f5cli.config import ConfigClient
+from f5cli.config import AuthConfigurationClient
 from f5cli.cli import PASS_CONTEXT, AliasedGroup
 
 HELP = docs.get_docs()
@@ -117,11 +117,11 @@ def cli(ctx,
             raise click.ClickException(f"Failed to login to Cloud Services: {error}")
 
     # Store credentials in auth file
-    config_client = ConfigClient(auth=auth_info)
+    auth_client = AuthConfigurationClient(auth=auth_info)
     try:
-        config_client.store_auth('create')
+        auth_client.store_auth('create')
     except click.ClickException:
-        config_client.store_auth('update')
+        auth_client.store_auth('update')
 
     ctx.log('Logged in successfully')
 

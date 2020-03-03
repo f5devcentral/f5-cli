@@ -3,26 +3,34 @@
 import tempfile
 from os.path import expanduser, join
 
-VERSION = '0.9.0'  # should consolidate with setup version
+NAME = 'f5-cli'
+VERSION = '0.9.0'
 USER_AGENT = 'f5cli/%s' % (VERSION)
 TMP_DIR = tempfile.gettempdir()
+TELEMETRY_TYPE = 'Installation Usage'
+TELEMETRY_TYPE_VERSION = '1'
 
-# Stateful file constants
+# stateful file constants
 F5_CLI_DIR = join(expanduser("~"), ".f5_cli")
 F5_CONFIG_FILE = join(F5_CLI_DIR, "config.yaml")
 F5_AUTH_FILE = join(F5_CLI_DIR, "auth.yaml")
 
 DEFAULT_BIGIP_PORT = 443
 
-# output data format(s)
+# Environment variables
+ENV_VARS = {
+    'ALLOW_TELEMETRY': 'F5_ALLOW_TELEMETRY',
+    'OUTPUT_FORMAT': 'F5_OUTPUT_FORMAT'
+}
+
+# Output data format(s)
 FORMATS = {
     'JSON': 'json',
     'TABLE': 'table',
     'DEFAULT': 'json'
 }
-FORMATS_ENV_VAR = 'F5_OUTPUT_FORMAT_ENV'
 
-# Command Group names
+# Command group names
 CLOUD_SERVICES_GROUP_NAME = 'CLOUD_SERVICES'
 BIGIP_GROUP_NAME = 'BIGIP'
 

@@ -53,7 +53,7 @@ from f5sdk.bigip.extension import ExtensionClient
 from f5cli import docs, constants
 from f5cli.utils import core as utils_core
 from f5cli.commands.cmd_bigip import extension_operations
-from f5cli.config import ConfigClient
+from f5cli.config import AuthConfigurationClient
 from f5cli.cli import PASS_CONTEXT, AliasedGroup
 
 HELP = docs.get_docs()
@@ -90,7 +90,7 @@ def extension():
 @PASS_CONTEXT
 def package(ctx, action, component, version, use_latest_metadata):
     """ command """
-    auth = ConfigClient().read_auth(constants.AUTHENTICATION_PROVIDERS['BIGIP'])
+    auth = AuthConfigurationClient().read_auth(constants.AUTHENTICATION_PROVIDERS['BIGIP'])
     management_kwargs = dict(port=auth['port'], user=auth['user'], password=auth['password'])
     client = ManagementClient(auth['host'], **management_kwargs)
 
@@ -131,7 +131,7 @@ def package(ctx, action, component, version, use_latest_metadata):
 @PASS_CONTEXT
 def service(ctx, action, component, version, declaration, install_component):
     """ command """
-    auth = ConfigClient().read_auth(constants.AUTHENTICATION_PROVIDERS['BIGIP'])
+    auth = AuthConfigurationClient().read_auth(constants.AUTHENTICATION_PROVIDERS['BIGIP'])
     management_kwargs = dict(port=auth['port'], user=auth['user'], password=auth['password'])
     client = ManagementClient(auth['host'], **management_kwargs)
     kwargs = {}
