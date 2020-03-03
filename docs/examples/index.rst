@@ -7,14 +7,14 @@ Config Examples
 .. toctree::
    :maxdepth: 4
 
-    config.rst
+   config.rst
 
 Login Examples
 ---------------
 .. toctree::
    :maxdepth: 4
 
-    login.rst
+   login.rst
 
 BIG-IP Examples
 ---------------

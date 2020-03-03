@@ -4,7 +4,7 @@ import json
 
 from f5sdk.bigip import ManagementClient
 
-from f5cli.config import ConfigClient
+from f5cli.config import AuthConfigurationClient
 from f5cli.commands.cmd_bigip import extension
 
 from ...global_test_imports import MagicMock, call, PropertyMock, pytest, CliRunner
@@ -52,16 +52,16 @@ class TestCommandBigIp(object):
     @staticmethod
     @pytest.fixture
     def config_client_read_auth_fixture(mocker):
-        """ PyTest fixture mocking ConfigClient's read_auth method """
+        """ PyTest fixture mocking AuthConfigurationClient's read_auth method """
         mock_config_client_read_auth = mocker.patch.object(
-            ConfigClient, "read_auth")
+            AuthConfigurationClient, "read_auth")
         mock_config_client_read_auth.return_value = MOCK_CONFIG_CLIENT_READ_AUTH_RETURN_VALUE
 
     @staticmethod
     @pytest.fixture
     def config_client_fixture(mocker):
-        """ PyTest fixture returning mocked ConfigClient """
-        mock_config_client = mocker.patch.object(ConfigClient, "__init__")
+        """ PyTest fixture returning mocked AuthConfigurationClient """
+        mock_config_client = mocker.patch.object(AuthConfigurationClient, "__init__")
         mock_config_client.return_value = None
         return mock_config_client
 

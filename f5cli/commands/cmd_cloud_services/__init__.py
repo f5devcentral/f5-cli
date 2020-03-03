@@ -31,7 +31,7 @@ from f5sdk.cloud_services.subscriptions import SubscriptionClient
 
 from f5cli import docs
 from f5cli.cli import PASS_CONTEXT, AliasedGroup
-from f5cli.config import ConfigClient
+from f5cli.config import AuthConfigurationClient
 from f5cli.utils import core as utils_core
 from f5cli import constants
 
@@ -80,7 +80,7 @@ def subscription(ctx, action, subscription_id, declaration):
             'The --declaration option is required when updating a Cloud Services subscription'
         )
 
-    auth = ConfigClient().read_auth(
+    auth = AuthConfigurationClient().read_auth(
         constants.AUTHENTICATION_PROVIDERS[constants.CLOUD_SERVICES_GROUP_NAME])
     mgmt_client = ManagementClient(user=auth['user'], password=auth['password'],
                                    api_endpoint=auth.pop('api_endpoint', None))

@@ -5,15 +5,15 @@ import sys
 
 import click
 
-from f5cli.constants import FORMATS
+from f5cli import constants
 from f5cli import docs
 from f5cli.utils.core import format_output
+from f5cli.config.telemetry import TelemetryClient
 
 DOC = docs.get_docs()
 
 CONTEXT_SETTINGS = dict(auto_envvar_prefix='f5cli')
 CMD_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), 'commands'))
-F5_OUTPUT_FORMAT = 'F5_OUTPUT_FORMAT_ENV'
 
 
 class Context():
@@ -77,30 +77,32 @@ class CLI(click.MultiCommand):
             cmd_name = cmd_name.replace('-', '_')
             mod = __import__('f5cli.commands.cmd_' + cmd_name, None, None, ['cli'])
         except ImportError as error:
-            print(error)
-            return
+            ctx.log(error)
         return mod.cli
 
 
 @click.command(cls=CLI,
                context_settings=CONTEXT_SETTINGS,
                help=DOC[('CLI_HELP')])
-@click.version_option('0.9.0')
+@click.version_option(constants.VERSION)
 @click.option('--verbose',
               is_flag=True,
               help=DOC[('VERBOSE_HELP')])
 @click.option('--output',
-              default=FORMATS['DEFAULT'],
-              help=DOC['OUTPUT_HELP'],
-              show_default=True)
+              help=DOC['OUTPUT_FORMAT_HELP'])
 @PASS_CONTEXT
 def cli(ctx='', output='', verbose='', home='', prog_name=''):  # pylint: disable=unused-argument
     """ main cli """
-    ctx.verbose = verbose
+
+    if ctx.verbose:
+        ctx.verbose = verbose
     if home is not None:
         ctx.home = home
     if output:
-        os.environ[F5_OUTPUT_FORMAT] = output
+        os.environ[constants.ENV_VARS['OUTPUT_FORMAT']] = output
+
+    telemetry_client = TelemetryClient(context=ctx)
+    telemetry_client.report()
 
 
 if __name__ == '__main__':

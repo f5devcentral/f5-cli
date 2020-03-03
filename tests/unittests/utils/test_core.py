@@ -5,7 +5,7 @@ import sys
 import json
 import click
 
-from f5cli.constants import FORMATS, FORMATS_ENV_VAR
+from f5cli.constants import FORMATS, ENV_VARS
 from f5cli.utils import core as core_utils
 
 from ...global_test_imports import pytest
@@ -77,7 +77,7 @@ def test_format_output_as_json(mocker):
     mocker.patch.dict(
         "os.environ",
         {
-            FORMATS_ENV_VAR: FORMATS['JSON']
+            ENV_VARS['OUTPUT_FORMAT']: FORMATS['JSON']
         }
     )
 
@@ -117,7 +117,7 @@ def test_format_output_as_table(mocker):
     mocker.patch.dict(
         "os.environ",
         {
-            FORMATS_ENV_VAR: FORMATS['TABLE']
+            ENV_VARS['OUTPUT_FORMAT']: FORMATS['TABLE']
         }
     )
 
@@ -157,7 +157,7 @@ def test_format_output_as_table_dict(mocker):
     mocker.patch.dict(
         "os.environ",
         {
-            FORMATS_ENV_VAR: FORMATS['TABLE']
+            ENV_VARS['OUTPUT_FORMAT']: FORMATS['TABLE']
         }
     )
 
@@ -176,7 +176,7 @@ def test_format_output_as_table_dict(mocker):
 def test_invalid_format_output(mocker):
     """ Invalid format output environment variable value
     Given
-    - FORMATS_ENV_VAR contains invalid value
+    - ENV_VARS['OUTPUT_FORMAT'] contains invalid value
 
     When
     - data is requested to be formatted
@@ -188,7 +188,7 @@ def test_invalid_format_output(mocker):
     mocker.patch.dict(
         "os.environ",
         {
-            FORMATS_ENV_VAR: 'foo'
+            ENV_VARS['OUTPUT_FORMAT']: 'foo'
         }
     )
 

@@ -5,7 +5,7 @@ from click import ClickException
 from f5sdk.bigip import ManagementClient as BigipManagementClient
 from f5sdk.cloud_services import ManagementClient as CSManagementClient
 from f5sdk.exceptions import HTTPError, DeviceReadyError
-from f5cli.config import ConfigClient
+from f5cli.config import AuthConfigurationClient
 from f5cli.commands.cmd_login import cli
 
 from ...global_test_imports import pytest, CliRunner
@@ -37,16 +37,16 @@ class TestCommandLogin(object):
     @staticmethod
     @pytest.fixture
     def config_client_store_auth_fixture(mocker):
-        """ PyTest fixture mocking ConfigClient's store_auth method """
+        """ PyTest fixture mocking AuthConfigurationClient's store_auth method """
         mock_config_client_store_auth = mocker.patch.object(
-            ConfigClient, "store_auth")
+            AuthConfigurationClient, "store_auth")
         return mock_config_client_store_auth
 
     @staticmethod
     @pytest.fixture
     def config_client_fixture(mocker):
-        """ PyTest fixture returning mocked ConfigClient """
-        mock_config_client = mocker.patch.object(ConfigClient, "__init__")
+        """ PyTest fixture returning mocked AuthConfigurationClient """
+        mock_config_client = mocker.patch.object(AuthConfigurationClient, "__init__")
         mock_config_client.return_value = None
         return mock_config_client
 
@@ -87,8 +87,8 @@ class TestCommandLogin(object):
         - User to log into a BIGIP with provided auth
 
         Then
-        - Credentials are passed to the ConfigClient
-        - The ConfigClient is instructed to save the credentials in temp
+        - Credentials are passed to the AuthConfigurationClient
+        - The AuthConfigurationClient is instructed to save the credentials in temp
           auth account named login_bigip and is set as the default account
           for bigip
         """
@@ -130,8 +130,8 @@ class TestCommandLogin(object):
         - login_bigip authentication account already exists
 
         Then
-        - Credentials are passed to the ConfigClient
-        - The ConfigClient is instructed to save the credentials in temp
+        - Credentials are passed to the AuthConfigurationClient
+        - The AuthConfigurationClient is instructed to save the credentials in temp
           auth account named login_bigip and is set as the default account
           for bigip
         """
@@ -181,8 +181,8 @@ class TestCommandLogin(object):
 
         Then
         - User is prompted to supply authentication-provider, user and password
-        - Credentials are passed to the ConfigClient
-        - The ConfigClient is instructed to save the credentials in temp
+        - Credentials are passed to the AuthConfigurationClient
+        - The AuthConfigurationClient is instructed to save the credentials in temp
           auth account named login_bigip and is set as the default account
           for bigip
         """
@@ -222,7 +222,7 @@ class TestCommandLogin(object):
 
         Then
         - The bigip management client will throw a HTTPError
-        - Credentials are not passed to the ConfigClient
+        - Credentials are not passed to the AuthConfigurationClient
         - Unsuccessful login message is thrown
         """
 
@@ -252,7 +252,7 @@ class TestCommandLogin(object):
 
         Then
         - The bigip management client will throw a DeviceReadyError
-        - Credentials are not passed to the ConfigClient
+        - Credentials are not passed to the AuthConfigurationClient
         - Unsuccessful login message is thrown
         """
 
@@ -280,8 +280,8 @@ class TestCommandLogin(object):
         - User is to log into a cloud services with provided auth
 
         Then
-        - Credentials are passed to the ConfigClient
-        - The ConfigClient is instructed to save the credentials in temp
+        - Credentials are passed to the AuthConfigurationClient
+        - The AuthConfigurationClient is instructed to save the credentials in temp
           auth account named login_cloud_services and is set as the default account
           for cloud-services provider
         """
@@ -320,8 +320,8 @@ class TestCommandLogin(object):
         - User is to log into a cloud services with provided auth
 
         Then
-        - Credentials are passed to the ConfigClient
-        - The ConfigClient is instructed to save the credentials in temp
+        - Credentials are passed to the AuthConfigurationClient
+        - The AuthConfigurationClient is instructed to save the credentials in temp
           auth account named login_cloud_services and is set as the default account
           for cloud-services provider
         """
@@ -355,7 +355,7 @@ class TestCommandLogin(object):
 
         Then
         - The cloud services management client will throw a HTTPError
-        - Credentials are not passed to the ConfigClient
+        - Credentials are not passed to the AuthConfigurationClient
         - Unsuccessful login message is thrown
         """
 

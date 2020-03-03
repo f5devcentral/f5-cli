@@ -5,11 +5,199 @@ import json
 
 import click
 
-from f5cli.constants import F5_CONFIG_FILE, FORMATS, FORMATS_ENV_VAR
+import f5cli
+from f5cli.constants import FORMATS, ENV_VARS
 from f5cli.cli import PASS_CONTEXT, AliasedGroup
-from f5cli import cli
+from f5cli.cli import cli as basecli
 
-from ..global_test_imports import pytest, CliRunner
+from ..global_test_imports import pytest, Mock, PropertyMock, CliRunner
+
+
+class TestBaseCli(object):
+    """ Test Class: Base CLI """
+
+    @classmethod
+    def setup_class(cls):
+        """ Setup func """
+        cls.runner = CliRunner()
+
+    @classmethod
+    def teardown_class(cls):
+        """ Teardown func """
+
+    def test_cli_sends_telemetry_first_run(self, mocker):
+        """ Test CLI sends telemetry
+
+        Given
+        - CLI has not been run before
+
+        When
+        - User attempts to use the CLI
+
+        Then
+        - CLI should exit successfully
+        - Telemetry data should be sent
+        - First run complete key should be set to True in file
+        """
+
+        mock_yaml_dump = mocker.patch("yaml.safe_dump")
+        mock_request = mocker.patch('requests.request')
+        mock_request.return_value.json = Mock(return_value={})
+        type(mock_request.return_value).status_code = PropertyMock(return_value=200)
+
+        result = self.runner.invoke(basecli, ['config', 'list-defaults'])
+
+        # validate successful exit code
+        assert result.exit_code == 0, result.exception
+        # validate telemetry data was sent
+        args, kwargs = mock_request.call_args
+        assert '/ee/v1/telemetry' in args[1]
+        assert json.loads(kwargs['data'])['telemetryRecords'][0]['installed']
+        # validate firstRunComplete is set to true
+        args, kwargs = mock_yaml_dump.call_args
+        assert args[0] == {'firstRunComplete': True}
+
+    def test_cli_does_not_send_telemetry_on_second_run(self, mocker):
+        """ Test CLI does NOT send telemetry on second run
+
+        Given
+        - CLI has been run before
+
+        When
+        - User attempts to use the CLI
+
+        Then
+        - CLI should exit successfully
+        - Telemetry data should NOT be sent
+        """
+
+        mocker.patch("os.path.exists").return_value = True
+        mocker.patch("os.path.isfile").return_value = True
+        mocker.patch(
+            'f5cli.config.core.open',
+            mocker.mock_open(read_data='firstRunComplete: true')
+        )
+        mock_request = mocker.patch('requests.request')
+
+        result = self.runner.invoke(basecli, ['config', 'list-defaults'])
+
+        # validate successful exit code
+        assert result.exit_code == 0, result.exception
+        # validate telemetry data was NOT sent
+        assert not mock_request.called
+
+    def test_cli_does_not_fail_on_telemetry_failure(self, mocker):
+        """ Test CLI does not fail when telemetry failure occurs
+
+        Given
+        - CLI has not been run before
+
+        When
+        - User attempts to use the CLI
+        - Telemetry is unable to be sent successfully
+
+        Then
+        - CLI should exit successfully
+        """
+
+        mock_request = mocker.patch('requests.request')
+        mock_request.return_value.json = Mock(return_value={})
+        type(mock_request.return_value).status_code = PropertyMock(return_value=500)
+
+        result = self.runner.invoke(basecli, ['config', 'list-defaults'])
+
+        # validate successful exit code
+        assert result.exit_code == 0, result.exception
+
+    def test_cli_does_not_send_telemetry_on_help(self, mocker):
+        """ Test CLI does not send telemetry on help
+
+        Given
+        - CLI has not been run before
+
+        When
+        - User attempts to use the CLI --help
+
+        Then
+        - CLI should exit successfully
+        - Telemetry should NOT be set
+        """
+
+        mock_request = mocker.patch('requests.request')
+
+        result = self.runner.invoke(basecli, ['--help'])
+
+        # validate successful exit code
+        assert result.exit_code == 0, result.exception
+        # validate telemetry data was NOT sent
+        assert not mock_request.called
+
+    def test_cli_does_not_send_telemetry_on_env_var_set_to_false(self, mocker):
+        """ Test CLI does not send telemetry when allow analytics environment
+        variable is set to false
+
+        Given
+        - CLI has not been run before
+
+        When
+        - User attempts to disable telemetry prior to use
+
+        Then
+        - CLI should exit successfully
+        - Telemetry should NOT be set
+        """
+
+        mocker.patch.dict(
+            "os.environ",
+            {
+                ENV_VARS['ALLOW_TELEMETRY']: 'false'
+            }
+        )
+        mock_request = mocker.patch('requests.request')
+
+        result = self.runner.invoke(
+            basecli,
+            ['config', 'set-defaults', '--allow-telemetry', 'false']
+        )
+
+        # validate successful exit code
+        assert result.exit_code == 0, result.exception
+        # validate telemetry data was NOT sent
+        assert not mock_request.called
+
+    def disabled_test_cli_does_not_send_telemetry_on_disable_telemetry_command(self, mocker):
+        """ Test CLI does not send telemetry on command to disable telemetry
+
+        Note: Disabled, unsure this is the right UX
+
+        Given
+        - CLI has not been run before
+
+        When
+        - User attempts to disable telemetry prior to use
+
+        Then
+        - CLI should exit successfully
+        - Telemetry should NOT be set
+        """
+
+        mocker.patch("os.path.exists").return_value = True
+        mocker.patch("os.path.isfile").return_value = True
+        mocker.patch(
+            'f5cli.config.core.open',
+            mocker.mock_open(read_data='firstRunComplete: false')
+        )
+        mock_request = mocker.patch('requests.request')
+
+        result = self.runner.invoke(
+            basecli,
+            ['config', 'set-defaults', '--allow-telemetry', 'false']
+        )
+
+        # validate successful exit code
+        assert result.exit_code == 0, result.exception
+        # validate telemetry data was NOT sent
+        assert not mock_request.called
 
 
 class TestContext(object):
@@ -17,7 +205,7 @@ class TestContext(object):
     @classmethod
     def setup_class(cls):
         """ Setup func """
-        cls.context = cli.Context()
+        cls.context = f5cli.cli.Context()
 
     @classmethod
     def teardown_class(cls):
@@ -31,13 +219,14 @@ class TestContext(object):
         mocker.patch.dict(
             "os.environ",
             {
-                FORMATS_ENV_VAR: FORMATS['JSON']
+                ENV_VARS['OUTPUT_FORMAT']: FORMATS['JSON']
             }
         )
-        mock_format_output = mocker.patch("f5cli.cli.format_output")
-        mock_format_output.side_effect = TestContext.format_output_side_effect
-        mock_click_echo = mocker.patch("f5cli.cli.click.echo")
-        return mock_click_echo
+        mocker.patch(
+            "f5cli.cli.format_output",
+            side_effect=TestContext.format_output_side_effect
+        )
+        return mocker.patch("f5cli.cli.click.echo")
 
     @staticmethod
     def format_output_side_effect(data):
@@ -88,24 +277,21 @@ class TestContext(object):
         - Message is logged in specific format
         """
 
-        mock_output_format_env = mocker.patch("f5cli.utils.core.os.environ.get")
-        mock_output_format_env.return_value = None
-        mock_os_path_isfile = mocker.patch("f5cli.utils.core.os.path.isfile")
-        mock_os_path_isfile.return_value = True
-        mock_open_config_file = mocker.patch(
-            "f5cli.utils.core.open", mocker.mock_open(read_data='json'))
-        mock_json_load = mocker.patch("f5cli.utils.core.json.load")
-        mock_json_load.return_value = {"output": "json"}
-
-        mock_format_output = mocker.patch("f5cli.utils.core.format_output")
-        mock_format_output.side_effect = TestContext.format_output_side_effect
+        mocker.patch("os.environ.get").return_value = None
+        mocker.patch("os.path.exists").return_value = True
+        mocker.patch("os.path.isfile").return_value = True
+        mock_open = mocker.patch(
+            'f5cli.config.core.open',
+            mocker.mock_open(read_data='output: json')
+        )
         mock_click_echo = mocker.patch("f5cli.cli.click.echo")
+
         self.context.log("Test message")
+
         mock_click_echo.assert_called_once_with(
             '{\n    "message": "Test message"\n}', file=sys.stderr
         )
-        mock_open_config_file.assert_called_once_with(F5_CONFIG_FILE, 'r')
-        mock_json_load.assert_called_once_with(mock_open_config_file.return_value)
+        assert mock_open.called
 
     def test_log_message_no_argument_with_environment_variable_no_config_file(self, mocker):
         """ Log a message, no argument, no output format env variable, config file does not exists
@@ -119,16 +305,18 @@ class TestContext(object):
         Then
         - Message is logged in specific format
         """
-        mock_output_format_env = mocker.patch("f5cli.cli.os.environ.get")
-        mock_output_format_env.return_value = "-1"
-        mock_os_path_isfile = mocker.patch("f5cli.cli.os.path.isfile")
-        mock_os_path_isfile.return_value = False
+        mocker.patch("f5cli.cli.os.environ.get").return_value = None
+        mocker.patch("f5cli.cli.os.path.isfile").return_value = False
         mocker.patch("f5cli.cli.open", mocker.mock_open(read_data='json'))
 
-        mock_format_output = mocker.patch("f5cli.cli.format_output")
-        mock_format_output.side_effect = TestContext.format_output_side_effect
+        mocker.patch(
+            "f5cli.cli.format_output",
+            side_effect=TestContext.format_output_side_effect
+        )
         mock_click_echo = mocker.patch("f5cli.cli.click.echo")
+
         self.context.log("Test message")
+
         mock_click_echo.assert_called_once_with('Test message', file=sys.stderr)
 
     def test_vlog_message(self, click_echo_fixture):
