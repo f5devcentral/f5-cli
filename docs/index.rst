@@ -1,7 +1,7 @@
 F5 CLI
 ======
 
-Welcome to the F5 CLI User Guide. To provide feedback on this documentation, you can file a `GitHub Issue <https://github.com/f5networks/f5-cli/issues>`_.
+Welcome to the F5 CLI User Guide. To provide feedback on this documentation, you can file a `GitHub Issue <https://github.com/f5devcentral/f5-cli/issues>`_.
 
 Introduction
 ------------
