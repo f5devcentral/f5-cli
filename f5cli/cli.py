@@ -88,42 +88,22 @@ class CLI(click.MultiCommand):
                context_settings=CONTEXT_SETTINGS,
                help=DOC[('CLI_HELP')])
 @click.version_option(constants.VERSION)
-@click.option('--verbose',
-              is_flag=True,
-              help=DOC['VERBOSE_HELP'])
-@click.option('--output',
-              help=DOC['OUTPUT_FORMAT_HELP'])
-@click.option('--disable-ssl-warnings',
-              required=False,
-              is_flag=True,
-              help=DOC['SSL_WARNINGS'])
 @PASS_CONTEXT
-def cli(ctx='',
-        output='',
-        verbose='',
-        home='',
-        disable_ssl_warnings='',
-        prog_name=''):  # pylint: disable=unused-argument
+def cli(ctx='', home=''):
     """ main cli """
 
-    if ctx.verbose:
-        ctx.verbose = verbose
     if home is not None:
         ctx.home = home
-    if output:
-        os.environ[constants.ENV_VARS['OUTPUT_FORMAT']] = output
-    if disable_ssl_warnings:
-        ctx.log('SSL Warnings have been disabled')
-        os.environ[constants.ENV_VARS['DISABLE_SSL_WARNINGS']] = str(disable_ssl_warnings)
-    else:
-        global_config_info = ConfigurationClient().list()
-        if 'disableSSLWarnings' in global_config_info.keys():
-            os.environ[constants.ENV_VARS['DISABLE_SSL_WARNINGS']] = \
-                global_config_info.get('disableSSLWarnings')
+
+    # set environment variable for SSL warnings if value provided in config
+    ctx.loaded_config = ConfigurationClient().list()
+    if 'disableSSLWarnings' in ctx.loaded_config.keys():
+        os.environ[constants.ENV_VARS['DISABLE_SSL_WARNINGS']] = \
+            ctx.loaded_config.get('disableSSLWarnings')
 
     telemetry_client = TelemetryClient(context=ctx)
     telemetry_client.report()
 
 
 if __name__ == '__main__':
-    cli(prog_name='f5')
+    cli()

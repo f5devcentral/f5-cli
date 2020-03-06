@@ -18,11 +18,11 @@ Debugging can be enabled by setting the following environment variable prior to 
 Ignore HTTPS warnings
 ---------------------
 
-To ignore HTTPS warnings while the SDK is making HTTP requests, set the following environment variable prior to using the SDK.
+To ignore HTTPS warnings while the SDK is making HTTP requests, configure the following setting.
 
 ::
 
-    export PYTHONWARNINGS="ignore:Unverified HTTPS request"
+    f5 config set-defaults --disable-ssl-warnings true
 
 .. WARNING::
     This is not recommended for production use, please configure the BIG-IP with a valid certificate.

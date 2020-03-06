@@ -88,7 +88,9 @@ test_functional:
         - cm-official-docker-executor
     only:
         variables:
-            # enable this job
+            # uncomment below, once functional testing is officially added
+            # - $CI_COMMIT_REF_NAME == "master"
+            # - $CI_COMMIT_REF_NAME == "develop"
             - $RUN_FUNCTIONAL_TESTS == "true"
             - $CI_COMMIT_MESSAGE =~ /smart:run_functional_tests/
 
@@ -110,7 +112,9 @@ test_functional_tf:
         - cm-official-docker-executor
     only:
         variables:
-            # enable this job
+            # uncomment below, once functional testing is officially added
+            # - $CI_COMMIT_REF_NAME == "master"
+            # - $CI_COMMIT_REF_NAME == "develop"
             - $RUN_FUNCTIONAL_TESTS == "true"
             - $CI_COMMIT_MESSAGE =~ /smart:run_functional_tests/
     # terraform destroy command needs the state from apply
@@ -136,7 +140,9 @@ test_functional_teardown:
     when: always
     only:
         variables:
-            # enable this job
+            # uncomment below, once functional testing is officially added
+            # - $CI_COMMIT_REF_NAME == "master"
+            # - $CI_COMMIT_REF_NAME == "develop"
             - $RUN_FUNCTIONAL_TESTS == "true"
             - $CI_COMMIT_MESSAGE =~ /smart:run_functional_tests/
 
@@ -157,7 +163,9 @@ test_functional_teardown_tf:
     when: always
     only:
         variables:
-            # enable this job
+            # uncomment below, once functional testing is officially added
+            # - $CI_COMMIT_REF_NAME == "master"
+            # - $CI_COMMIT_REF_NAME == "develop"
             - $RUN_FUNCTIONAL_TESTS == "true"
             - $CI_COMMIT_MESSAGE =~ /smart:run_functional_tests/
 

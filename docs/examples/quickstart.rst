@@ -67,21 +67,19 @@ The CLI will provide help information for any sub-commands, as well as relevant 
 ::
 
     $f5 --help 
-    Usage: f5 [OPTIONS] COMMAND [ARGS]... 
+    Usage: f5 [OPTIONS] COMMAND [ARGS]...
 
-        Welcome to the F5 command line interface. 
+    Welcome to the F5 command line interface.
 
-        You can do all the things here. 
+    Options:
+    --version  Show the version and exit.
+    --help     Show this message and exit.
 
-    Options: 
-        --version      Show the version and exit. 
-        --help         Show this message and exit. 
-
-    Commands: 
-        bigip           Manage BIG-IP 
-        login           Login to BIG-IP, F5 Cloud Services, etc. 
-        config          Configure CLI authentication and configuration 
-        cloud-services  Manage F5 Cloud Services 
+    Commands:
+    login           Login to BIG-IP, F5 Cloud Services, etc.
+    bigip           Manage BIG-IP
+    cloud-services  Manage F5 Cloud Services
+    config          Configure CLI authentication and configuration
 
 
 The CLI will also provide help information for any commands, for example, how to use the ``bigip extension service|package`` command:
