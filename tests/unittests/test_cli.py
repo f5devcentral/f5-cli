@@ -40,8 +40,6 @@ class TestBaseCli(object):
         - First run complete key should be set to True in file
         """
 
-        mocker.patch("os.path.exists").return_value = True
-        mocker.patch("os.path.isfile").return_value = False
         mock_yaml_dump = mocker.patch("yaml.safe_dump")
         mock_request = mocker.patch('requests.request')
         mock_request.return_value.json = Mock(return_value={})
@@ -50,7 +48,7 @@ class TestBaseCli(object):
         result = self.runner.invoke(basecli, ['config', 'list-defaults'])
 
         # validate successful exit code
-        assert result.exit_code == 0, result.exception
+        assert result.exit_code == 0, result.exc_info
         # validate telemetry data was sent
         args, kwargs = mock_request.call_args
         assert '/ee/v1/telemetry' in args[1]
