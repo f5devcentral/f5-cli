@@ -40,6 +40,12 @@ class TestBaseCli(object):
         - First run complete key should be set to True in file
         """
 
+        mocker.patch("os.path.exists").return_value = True
+        mocker.patch("os.path.isfile").return_value = True
+        mocker.patch(
+            'f5cli.config.core.open',
+            mocker.mock_open(read_data='')
+        )
         mock_yaml_dump = mocker.patch("yaml.safe_dump")
         mock_request = mocker.patch('requests.request')
         mock_request.return_value.json = Mock(return_value={})
