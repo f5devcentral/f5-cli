@@ -10,17 +10,31 @@ __pycache__/
 .coverage
 code_coverage/
 
-# Build
+# docs build
+_build/
+code_docs/
+
+# build
 build/
 dist/
 *egg-info/
 
-# Ansible
+# ansible
 *.retry
 ansible-env/
 
-# Python env
-*.env
+# terraform
+terraform.tfplan
+terraform.tfstate
+*.tfstate*
+.terraform/
 
-# Misc
+# Node
+node_modules/
+
+# misc
 .DS_Store
+.vscode
+.idea/*
+*.iml
+
