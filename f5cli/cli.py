@@ -8,7 +8,9 @@ import click
 from f5cli import constants
 from f5cli import docs
 from f5cli.utils.core import format_output
+from f5cli.config import ConfigurationClient
 from f5cli.config.telemetry import TelemetryClient
+
 
 DOC = docs.get_docs()
 
@@ -81,17 +83,27 @@ class CLI(click.MultiCommand):
         return mod.cli
 
 
+# pylint: disable=too-many-arguments
 @click.command(cls=CLI,
                context_settings=CONTEXT_SETTINGS,
                help=DOC[('CLI_HELP')])
 @click.version_option(constants.VERSION)
 @click.option('--verbose',
               is_flag=True,
-              help=DOC[('VERBOSE_HELP')])
+              help=DOC['VERBOSE_HELP'])
 @click.option('--output',
               help=DOC['OUTPUT_FORMAT_HELP'])
+@click.option('--disable-ssl-warnings',
+              required=False,
+              is_flag=True,
+              help=DOC['SSL_WARNINGS'])
 @PASS_CONTEXT
-def cli(ctx='', output='', verbose='', home='', prog_name=''):  # pylint: disable=unused-argument
+def cli(ctx='',
+        output='',
+        verbose='',
+        home='',
+        disable_ssl_warnings='',
+        prog_name=''):  # pylint: disable=unused-argument
     """ main cli """
 
     if ctx.verbose:
@@ -100,6 +112,14 @@ def cli(ctx='', output='', verbose='', home='', prog_name=''):  # pylint: disabl
         ctx.home = home
     if output:
         os.environ[constants.ENV_VARS['OUTPUT_FORMAT']] = output
+    if disable_ssl_warnings:
+        ctx.log('SSL Warnings have been disabled')
+        os.environ[constants.ENV_VARS['DISABLE_SSL_WARNINGS']] = str(disable_ssl_warnings)
+    else:
+        global_config_info = ConfigurationClient().list()
+        if 'disableSSLWarnings' in global_config_info.keys():
+            os.environ[constants.ENV_VARS['DISABLE_SSL_WARNINGS']] = \
+                global_config_info.get('disableSSLWarnings')
 
     telemetry_client = TelemetryClient(context=ctx)
     telemetry_client.report()

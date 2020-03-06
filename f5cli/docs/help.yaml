@@ -8,6 +8,7 @@ LIST_DEFAULTS_HELP: 'List default settings.'
 SET_DEFAULTS_HELP: 'Configure default settings.'
 OUTPUT_FORMAT_HELP: 'Specify output format.'
 ALLOW_TELEMETRY_HELP: 'Enable/disable telemetry.'
+SSL_WARNINGS: 'Disable SSL warnings'
 ### f5 bigip ###
 BIGIP_HELP: Manage BIG-IP
 BIGIP_DISCOVER_HELP: Discover BIG-IP's with a specific key/value tag
