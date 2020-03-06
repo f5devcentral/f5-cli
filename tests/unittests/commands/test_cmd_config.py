@@ -399,6 +399,28 @@ class TestCommandConfig(object):
         assert result.exit_code == 0, result.exception
         assert mock_yaml_dump.call_args_list[0][0][0] == ({'output': 'json'})
 
+    def test_cmd_configure_ssl_cli_dir_exist(self, mocker):
+        """ Disable SSL Warnings
+        Given
+        - F5_CLI_DIR exists
+        - F5 CLI configuration file does not exist
+
+        When
+        - User attempts to disable SSL Warnings
+
+        Then
+        - JSON_FORMAT is written into F5_CONFIG_FILE
+        """
+        mocker.patch("os.path.exists").return_value = True
+        mocker.patch("os.path.isfile").return_value = False
+        mocker.patch('f5cli.commands.cmd_config.open', mocker.mock_open())
+        mock_yaml_dump = mocker.patch("yaml.safe_dump")
+
+        result = self.runner.invoke(cli, ['set-defaults', '--disable-ssl-warnings', 'true'])
+
+        assert result.exit_code == 0, result.exception
+        assert mock_yaml_dump.call_args_list[0][0][0] == ({'disableSSLWarnings': 'true'})
+
     def test_cmd_config_list_defaults(self, mocker):
         """ Test list-defaults
         Given

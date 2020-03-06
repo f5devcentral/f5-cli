@@ -108,7 +108,7 @@ class ConfigurationClient:
 
         Returns
         -------
-        None
+        dict
         """
 
         return self._load_content()

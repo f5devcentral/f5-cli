@@ -50,9 +50,15 @@
 
         $ f5 config set-defaults --output json --allow-telemetry true
 
+    7. Disabling SSL Warnings thorough global config settings
+    ------------------------------------------
+    The following is an example of how to disable SSL warnings ::
+
+        $ f5 config set-defaults --disable-ssl-warnings true
+
 
 """
-
+import os
 import click_repl
 import click
 
@@ -80,20 +86,29 @@ def cli(ctx):
               help=HELP['OUTPUT_FORMAT_HELP'])
 @click.option('--allow-telemetry',
               help=HELP['ALLOW_TELEMETRY_HELP'])
+@click.option('--disable-ssl-warnings',
+              help=HELP['SSL_WARNINGS'])
 @PASS_CONTEXT
-def set_defaults(ctx, output, allow_telemetry):
+def set_defaults(ctx, output, allow_telemetry, disable_ssl_warnings):
     """ command """
     # Process any changed defaults
     new_defaults = {}
     for i in [
             {'key': 'output', 'inputValue': output},
-            {'key': 'allowTelemetry', 'inputValue': allow_telemetry}
+            {'key': 'allowTelemetry', 'inputValue': allow_telemetry},
+            {'key': 'disableSSLWarnings', 'inputValue': disable_ssl_warnings}
     ]:
         if i['inputValue'] is not None:
             new_defaults[i['key']] = i['inputValue']
     # Create/update configuration file
     ctx.config_client.create_or_update(new_defaults)
-    ctx.log('CLI defaults updated successfully')
+    message = 'CLI defaults updated successfully.'
+    if disable_ssl_warnings:
+        os.environ[constants.ENV_VARS['DISABLE_SSL_WARNINGS']] = disable_ssl_warnings
+        if disable_ssl_warnings == 'true':
+            message += ' Warning: Insecure SSL warnings have been disabled'
+    ctx.log(message)
+
 
 @cli.command('list-defaults',
              help=HELP['LIST_DEFAULTS_HELP'])
