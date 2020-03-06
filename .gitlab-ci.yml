@@ -14,6 +14,9 @@ variables:
     GIT_SECRETS_VERSION: '1.3.0'
     GIT_SECRETS_PKG_URL: "https://github.com/awslabs/git-secrets/archive/${GIT_SECRETS_VERSION}.tar.gz"
     TERRAFORM_PKG_URL: 'https://releases.hashicorp.com/terraform/0.11.14/terraform_0.11.14_linux_386.zip'
+    TWINE_USERNAME: "$PYPI_USERNAME"
+    TWINE_PASSWORD: "$PYPI_PASSWORD"
+    TWINE_NON_INTERACTIVE: "true"
     PRIMARY_DEMO_DIR: demos/primary
     # normalize env var options between ansible and terraform
     AZURE_TENANT: "$AZURE_TENANT_ID"
