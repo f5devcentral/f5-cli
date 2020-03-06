@@ -4,7 +4,7 @@ import tempfile
 from os.path import expanduser, join
 
 NAME = 'f5-cli'
-VERSION = '0.9.0'
+VERSION = '0.9.1'
 USER_AGENT = 'f5cli/%s' % (VERSION)
 TMP_DIR = tempfile.gettempdir()
 TELEMETRY_TYPE = 'Installation Usage'

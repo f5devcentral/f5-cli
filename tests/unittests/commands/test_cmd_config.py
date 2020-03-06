@@ -233,7 +233,7 @@ class TestCommandConfig(object):
         mock_config_client = config_client_fixture
         mock_config_client_store_auth = config_client_store_auth_fixture
 
-        test_api_endpoint = 'my-f5.api.com'
+        test_api_endpoint = 'test.api.com'
         result = self.runner.invoke(cli, [
             'auth',
             'create',

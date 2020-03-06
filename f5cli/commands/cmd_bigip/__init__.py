@@ -1,46 +1,4 @@
-"""Below are examples of using the CLI to interact with a BIG-IP.
-
-
-    1. Install or upgrade an Automation Toolchain package
-    ------------------------------------------
-    The following are the examples of how to install, uninstall, upgrade, and verify the Declarative
-    Onboarding package onto a BIG-IP.  ::
-        $ f5 bigip extension package install --component do
-        {
-            "message": "Extension component package 'do' successfully installed version '1.10.0'"
-        }
-
-        $ f5 bigip extension package verify --component do
-        {
-            "installed": true,
-            "installed_version": "1.10.0",
-            "latest_version": "1.10.0"
-        }
-
-        $ f5 bigip extension package uninstall --component do
-        {
-           "message": "Successfully uninstalled extension component package 'do' version '1.10.0'"
-        }
-
-        $ f5 bigip extension package upgrade --component do --version 1.9.0
-        {
-            "message": "Successfully upgraded extension component package 'do' to version '1.9.0'"
-        }
-
-
-    2. Install an Automation Toolchain service
-    ------------------------------------------
-    The following is an example of how to configure a new service using AS3 ::
-
-        $ f5 bigip extension service --component as3 --declaration as3_decl.json create
-        {
-            "declaration": {
-                ...
-            }
-        }
-
-
-"""
+""" BIG-IP command """
 
 # pylint: disable=too-many-arguments
 
