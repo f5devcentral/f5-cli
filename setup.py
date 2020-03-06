@@ -68,8 +68,5 @@ setuptools.setup(
             'f5 = f5cli.cli:cli'
         ]
     },
-    dependency_links=[
-        'https://***REMOVED***/artifactory/api/pypi/f5-cloud-solutions-pypi/simple'
-    ],
     install_requires=DEPENDENCIES
 )

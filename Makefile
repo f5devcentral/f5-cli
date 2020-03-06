@@ -35,6 +35,12 @@ html:
 code_docs: html
 	cp -R ${BUILDDIR}/ ${CODE_DOCS_DIR}
 	@echo "Docs finished. The are located in $(CODE_DOCS_DIR)"
+upload: build
+	echo "Uploading package to PyPI";
+	# set username/password using TWINE_USERNAME/TWINE_PASSWORD
+	# or using keyring for automated scenarios
+	twine check ${DIST_DIR}/*
+	twine upload --skip-existing ${DIST_DIR}/*
 clean:
 	echo "Removing artifacts"
 	rm -rf ${BUILD_DIR}
