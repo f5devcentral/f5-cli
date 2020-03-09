@@ -13,8 +13,8 @@ RUN pip install --upgrade pip==20.0.2
 RUN pip install -r requirements.txt
 
 # Install f5-cli locally
-RUN pip install /f5-cli
+RUN pip install .
 
-# Install f5-cli 
-#RUN pip3 install f5-cli --no-cache-dir --extra-index-url https://artifactory.f5net.com/artifactory/api/pypi/f5-cloud-solutions-pypi/simple
+#Uncomment to install f5-cli from pypi
+#RUN pip install f5-cli==0.9.1
 

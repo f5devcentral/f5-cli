@@ -39,6 +39,9 @@ test_unit:
         - pip3 install -r requirements.txt && pip3 install .
         # run unit tests
         - make unit_test
+        # fetch hadolint to lint dockerfile
+        - wget -qO- https://github.com/hadolint/hadolint/releases/download/v1.17.5/hadolint-Linux-x86_64 > hadolint
+        - chmod +x hadolint && mv hadolint /usr/bin
         # run linter
         - make lint
     tags:
