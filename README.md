@@ -41,9 +41,9 @@ See the source repository [here](https://github.com/f5devcentral/f5-cli).
 
 ## Filing Issues and Getting Help
 
-If you come across a bug or other issue when using Cloud Failover, use [GitHub Issues](https://github.com/f5devcentral/f5-cli/issues) to submit an issue for our team.  You can also see the current known issues on that page, which are tagged with a Known Issue label.  
+If you come across a bug or other issue when using the CLI, use [GitHub Issues](https://github.com/f5devcentral/f5-cli/issues) to submit an issue for our team.  You can also see the current known issues on that page, which are tagged with a Known Issue label.  
 
-F5 Cloud Failover Extension is community-supported. For more information, see the [Support page](SUPPORT.md).
+F5 CLI is community-supported. For more information, see the [Support page](SUPPORT.md).
 
 ## Copyright
 
