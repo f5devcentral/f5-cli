@@ -34,7 +34,7 @@ f5 --help
 ### Run f5-cli in Docker container
 - Run docker container 
 ```bash
-docker run -it -v "/Users/home/.f5_cli:/root/.f5_cli" -v "$(pwd):/f5-cli" <dockerhub url> f5
+docker run -it -v "$HOME/.f5_cli:/root/.f5_cli" -v "$(pwd):/f5-cli" <dockerhub url> f5
 ```
    * Note: 
       * To post a declaration, make sure that the current directory is at where the declarative files are located. This will let the docker container to mount the local directory onto the container "$(pwd):/f5-cli" and process the declarative files with f5-cli container.
@@ -42,11 +42,11 @@ docker run -it -v "/Users/home/.f5_cli:/root/.f5_cli" -v "$(pwd):/f5-cli" <docke
 
 - Run docker container with f5-cli supported environment variable
 ```bash
-docker run -it -e "F5_SDK_LOG_LEVEL=INFO" -e "PYTHONWARNINGS=ignore:Unverified HTTPS request" -v "/Users/home/.f5_cli:/root/.f5_cli" -v "$(pwd):/f5-cli" <dockerhub url> f5
+docker run -it -e "F5_SDK_LOG_LEVEL=INFO" -e "PYTHONWARNINGS=ignore:Unverified HTTPS request" -v "$HOME/.f5_cli:/root/.f5_cli" -v "$(pwd):/f5-cli" <dockerhub url> f5
 ```
 - set alias to reference the f5 command from the docker container 
 ```bash
-alias f5='docker run -it -e "F5_SDK_LOG_LEVEL=INFO" -e "PYTHONWARNINGS=ignore:Unverified HTTPS request" -v "/Users/home/.f5_cli:/root/.f5_cli" -v "$(pwd):/f5-cli" <dockerhub url> f5'
+alias f5='docker run -it -e "F5_SDK_LOG_LEVEL=INFO" -e "PYTHONWARNINGS=ignore:Unverified HTTPS request" -v "$HOME/.f5_cli:/root/.f5_cli" -v "$(pwd):/f5-cli" <dockerhub url> f5'
 ```
 ## User Documentation
 
