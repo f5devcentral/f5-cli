@@ -1,3 +1,4 @@
+# Build container from local project
 FROM python:3.7-alpine
 
 COPY . /f5-cli
@@ -13,7 +14,3 @@ RUN pip install -r requirements.txt
 
 # Install f5-cli locally
 RUN pip install .
-
-#Uncomment to install f5-cli from pypi
-#RUN pip install f5-cli==0.9.1
-
