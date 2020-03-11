@@ -32,22 +32,24 @@ pip install f5-cli
 f5 --help
 ```
 ### Run f5-cli in Docker container
-- Run docker container 
-```bash
-docker run -it -v "$HOME/.f5_cli:/root/.f5_cli" -v "$(pwd):/f5-cli" <dockerhub url> f5
-```
-   * Note: 
-      * To post a declaration, make sure that the current directory is at where the declarative files are located. This will let the docker container to mount the local directory onto the container "$(pwd):/f5-cli" and process the declarative files with f5-cli container.
-      * Ensure that the config directory .f5_cli is mounted to the container so the container can authenticate and communicate properly with a target device.
 
 - Run docker container with f5-cli supported environment variable
 ```bash
 docker run -it -e "F5_SDK_LOG_LEVEL=INFO" -e "PYTHONWARNINGS=ignore:Unverified HTTPS request" -v "$HOME/.f5_cli:/root/.f5_cli" -v "$(pwd):/f5-cli" <dockerhub url> f5
 ```
-- set alias to reference the f5 command from the docker container 
+- set alias and environmental variable to reference the f5 command from the docker container 
 ```bash
 alias f5='docker run -it -e "F5_SDK_LOG_LEVEL=INFO" -e "PYTHONWARNINGS=ignore:Unverified HTTPS request" -v "$HOME/.f5_cli:/root/.f5_cli" -v "$(pwd):/f5-cli" <dockerhub url> f5'
 ```
+- Another shortcut to launch f5-cli is to assign a file containing the following in your system's PATH (ex. cat /usr/local/bin/f5)
+```bash
+#!/usr/bin/env bash
+docker run -it --rm -e "F5_SDK_LOG_LEVEL=INFO" -e "PYTHONWARNINGS=ignore:Unverified HTTPS request" -v "$HOME/.f5_cli:/root/.f5_cli" -v "$(pwd):/f5-cli" f5devcentral/f5-cli:latest f5 $@
+```
+
+   * Note: 
+      * To post a declaration, make sure that the current directory is at where the declarative files are located. This will let the docker container to mount the local directory onto the container "$(pwd):/f5-cli" and process the declarative files with f5-cli container.
+      * Ensure that the config directory .f5_cli is mounted to the container so the container can authenticate and communicate properly with a target device.
 ## User Documentation
 
 See the [documentation](https://clouddocs.f5.com/sdk/f5-cli/) for details on installation, usage and much more.
