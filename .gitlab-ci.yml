@@ -334,3 +334,16 @@ publish_test_public_install:
         - pip install f5-cli
     tags:
         - cm-official-docker-executor
+
+# 'latest' container should only be published on commit to master
+publish_container:
+    image: docker:stable
+    stage: publish
+    script:
+        - docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASSWORD} ${DOCKERHUB_SERVER}
+        #- docker build -t ${DOCKERHUB_REPO}/${CONTAINER_NAME}:latest .
+        #- docker push ${DOCKERHUB_REPO}/${CONTAINER_NAME}:latest
+    tags:
+        - docker-executor
+    only:
+        - master
