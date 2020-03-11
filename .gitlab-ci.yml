@@ -10,6 +10,9 @@ stages:
 
 variables:
     DOCS_BUILD_DIR: "code_docs/html"
+    DOCKERHUB_USER: "$DOCKERHUB_USER"
+    DOCKERHUB_PASSWORD: "$DOCKERHUB_PASSWORD"
+    DOCKERHUB_SERVER: "$DOCKERHUB_SERVER"
     FUNCTIONAL_TEST_PREFIX: 'f5clitest'
     GIT_SECRETS_VERSION: '1.3.0'
     GIT_SECRETS_PKG_URL: "https://github.com/awslabs/git-secrets/archive/${GIT_SECRETS_VERSION}.tar.gz"
