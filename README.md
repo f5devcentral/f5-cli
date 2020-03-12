@@ -31,20 +31,26 @@ Benefits:
 pip install f5-cli
 f5 --help
 ```
+
+### Build f5-cli Docker container locally
+```bash
+docker build -t f5-cli:latest .
+```
+
 ### Run f5-cli in Docker container
 
 - Run docker container with f5-cli supported environment variable
 ```bash
-docker run -it -e "F5_SDK_LOG_LEVEL=INFO" -e "PYTHONWARNINGS=ignore:Unverified HTTPS request" -v "$HOME/.f5_cli:/root/.f5_cli" -v "$(pwd):/f5-cli" <dockerhub url> f5
+docker run -it -e "F5_SDK_LOG_LEVEL=INFO" -e "F5_DISABLE_SSL_WARNINGS=true" -v "$HOME/.f5_cli:/root/.f5_cli" -v "$(pwd):/f5-cli" <dockerhub url> f5
 ```
 - set alias and environmental variable to reference the f5 command from the docker container 
 ```bash
-alias f5='docker run -it -e "F5_SDK_LOG_LEVEL=INFO" -e "PYTHONWARNINGS=ignore:Unverified HTTPS request" -v "$HOME/.f5_cli:/root/.f5_cli" -v "$(pwd):/f5-cli" <dockerhub url> f5'
+alias f5='docker run -it -e "F5_SDK_LOG_LEVEL=INFO" -e "F5_DISABLE_SSL_WARNINGS=true" -v "$HOME/.f5_cli:/root/.f5_cli" -v "$(pwd):/f5-cli" <dockerhub url> f5'
 ```
 - Another shortcut to launch f5-cli is to assign a file containing the following in your system's PATH (ex. cat /usr/local/bin/f5)
 ```bash
 #!/usr/bin/env bash
-docker run -it --rm -e "F5_SDK_LOG_LEVEL=INFO" -e "PYTHONWARNINGS=ignore:Unverified HTTPS request" -v "$HOME/.f5_cli:/root/.f5_cli" -v "$(pwd):/f5-cli" f5devcentral/f5-cli:latest f5 $@
+docker run -it --rm -e "F5_SDK_LOG_LEVEL=INFO" -e "F5_DISABLE_SSL_WARNINGS=true" -v "$HOME/.f5_cli:/root/.f5_cli" -v "$(pwd):/f5-cli" f5devcentral/f5-cli:latest f5 $@
 ```
 
    * Note: 
