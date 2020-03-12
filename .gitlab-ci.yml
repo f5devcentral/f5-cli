@@ -345,8 +345,8 @@ publish_container:
     stage: publish
     script:
         - docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASSWORD} ${DOCKERHUB_SERVER}
-        #- docker build -t ${DOCKERHUB_REPO}/${CONTAINER_NAME}:latest .
-        #- docker push ${DOCKERHUB_REPO}/${CONTAINER_NAME}:latest
+        - docker build -t ${DOCKERHUB_REPO}/${CONTAINER_NAME}:latest .
+        - docker push ${DOCKERHUB_REPO}/${CONTAINER_NAME}:latest
     tags:
         - docker-executor
     only:
