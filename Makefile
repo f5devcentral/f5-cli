@@ -2,6 +2,7 @@ BUILD_DIR := build
 CODE_DOCS_DIR := ./code_docs
 COVERAGE_DIR := ./code_coverage
 COVERAGE_FILE := .coverage
+DOCKER_FILE := ./Dockerfile
 DIST_DIR := dist
 EGG_DIR := f5_cli.egg-info
 PACKAGE_DIR := f5cli
@@ -27,6 +28,7 @@ lint:
 	echo "Running linter (any error will result in non-zero exit code)";
 	flake8 ${PACKAGE_DIR}/ ${TEST_DIR}/;
 	pylint -j 0 ${PACKAGE_DIR}/ ${TEST_DIR}/;
+	hadolint ${DOCKER_FILE}
 coverage: unit_test
 	echo "Generating code coverage documentation"
 	coverage html
