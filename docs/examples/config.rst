@@ -50,7 +50,10 @@ Setting global config
 ---------------------
 The following is an example of how to set the global output format setting: ::
 
-    $ f5 config output-format --output json
+    # f5 config set-defaults --output json
+    {
+        "message": "CLI defaults updated successfully."
+    }
 
 
 
