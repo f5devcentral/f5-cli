@@ -37,6 +37,8 @@ Response:
         "message": "Logged in successfully" 
     } 
 
+|
+
 ::
 
     $ f5 bigip extension package verify --component as3

@@ -59,6 +59,7 @@ This example installs the latest version available online:
 Response:
 
 ::
+
     {
         "message": "Extension component package 'as3' successfully installed version 'x.x.x"
     }
