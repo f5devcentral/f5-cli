@@ -29,6 +29,10 @@ This example shows how to configure authentication with an existing BIG-IP syste
 
     Password: <type your password here> 
 
+Response:
+
+::
+
     { 
         "message": "Logged in successfully" 
     } 
@@ -36,6 +40,10 @@ This example shows how to configure authentication with an existing BIG-IP syste
 ::
 
     $ f5 bigip extension package verify --component as3
+
+Response:
+
+::
 
     { 
         "installed": false, 
@@ -67,6 +75,11 @@ The CLI will provide help information for any sub-commands, as well as relevant 
 ::
 
     $f5 --help 
+
+Response:
+
+::
+
     Usage: f5 [OPTIONS] COMMAND [ARGS]...
 
     Welcome to the F5 command line interface.
@@ -87,6 +100,11 @@ The CLI will also provide help information for any commands, for example, how to
 ::
 
     f5 bigip extension service --help 
+
+Response:
+
+::
+
     Usage: f5 bigip extension service [OPTIONS] [create|delete|show|show-info|show-failover|show-inspect|reset|trigger-failover] 
 
     Create, delete and verify extension services 
