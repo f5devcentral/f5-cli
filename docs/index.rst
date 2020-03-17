@@ -19,9 +19,9 @@ Benefits:
 - Include common actions in Continuous Deployment (CD) pipelines 
 - Prototyping
 
-   - Test calls that may be used in more complex custom integrations using the underlying SDK
-   - Supports discovery activities/querying of command-line results (for example, “list accounts” to find the desired account which will be used as an input to final automation)
-    
+    - Test calls that may be used in more complex custom integrations using the underlying SDK
+    - Supports discovery activities/querying of command-line results (for example, “list accounts” to find the desired account which will be used as an input to final automation)
+
 - Support quick one-off automation activities (for example, leveraging a bash loop to create/delete large lists of objects)   
 
 
