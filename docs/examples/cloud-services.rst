@@ -10,6 +10,10 @@ The following is an example of how to update an F5 Cloud Services subscription, 
 ::
 
     f5 cloud-services subscription update --subscription-id s-123 --declaration decl.json
+
+Response:
+::
+
         {
             "subscription_id": "s-123",
             ...
@@ -22,6 +26,10 @@ The following is an example of how to display or show the configuration of an ex
 ::
 
     f5 cloud-services subscription show --subscription-id s-123
+
+Response:
+::
+
     {
         "subscription_id": "s-123",
         ...

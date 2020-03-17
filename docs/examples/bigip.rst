@@ -12,6 +12,9 @@ This example will send a declaration to AS3 and install the package if it is not
 
     f5 bigip extension service create --component as3 --declaration as3.json --install-component 
 
+Response:
+::
+
     { 
         "declaration":  
       {        ...    } 
@@ -135,7 +138,12 @@ The following is an example of how to configure a new service using AS3:
 
 ::
 
-    f5 bigip extension service create --component as3 --declaration as3_decl.json 
+    f5 bigip extension service create --component as3 --declaration as3_decl.json
+
+Response:
+
+::
+
     {
         "declaration": {
             ...
