@@ -38,7 +38,9 @@ The following are examples of how to update authentication accounts:
 
 Delete an authentication account
 --------------------------------
-The following is an example of how to delete an authentication config auth: ::
+The following is an example of how to delete an authentication config auth: 
+
+::
 
     f5 config auth delete --name bigip-1
 
@@ -46,23 +48,29 @@ The following is an example of how to delete an authentication config auth: ::
 
 List all authentication accounts
 --------------------------------
-The following is an example of how to list all the authentication accounts: ::
+The following is an example of how to list all the authentication accounts: 
+
+::
 
     f5 config auth list
 
 
 Toggle a default authentication account
 ---------------------------------------
-The following is an example of how to set default authentication config auth: ::
+The following is an example of how to set default authentication config auth: 
+
+::
 
     f5 config auth update --name cs-1 --set-default
 
 
 Set global config
 -----------------
-The following is an example of how to set the global output format setting: ::
+The following is an example of how to set the global output format setting: 
 
-    # f5 config set-defaults --output json
+::
+
+    f5 config set-defaults --output json
 
 Response:
 
@@ -76,7 +84,9 @@ Response:
 
 Disable SSL Warnings through global config settings
 ---------------------------------------------------
-The following is an example of how to disable SSL warnings: ::
+The following is an example of how to disable SSL warnings: 
+
+::
 
     f5 config set-defaults --disable-ssl-warnings true
 
