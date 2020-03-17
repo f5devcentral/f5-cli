@@ -10,7 +10,7 @@ This example will send a declaration to AS3 and install the package if it is not
 
 ::
 
-    $ f5 bigip extension service create --component as3 --declaration as3.json --install-component 
+    f5 bigip extension service create --component as3 --declaration as3.json --install-component 
 
     { 
         "declaration":  
@@ -27,7 +27,7 @@ Install
 ```````
 ::
 
-    $ f5 bigip extension package install --component as3   
+    f5 bigip extension package install --component as3   
 
 Response:
 ::
@@ -43,7 +43,7 @@ The example below shows how to install a specific version:
 
 ::
 
-    $ f5 bigip extension package install --component as3 --version 3.17.0
+    f5 bigip extension package install --component as3 --version 3.17.0
 
 Response:
 
@@ -60,7 +60,7 @@ This example installs the latest version available online:
 
 ::
 
-    $ f5 bigip extension package install --component as3 --use-latest-metadata
+    f5 bigip extension package install --component as3 --use-latest-metadata
 
 Response:
 
@@ -79,7 +79,7 @@ This example verifies that the package is installed on the BIG-IP and shows you 
 
 ::
 
-    $ f5 bigip extension package verify --component as3
+    f5 bigip extension package verify --component as3
 
 Response:
 
@@ -98,7 +98,7 @@ This example shows you how to upgrade to a specific version.
 
 ::
 
-    $ f5 bigip extension package upgrade --component as3 --version 3.17.1
+    f5 bigip extension package upgrade --component as3 --version 3.17.1
 
 Response:
 
@@ -117,7 +117,7 @@ Uninstall
 
 ::
 
-    $ f5 bigip extension package uninstall --component as3
+    f5 bigip extension package uninstall --component as3
 
 Response:
 
@@ -135,7 +135,7 @@ The following is an example of how to configure a new service using AS3:
 
 ::
 
-    $ f5 bigip extension service create --component as3 --declaration as3_decl.json 
+    f5 bigip extension service create --component as3 --declaration as3_decl.json 
     {
         "declaration": {
             ...

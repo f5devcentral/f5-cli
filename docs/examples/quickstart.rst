@@ -25,7 +25,7 @@ This example shows how to configure authentication with an existing BIG-IP syste
 
 ::
 
-    $ f5 login --authentication-provider bigip --host 192.0.2.10 --user myuser
+    f5 login --authentication-provider bigip --host 192.0.2.10 --user myuser
 
     Password: <type your password here> 
 
@@ -43,7 +43,7 @@ Verify command:
 
 ::
 
-    $ f5 bigip extension package verify --component as3
+    f5 bigip extension package verify --component as3
 
 Response:
 
@@ -60,7 +60,7 @@ If you have an AS3 declaration in a local file (as3.json), install the AS3 exten
 
 ::
 
-    $ f5 bigip extension service create --component as3 --install-component --declaration as3.json 
+    f5 bigip extension service create --component as3 --install-component --declaration as3.json 
 
     { 
         "declaration":  
@@ -78,7 +78,7 @@ The CLI will provide help information for any sub-commands, as well as relevant 
 
 ::
 
-    $f5 --help 
+    f5 --help 
 
 Response:
 
