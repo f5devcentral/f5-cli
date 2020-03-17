@@ -39,6 +39,8 @@ Response:
 
 |
 
+Verify command:
+
 ::
 
     $ f5 bigip extension package verify --component as3

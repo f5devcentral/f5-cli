@@ -36,6 +36,9 @@ Response:
         "message": "Extension component package 'as3' successfully installed version '3.17.0'" 
     } 
 
+
+|
+
 The example below shows how to install a specific version:
 
 ::
@@ -49,6 +52,9 @@ Response:
     { 
         "message": "Extension component package 'as3' successfully installed version '3.17.0'" 
     } 
+
+
+|
 
 This example installs the latest version available online:
 
