@@ -25,17 +25,29 @@ This example shows how to configure authentication with an existing BIG-IP syste
 
 ::
 
-    $ f5 login --authentication-provider bigip --host 192.0.2.10 --user myuser
+    f5 login --authentication-provider bigip --host 192.0.2.10 --user myuser
 
     Password: <type your password here> 
+
+Response:
+
+::
 
     { 
         "message": "Logged in successfully" 
     } 
 
+|
+
+Verify command:
+
 ::
 
-    $ f5 bigip extension package verify --component as3
+    f5 bigip extension package verify --component as3
+
+Response:
+
+::
 
     { 
         "installed": false, 
@@ -48,7 +60,11 @@ If you have an AS3 declaration in a local file (as3.json), install the AS3 exten
 
 ::
 
-    $ f5 bigip extension service create --component as3 --install-component --declaration as3.json 
+    f5 bigip extension service create --component as3 --install-component --declaration as3.json
+
+Response:
+
+::
 
     { 
         "declaration":  
@@ -66,7 +82,12 @@ The CLI will provide help information for any sub-commands, as well as relevant 
 
 ::
 
-    $f5 --help 
+    f5 --help 
+
+Response:
+
+::
+
     Usage: f5 [OPTIONS] COMMAND [ARGS]...
 
     Welcome to the F5 command line interface.
@@ -87,6 +108,11 @@ The CLI will also provide help information for any commands, for example, how to
 ::
 
     f5 bigip extension service --help 
+
+Response:
+
+::
+
     Usage: f5 bigip extension service [OPTIONS] [create|delete|show|show-info|show-failover|show-inspect|reset|trigger-failover] 
 
     Create, delete and verify extension services 
