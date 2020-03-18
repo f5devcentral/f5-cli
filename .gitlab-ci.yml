@@ -339,7 +339,7 @@ publish_test_public_install:
     tags:
         - cm-official-docker-executor
 
-# 'latest' container should only be published on commit to master
+# publish 'latest' container on commit to master
 publish_container:
     image: docker:stable
     stage: publish
