@@ -11,6 +11,7 @@ stages:
 variables:
     DOCS_BUILD_DIR: "code_docs/html"
     CONTAINER_NAME: "f5-cli"
+    DOCKERHUB_REPO: "$DOCKERHUB_REPO"
     DOCKERHUB_USER: "$DOCKERHUB_USER"
     DOCKERHUB_PASSWORD: "$DOCKERHUB_PASSWORD"
     FUNCTIONAL_TEST_PREFIX: 'f5clitest'
@@ -344,13 +345,9 @@ publish_container:
     stage: publish
     script:
         - docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASSWORD}
-        #- docker build -t ${DOCKERHUB_REPO}/${CONTAINER_NAME}:latest .
-        #- docker push ${DOCKERHUB_REPO}/${CONTAINER_NAME}:latest
-        - docker build -t ${DOCKERHUB_REPO}/${CONTAINER_NAME}:unstable .
-        - docker push ${DOCKERHUB_REPO}/${CONTAINER_NAME}:unstable
+        - docker build -t ${DOCKERHUB_REPO}/${CONTAINER_NAME}:latest .
+        - docker push ${DOCKERHUB_REPO}/${CONTAINER_NAME}:latest
     tags:
         - docker-executor
     only:
-        #- master
-          variables:
-              - $CI_COMMIT_MESSAGE =~ /smart:run_test_container/
+        - master
