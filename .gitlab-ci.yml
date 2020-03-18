@@ -13,7 +13,6 @@ variables:
     CONTAINER_NAME: "f5-cli"
     DOCKERHUB_USER: "$DOCKERHUB_USER"
     DOCKERHUB_PASSWORD: "$DOCKERHUB_PASSWORD"
-    DOCKERHUB_SERVER: "$DOCKERHUB_SERVER"
     FUNCTIONAL_TEST_PREFIX: 'f5clitest'
     GIT_SECRETS_VERSION: '1.3.0'
     GIT_SECRETS_PKG_URL: "https://github.com/awslabs/git-secrets/archive/${GIT_SECRETS_VERSION}.tar.gz"
@@ -344,10 +343,14 @@ publish_container:
     image: docker:stable
     stage: publish
     script:
-        - docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASSWORD} ${DOCKERHUB_SERVER}
-        - docker build -t ${DOCKERHUB_REPO}/${CONTAINER_NAME}:latest .
-        - docker push ${DOCKERHUB_REPO}/${CONTAINER_NAME}:latest
+        - docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASSWORD}
+        #- docker build -t ${DOCKERHUB_REPO}/${CONTAINER_NAME}:latest .
+        #- docker push ${DOCKERHUB_REPO}/${CONTAINER_NAME}:latest
+        - docker build -t ${DOCKERHUB_REPO}/${CONTAINER_NAME}:unstable .
+        - docker push ${DOCKERHUB_REPO}/${CONTAINER_NAME}:unstable
     tags:
         - docker-executor
     only:
-        - master
+        #- master
+          variables:
+              - $CI_COMMIT_MESSAGE =~ /smart:run_test_container/
