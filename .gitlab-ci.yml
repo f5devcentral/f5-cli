@@ -11,7 +11,7 @@ stages:
 variables:
     DOCS_BUILD_DIR: "code_docs/html"
     CONTAINER_NAME: "f5-cli"
-    DOCKERHUB_REPO: "$DOCKERHUB_REPO"
+    DOCKERHUB_REPO: "f5devcentral"
     DOCKERHUB_USER: "$DOCKERHUB_USER"
     DOCKERHUB_PASSWORD: "$DOCKERHUB_PASSWORD"
     FUNCTIONAL_TEST_PREFIX: 'f5clitest'
