@@ -5,6 +5,7 @@ import yaml
 import click
 
 import f5cli.constants as constants
+import f5cli.utils.core as utils
 
 
 class AuthConfigurationClient:
@@ -99,8 +100,7 @@ class AuthConfigurationClient:
         None
         """
         try:
-            with open(constants.F5_AUTH_FILE, 'w') as file:
-                yaml.safe_dump(auth_contents, file, default_flow_style=False, sort_keys=False)
+            utils.write_file(constants.F5_AUTH_FILE, auth_contents)
         except IOError as error:
             raise click.ClickException(
                 f"Unable to open auth file. Error returned {error}.")

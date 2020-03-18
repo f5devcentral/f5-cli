@@ -5,6 +5,7 @@ import yaml
 import click
 
 import f5cli.constants as constants
+import f5cli.utils.core as utils
 
 
 class ConfigurationClient:
@@ -94,8 +95,7 @@ class ConfigurationClient:
         None
         """
         try:
-            with open(constants.F5_CONFIG_FILE, 'w') as file:
-                yaml.safe_dump(content, file, default_flow_style=False, sort_keys=False)
+            utils.write_file(constants.F5_CONFIG_FILE, content)
         except IOError as error:
             raise click.ClickException(f"Unable to save contents: {error}.")
 
