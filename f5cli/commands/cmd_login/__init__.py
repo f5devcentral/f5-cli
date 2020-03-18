@@ -4,7 +4,7 @@
 
 import click_repl
 import click
-from f5sdk.exceptions import DeviceReadyError, HTTPError
+from f5sdk.exceptions import DeviceReadyError, HTTPError, RetryInterruptedError
 from f5sdk.cloud_services import ManagementClient as CSManagementClient
 from f5sdk.bigip import ManagementClient as BigipManagementClient
 
@@ -89,8 +89,8 @@ def cli(ctx,
                 password=auth_info['password']
             )
             BigipManagementClient(auth_info['host'], **management_kwargs)
-        except (DeviceReadyError, HTTPError) as error:
-            raise click.ClickException(f"Failed to login to BIG-IP: {error}")
+        except (DeviceReadyError, HTTPError, RetryInterruptedError) as error:
+            raise click.ClickException(f"Failed to login to BIG-IP: {error}") from None
     else:
         try:
             CSManagementClient(user=auth_info['user'],
