@@ -216,37 +216,37 @@ docs_code:
 # Note: Will build and push package when new tags are added with
 # the assumption being the package version has been updated.
 # However even if it hasn't it will simply update the existing version
-publish_egg_to_artifactory:
-    stage: publish
-    only:
-        - tags
-    tags:
-        - docker-executor
-    script:
-        - make build
-        - EGG_FILE=$(ls dist/*.gz)
-        - EGG_NAME=$(basename $EGG_FILE)
-        - URL=${ARTIFACTORY_BASE_URL}/f5-cloud-solutions-pypi/f5-cli/${EGG_NAME}
-        - echo ${URL}
-        - >-
-          UPLOAD_RESULT=$(curl -H "Authorization: Bearer ${ARTIFACTORY_TOKEN}" -X PUT --data-binary @${EGG_FILE} ${URL})
-        - if [[ $? -eq 0 ]] && [[ "$UPLOAD_RESULT" == *created* ]]; then echo "Upload complete"; else echo "Upload failed"; exit 1; fi
-        - echo $UPLOAD_RESULT
+#publish_egg_to_artifactory:
+#    stage: publish
+#    only:
+#        - tags
+#    tags:
+#        - docker-executor
+#    script:
+#        - make build
+#        - EGG_FILE=$(ls dist/*.gz)
+#        - EGG_NAME=$(basename $EGG_FILE)
+#        - URL=${ARTIFACTORY_BASE_URL}/f5-cloud-solutions-pypi/f5-cli/${EGG_NAME}
+#        - echo ${URL}
+#        - >-
+#          UPLOAD_RESULT=$(curl -H "Authorization: Bearer ${ARTIFACTORY_TOKEN}" -X PUT --data-binary @${EGG_FILE} ${URL})
+#        - if [[ $? -eq 0 ]] && [[ "$UPLOAD_RESULT" == *created* ]]; then echo "Upload complete"; else echo "Upload failed"; exit 1; fi
+#        - echo $UPLOAD_RESULT
 
 # Publish to PyPI
 # Note: Will build and push package when new tags are added with
 # the assumption being the package version has been updated
-publish_package_to_pypi:
-    stage: publish
-    only:
-        - tags
-    tags:
-        - docker-executor
-    script:
-        # install packages
-        - pip install -r requirements.txt
-        # upload
-        - make upload
+#publish_package_to_pypi:
+#    stage: publish
+#    only:
+#        - tags
+#    tags:
+#        - docker-executor
+#    script:
+#        # install packages
+#        - pip install -r requirements.txt
+#        # upload
+#        - make upload
 
 # publish docs to internal pages: - this job MUST be named 'pages'
 pages:
@@ -317,27 +317,27 @@ docs_to_production:
         - aws cloudfront create-invalidation --distribution-id $AWS_DIST_STAGE --paths /sdk/f5-cli --profile=docs
 
 # publish test: test internal (artifactory) install
-publish_test_internal_install:
-    stage: publish_test
-    only:
-        - tags
-    script:
-        # install package - first wait until it is available after a recent publish (known artifactory issue)
-        - bash scripts/wait_for_resp.sh ${ARTIFACTORY_BASE_URL}/api/pypi/f5-cloud-solutions-pypi/simple/f5-cli/
-        - pip install f5-cli --extra-index-url ${ARTIFACTORY_BASE_URL}/api/pypi/f5-cloud-solutions-pypi/simple
-    tags:
-        - cm-official-docker-executor
+#publish_test_internal_install:
+#    stage: publish_test
+#    only:
+#        - tags
+#    script:
+#        # install package - first wait until it is available after a recent publish (known artifactory issue)
+#        - bash scripts/wait_for_resp.sh ${ARTIFACTORY_BASE_URL}/api/pypi/f5-cloud-solutions-pypi/simple/f5-cli/
+#        - pip install f5-cli --extra-index-url ${ARTIFACTORY_BASE_URL}/api/pypi/f5-cloud-solutions-pypi/simple
+#    tags:
+#        - cm-official-docker-executor
 
 # publish test: test public (pypi) install
-publish_test_public_install:
-    stage: publish_test
-    only:
-        - tags
-    script:
-        # install package
-        - pip install f5-cli
-    tags:
-        - cm-official-docker-executor
+#publish_test_public_install:
+#    stage: publish_test
+#    only:
+#        - tags
+#    script:
+#        # install package
+#        - pip install f5-cli
+#    tags:
+#        - cm-official-docker-executor
 
 # publish container on commit from master or by tag
 publish_container:
