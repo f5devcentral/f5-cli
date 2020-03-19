@@ -11,7 +11,6 @@ stages:
 variables:
     DOCS_BUILD_DIR: "code_docs/html"
     CONTAINER_NAME: "f5-cli"
-    #CONTAINER_TAG: "$CONTAINER_TAG"
     DOCKERHUB_REPO: "f5devcentral"
     DOCKERHUB_USER: "$DOCKERHUB_USER"
     DOCKERHUB_PASSWORD: "$DOCKERHUB_PASSWORD"
@@ -345,9 +344,8 @@ publish_container:
     image: docker:stable
     stage: publish
     script:
-        - echo "CONTAINER_TAG = ${CONTAINER_TAG}"
-        - if [ $CI_COMMIT_REF_NAME == "AUTOSDK-223" ]; then
-        -    CONTAINER_TAG="unstable"
+        - if [ $CI_COMMIT_REF_NAME == "master" ]; then
+        -    CONTAINER_TAG="latest"
         - fi
         - docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASSWORD}
         - docker build -t ${DOCKERHUB_REPO}/${CONTAINER_NAME}:${CONTAINER_TAG} .
@@ -356,5 +354,5 @@ publish_container:
         - docker-executor
     only:
         variables:
-        - $CI_COMMIT_REF_NAME == "AUTOSDK-223"
+        - $CI_COMMIT_REF_NAME == "latest"
         - $CONTAINER_TAG
