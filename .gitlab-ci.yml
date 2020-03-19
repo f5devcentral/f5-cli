@@ -345,6 +345,7 @@ publish_container:
     image: docker:stable
     stage: publish
     script:
+        - echo "CONTAINER_TAG = $CONTAINER_TAG"
         - if [ $CI_COMMIT_REF_NAME == "master" ]; then
         -    CONTAINER_TAG="unstable"
         - fi
@@ -356,4 +357,4 @@ publish_container:
     only:
         variables:
         - $CI_COMMIT_REF_NAME == "master"
-        #- $CONTAINER_TAG != ""
+        - $CONTAINER_TAG != ""
