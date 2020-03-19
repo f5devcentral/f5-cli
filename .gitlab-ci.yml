@@ -350,12 +350,13 @@ publish_container:
         - fi
         - echo ${CONTAINER_TAG}
         #- docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASSWORD}
+        - docker build -t ${DOCKERHUB_REPO}/${CONTAINER_NAME}:unstable .
+        - docker push ${DOCKERHUB_REPO}/${CONTAINER_NAME}:unstable
         #- docker build -t ${DOCKERHUB_REPO}/${CONTAINER_NAME}:${CONTAINER_TAG} .
         #- docker push ${DOCKERHUB_REPO}/${CONTAINER_NAME}:${CONTAINER_TAG}
     tags:
         - cm-official-docker-executor
     only:
+        - tags
         variables:
             - $CI_COMMIT_REF_NAME == "master"
-        refs:
-            - tags
