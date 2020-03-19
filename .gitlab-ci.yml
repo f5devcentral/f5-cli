@@ -356,4 +356,4 @@ publish_container:
     only:
         variables:
         - $CI_COMMIT_REF_NAME == "master"
-        - $CONTAINER_TAG
+        - $CONTAINER_TAG != ""
