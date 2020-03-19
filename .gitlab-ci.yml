@@ -344,6 +344,7 @@ publish_container:
     image: docker:stable
     stage: publish
     script:
+        - CONTAINER_TAG=$CI_COMMIT_REF_NAME
         - if [ $CI_COMMIT_REF_NAME == "master" ]; then
         -    CONTAINER_TAG="latest"
         - fi
@@ -354,5 +355,6 @@ publish_container:
         - docker-executor
     only:
         variables:
-        - $CI_COMMIT_REF_NAME == "master"
-        - $CONTAINER_TAG
+            - $CI_COMMIT_REF_NAME == "master"
+        refs:
+            - tags
