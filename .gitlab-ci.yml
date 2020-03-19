@@ -346,7 +346,7 @@ publish_container:
     stage: publish
     script:
         - echo "CONTAINER_TAG = ${CONTAINER_TAG}"
-        - if [ $CI_COMMIT_REF_NAME == "master" ]; then
+        - if [ $CI_COMMIT_REF_NAME == "AUTOSDK-223" ]; then
         -    CONTAINER_TAG="unstable"
         - fi
         - docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASSWORD}
@@ -356,5 +356,5 @@ publish_container:
         - docker-executor
     only:
         variables:
-        - $CI_COMMIT_REF_NAME == "master"
+        - $CI_COMMIT_REF_NAME == "AUTOSDK-223"
         - $CONTAINER_TAG
