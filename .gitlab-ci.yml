@@ -342,7 +342,8 @@ docs_to_production:
 # publish container on commit from master or by tag
 publish_container:
     image: docker:stable
-    stage: publish
+#    stage: publish
+    stage: test
     script:
         - CONTAINER_TAG=$CI_COMMIT_REF_NAME
         - if [ $CI_COMMIT_REF_NAME == "master" ]; then
