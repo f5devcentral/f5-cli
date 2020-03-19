@@ -346,7 +346,7 @@ publish_container:
     stage: publish
     script:
         - if [ $CI_COMMIT_REF_NAME == "AUTOSDK-223" ]; then
-        -    CONTAINER_TAG = "unstable"
+        -    CONTAINER_TAG="unstable"
         - fi
         - docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASSWORD}
         - docker build -t ${DOCKERHUB_REPO}/${CONTAINER_NAME}:${CONTAINER_TAG} .
