@@ -36,7 +36,7 @@ f5 --help
 
 #### Example: Run the F5 CLI with docker container interactively 
 ```bash
-docker run -it -v "$HOME/.f5_cli:/root/.f5_cli" -v "$(pwd):/f5-cli" f5devcentral/f5-cli:latest f5
+docker run -it -v "$HOME/.f5_cli:/root/.f5_cli" -v "$(pwd):/f5-cli" f5devcentral/f5-cli:latest /bin/bash
 ```
 #### Example: Run the F5 CLI with docker container using an alias
 ```bash
