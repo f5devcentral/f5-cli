@@ -357,7 +357,5 @@ publish_container:
     tags:
         - cm-official-docker-executor
     only:
-        refs:
-            - tags
-        variables:
-            - $CI_COMMIT_REF_NAME == "master"
+        - master
+        - tags
