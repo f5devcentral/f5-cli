@@ -353,7 +353,7 @@ publish_container:
         #- docker build -t ${DOCKERHUB_REPO}/${CONTAINER_NAME}:${CONTAINER_TAG} .
         #- docker push ${DOCKERHUB_REPO}/${CONTAINER_NAME}:${CONTAINER_TAG}
     tags:
-        - docker-executor
+        - cm-official-docker-executor
     only:
         variables:
             - $CI_COMMIT_REF_NAME == "master"
