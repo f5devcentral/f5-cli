@@ -340,12 +340,12 @@ publish_test_public_install:
     tags:
         - cm-official-docker-executor
 
-# publish container on commit to master
+# publish container on commit from master or by tag
 publish_container:
     image: docker:stable
     stage: publish
     script:
-        - if [ $CI_COMMIT_REF_NAME == "AUTOSDK-223" ]; then
+        - if [ $CI_COMMIT_REF_NAME == "master" ]; then
         -    CONTAINER_TAG="unstable"
         - fi
         - docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASSWORD}
@@ -355,5 +355,5 @@ publish_container:
         - docker-executor
     only:
         variables:
-        - $CI_COMMIT_REF_NAME == "AUTOSDK-223"
+        - $CI_COMMIT_REF_NAME == "master"
         - $CONTAINER_TAG
