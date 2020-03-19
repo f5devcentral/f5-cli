@@ -354,5 +354,5 @@ publish_container:
         - docker-executor
     only:
         variables:
-        - $CI_COMMIT_REF_NAME == "latest"
+        - $CI_COMMIT_REF_NAME == "master"
         - $CONTAINER_TAG
