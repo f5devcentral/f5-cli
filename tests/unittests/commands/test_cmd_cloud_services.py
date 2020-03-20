@@ -5,6 +5,7 @@ import os
 
 
 from f5sdk.cloud_services import ManagementClient
+from f5sdk.cloud_services.accounts import AccountClient
 from f5sdk.cloud_services.subscriptions import SubscriptionClient
 
 from f5cli.config import AuthConfigurationClient
@@ -67,72 +68,123 @@ class TestCommandBigIp(object):
         mock_management_client.return_value = None
         return mock_management_client
 
-    @staticmethod
-    @pytest.fixture
-    def subscription_client_fixture(mocker):
-        """ PyTest fixture returning mocked Cloud Services Subscription Client """
-        mock_subscription_client = mocker.patch.object(SubscriptionClient, '__init__')
-        mock_subscription_client.return_value = None
-        return mock_subscription_client
+    @pytest.mark.usefixtures("config_client_read_auth_fixture")
+    @pytest.mark.usefixtures("mgmt_client_fixture")
+    def test_cmd_cloud_services_account_show_user(self, mocker):
+        """ Show currently authentication CS user
 
-    def test_dns_service(self):
-        """ Test DNS service
         Given
-        - BIG IP is up
+        - The Account Client returns a successful response
 
         When
-        - User attempts to create a DNS
+        - User executes a 'show_user'
 
         Then
-        - Exception is thrown
+        - The show_user command returns a successful response
         """
-        result = self.runner.invoke(
-            cli, ['dns', 'create', 'a', 'test_members'])
 
-        assert result.output == 'Error: Command not implemented\n'
-        assert result.exception
+        mock_response = {
+            'foo': 'bar'
+        }
+        mocker.patch.object(
+            AccountClient, "show_user", return_value=mock_response)
 
-    # pylint: disable=unused-argument
-    def test_cmd_cloud_services_subscription_show(self,
-                                                  mocker,
-                                                  config_client_read_auth_fixture,
-                                                  mgmt_client_fixture,
-                                                  subscription_client_fixture):
+        result = self.runner.invoke(cli, ['account', 'show-user'])
+        assert result.output == json.dumps(mock_response, indent=4, sort_keys=True) + '\n'
+
+    @pytest.mark.usefixtures("config_client_read_auth_fixture")
+    @pytest.mark.usefixtures("mgmt_client_fixture")
+    def test_cmd_cloud_services_subscription_list(self, mocker):
+        """ List subscriptions
+
+        Given
+        - The Account Client returns a successful response
+
+        When
+        - User executes the 'show_user' commaned
+
+        Then
+        - The command returns a successful response
+        """
+
+        mock_response = {
+            'foo': 'bar'
+        }
+        mocker.patch.object(
+            SubscriptionClient,
+            "list",
+            return_value=mock_response
+        )
+
+        result = self.runner.invoke(cli, ['subscription', 'list'])
+        assert result.output == json.dumps(mock_response, indent=4, sort_keys=True) + '\n'
+
+    @pytest.mark.usefixtures("config_client_read_auth_fixture")
+    @pytest.mark.usefixtures("mgmt_client_fixture")
+    def test_cmd_cloud_services_subscription_list_with_filter(self, mocker):
+        """ List subscriptions (with account ID filter)
+
+        Given
+        - The Account Client returns a successful response
+
+        When
+        - User executes the 'show_user' commaned
+
+        Then
+        - The command returns a successful response
+        - The subscription client is passed the account id filter
+        """
+
+        mock_response = {
+            'foo': 'bar'
+        }
+        mock_subscription_client_list = mocker.patch.object(
+            SubscriptionClient,
+            "list",
+            return_value=mock_response
+        )
+
+        result = self.runner.invoke(cli, ['subscription', 'list', '--account-id-filter', 'foo'])
+        assert result.output == json.dumps(mock_response, indent=4, sort_keys=True) + '\n'
+        _, kwargs = mock_subscription_client_list.call_args
+        assert kwargs['query_parameters']['account_id'] == 'foo'
+
+    @pytest.mark.usefixtures("config_client_read_auth_fixture")
+    @pytest.mark.usefixtures("mgmt_client_fixture")
+    def test_cmd_cloud_services_subscription_show(self, mocker):
         """ Execute a 'show' action against an F5 Cloud Services subscription
 
         Given
-        - Cloud Services is available, and end-user has an account
-        - The user has already configured authentication with Cloud Services
+        - The Subscription Client returns a successful response
 
         When
-        - User executes a 'show' against F5 Cloud Services
+        - User executes the 'show' command
 
         Then
-        - Authentication data is read from disk
-        - A Management client is created
-        - A Subscription client is created
-        - The show command is executed
+        - The command returns a successful response
         """
 
-        mock_show_return = {
+        mock_response = {
             'subscription_id': SUBSCRIPTION_ID,
             'account_id': 'a-123'
         }
-        mock_subscription_client_show = mocker.patch.object(
-            SubscriptionClient, "show")
-        mock_subscription_client_show.return_value = mock_show_return
+        mocker.patch.object(
+            SubscriptionClient,
+            "show",
+            return_value=mock_response
+        )
 
         result = self.runner.invoke(cli, ['subscription', 'show',
                                           '--subscription-id', SUBSCRIPTION_ID])
+        assert result.output == json.dumps(mock_response, indent=4, sort_keys=True) + '\n'
 
-        assert result.output == json.dumps(mock_show_return, indent=4, sort_keys=True) + '\n'
-
+    @pytest.mark.usefixtures("config_client_read_auth_fixture")
+    @pytest.mark.usefixtures("mgmt_client_fixture")
     def test_cmd_cloud_services_subscription_bad_action(self):
         """ Execute an unimplemented action for F5 Cloud Services subscription
 
         Given
-        - Cloud Services is available, and end-user has an account
-        - The user has already configured authentication with Cloud Services
+        - The CLI is available
 
         When
         - User executes a 'blahblah' command against F5 Cloud Services
@@ -146,8 +198,13 @@ class TestCommandBigIp(object):
         assert f"invalid choice: {bad_action}" in result.output
         assert result.exception
 
+    @pytest.mark.usefixtures("config_client_read_auth_fixture")
+    @pytest.mark.usefixtures("mgmt_client_fixture")
     def test_cmd_cloud_services_subscription_update_no_declaration(self):
         """ Execute 'update' without providing a declaration
+
+        Given
+        - The CLI is available
 
         When
         - The User executes the 'update' action for a Cloud Services Subscription
@@ -160,22 +217,16 @@ class TestCommandBigIp(object):
         result = self.runner.invoke(cli, ['subscription', 'update', '--subscription-id', 's'])
         assert result.exception
 
-        expected_output = ("Error: The --declaration option is required when"
-                           " updating a Cloud Services subscription\n")
+        expected_output = ("Error: The --declaration option is required\n")
         assert result.output == expected_output
 
-    # pylint: disable=unused-argument
-    def test_cmd_cloud_services_subscription_update(self,
-                                                    mocker,
-                                                    config_client_read_auth_fixture,
-                                                    mgmt_client_fixture,
-                                                    subscription_client_fixture):
+    @pytest.mark.usefixtures("config_client_read_auth_fixture")
+    @pytest.mark.usefixtures("mgmt_client_fixture")
+    def test_cmd_cloud_services_subscription_update(self, mocker):
         """ Execute an 'update' action against a Cloud Services subscription
 
         Given
-        - Cloud Services is available, and end-user has an account
-        - The user has already configured authentication with Cloud Services
-        - There is an existing F5 Cloud Services configuration
+        - The CLI exists
 
         When
         - The User executes the 'update' action for a Cloud Services Subscription
@@ -191,8 +242,10 @@ class TestCommandBigIp(object):
         }
 
         mock_subscription_client_update = mocker.patch.object(
-            SubscriptionClient, "update")
-        mock_subscription_client_update.return_value = mock_update_return
+            SubscriptionClient,
+            "update",
+            return_value=mock_update_return
+        )
 
         declaration_file = 'decl.json'
         expected_config_file = os.path.join(os.getcwd(), declaration_file)
