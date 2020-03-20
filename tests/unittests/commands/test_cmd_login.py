@@ -4,7 +4,7 @@ import json
 from click import ClickException
 from f5sdk.bigip import ManagementClient as BigipManagementClient
 from f5sdk.cloud_services import ManagementClient as CSManagementClient
-from f5sdk.exceptions import HTTPError, DeviceReadyError
+from f5sdk.exceptions import DeviceReadyError, InvalidAuthError
 from f5cli.config import AuthConfigurationClient
 from f5cli.commands.cmd_login import cli
 
@@ -225,8 +225,8 @@ class TestCommandLogin(object):
         - Credentials are not passed to the AuthConfigurationClient
         - Unsuccessful login message is thrown
         """
-
-        bigip_mgmt_client_fixture.side_effect = HTTPError('code: 401')
+        error = 'Failed to login to BIG-IP, please provide valid credentials.'
+        bigip_mgmt_client_fixture.side_effect = InvalidAuthError(error)
         result = self.runner.invoke(cli, [
             '--authentication-provider', 'bigip',
             '--host', TEST_HOST,
@@ -235,7 +235,7 @@ class TestCommandLogin(object):
         ])
 
         config_client_store_auth_fixture.assert_not_called()
-        assert result.output == "Error: Failed to login to BIG-IP: code: 401\n"
+        assert result.output == f'Error: {error}\n'
 
     # pylint: disable=unused-argument
     def test_login_bigip_host_not_ready(self,
@@ -265,7 +265,7 @@ class TestCommandLogin(object):
         ])
 
         config_client_store_auth_fixture.assert_not_called()
-        assert result.output == "Error: Failed to login to BIG-IP: Not ready\n"
+        assert result.output == "Error: Device is not ready.\n"
 
     # pylint: disable=unused-argument
     def test_cmd_login_cloud_services(self,
@@ -358,8 +358,8 @@ class TestCommandLogin(object):
         - Credentials are not passed to the AuthConfigurationClient
         - Unsuccessful login message is thrown
         """
-
-        cs_mgmt_client_fixture.side_effect = HTTPError('code: 401')
+        error = 'Failed to login to Cloud Services, please provide valid credentials.'
+        cs_mgmt_client_fixture.side_effect = InvalidAuthError(error)
         result = self.runner.invoke(cli, [
             '--authentication-provider', 'cloud-services',
             '--host', TEST_HOST,
@@ -368,4 +368,4 @@ class TestCommandLogin(object):
         ])
 
         config_client_store_auth_fixture.assert_not_called()
-        assert result.output == "Error: Failed to login to Cloud Services: code: 401\n"
+        assert result.output == f'Error: {error}\n'
