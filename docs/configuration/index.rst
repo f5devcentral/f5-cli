@@ -26,7 +26,7 @@ The F5 CLI stores configuration settings and credentials in the user's home dire
       default: false
     - name: cs1
       password: mypassword3
-      authentication-type: cloud-services
+      authentication-type: cs
       username: myuser1@f5.com
       default: true
 

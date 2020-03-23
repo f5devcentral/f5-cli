@@ -4,12 +4,12 @@ import json
 import os
 
 
-from f5sdk.cloud_services import ManagementClient
-from f5sdk.cloud_services.accounts import AccountClient
-from f5sdk.cloud_services.subscriptions import SubscriptionClient
+from f5sdk.cs import ManagementClient
+from f5sdk.cs.accounts import AccountClient
+from f5sdk.cs.subscriptions import SubscriptionClient
 
 from f5cli.config import AuthConfigurationClient
-from f5cli.commands.cmd_cloud_services import cli
+from f5cli.commands.cmd_cs import cli
 
 from ...global_test_imports import pytest, CliRunner
 
@@ -70,7 +70,7 @@ class TestCommandBigIp(object):
 
     @pytest.mark.usefixtures("config_client_read_auth_fixture")
     @pytest.mark.usefixtures("mgmt_client_fixture")
-    def test_cmd_cloud_services_account_show_user(self, mocker):
+    def test_cmd_cs_account_show_user(self, mocker):
         """ Show currently authentication CS user
 
         Given
@@ -94,7 +94,7 @@ class TestCommandBigIp(object):
 
     @pytest.mark.usefixtures("config_client_read_auth_fixture")
     @pytest.mark.usefixtures("mgmt_client_fixture")
-    def test_cmd_cloud_services_subscription_list(self, mocker):
+    def test_cmd_cs_subscription_list(self, mocker):
         """ List subscriptions
 
         Given
@@ -121,7 +121,7 @@ class TestCommandBigIp(object):
 
     @pytest.mark.usefixtures("config_client_read_auth_fixture")
     @pytest.mark.usefixtures("mgmt_client_fixture")
-    def test_cmd_cloud_services_subscription_list_with_filter(self, mocker):
+    def test_cmd_cs_subscription_list_with_filter(self, mocker):
         """ List subscriptions (with account ID filter)
 
         Given
@@ -151,7 +151,7 @@ class TestCommandBigIp(object):
 
     @pytest.mark.usefixtures("config_client_read_auth_fixture")
     @pytest.mark.usefixtures("mgmt_client_fixture")
-    def test_cmd_cloud_services_subscription_show(self, mocker):
+    def test_cmd_cs_subscription_show(self, mocker):
         """ Execute a 'show' action against an F5 Cloud Services subscription
 
         Given
@@ -180,7 +180,7 @@ class TestCommandBigIp(object):
 
     @pytest.mark.usefixtures("config_client_read_auth_fixture")
     @pytest.mark.usefixtures("mgmt_client_fixture")
-    def test_cmd_cloud_services_subscription_bad_action(self):
+    def test_cmd_cs_subscription_bad_action(self):
         """ Execute an unimplemented action for F5 Cloud Services subscription
 
         Given
@@ -200,7 +200,7 @@ class TestCommandBigIp(object):
 
     @pytest.mark.usefixtures("config_client_read_auth_fixture")
     @pytest.mark.usefixtures("mgmt_client_fixture")
-    def test_cmd_cloud_services_subscription_update_no_declaration(self):
+    def test_cmd_cs_subscription_update_no_declaration(self):
         """ Execute 'update' without providing a declaration
 
         Given
@@ -222,7 +222,7 @@ class TestCommandBigIp(object):
 
     @pytest.mark.usefixtures("config_client_read_auth_fixture")
     @pytest.mark.usefixtures("mgmt_client_fixture")
-    def test_cmd_cloud_services_subscription_update(self, mocker):
+    def test_cmd_cs_subscription_update(self, mocker):
         """ Execute an 'update' action against a Cloud Services subscription
 
         Given

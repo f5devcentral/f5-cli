@@ -172,9 +172,9 @@ class TestCommandConfig(object):
             sort_keys=True
         ) + '\n'
 
-    def test_cmd_configure_auth_cloud_services(self,
-                                               config_client_fixture,
-                                               config_client_store_auth_fixture):
+    def test_cmd_configure_auth_cs(self,
+                                   config_client_fixture,
+                                   config_client_store_auth_fixture):
         """ Configure authentication to F5 Cloud Services
 
         Given
@@ -193,7 +193,7 @@ class TestCommandConfig(object):
         result = self.runner.invoke(cli, [
             'auth',
             'create',
-            '--authentication-provider', 'cloud-services',
+            '--authentication-provider', 'cs',
             '--name', 'test1',
             '--user', TEST_USER,
             '--password', TEST_PASSWORD])
@@ -201,7 +201,7 @@ class TestCommandConfig(object):
         mock_config_client_store_auth.assert_called_once()
         mock_config_client_args = mock_config_client.call_args_list[0][1]
         expected_result = {
-            'authentication-type': 'cloud-services',
+            'authentication-type': 'cs',
             'default': False,
             'name': 'test1',
             'user': TEST_USER,
@@ -237,7 +237,7 @@ class TestCommandConfig(object):
         result = self.runner.invoke(cli, [
             'auth',
             'create',
-            '--authentication-provider', 'cloud-services',
+            '--authentication-provider', 'cs',
             '--name', 'test1',
             '--user', TEST_USER,
             '--password', TEST_PASSWORD,
@@ -247,7 +247,7 @@ class TestCommandConfig(object):
         mock_config_client_store_auth.assert_called_once()
         mock_config_client_args = mock_config_client.call_args_list[0][1]
         expected_result = {
-            'authentication-type': 'cloud-services',
+            'authentication-type': 'cs',
             'name': 'test1',
             'default': True,
             'user': TEST_USER,
@@ -283,7 +283,7 @@ class TestCommandConfig(object):
         result = self.runner.invoke(cli, [
             'auth',
             'update',
-            '--authentication-provider', 'cloud-services',
+            '--authentication-provider', 'cs',
             '--name', 'test1',
             '--user', TEST_USER,
             '--set-default'], input='blah')
@@ -291,7 +291,7 @@ class TestCommandConfig(object):
         mock_config_client_store_auth.assert_called_once()
         mock_config_client_args = mock_config_client.call_args_list[0][1]
         expected_result = {
-            'authentication-type': 'cloud-services',
+            'authentication-type': 'cs',
             'name': 'test1',
             'default': True,
             'host': None,

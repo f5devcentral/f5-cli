@@ -12,7 +12,7 @@ from ...global_test_imports import pytest
 TYPICAL_AUTH_CONTENTS = [
     {
         'name': 'cs1',
-        'authentication-type': constants.AUTHENTICATION_PROVIDERS['CLOUD_SERVICES'],
+        'authentication-type': constants.AUTHENTICATION_PROVIDERS['CS'],
         'default': True
     },
     {
@@ -22,7 +22,7 @@ TYPICAL_AUTH_CONTENTS = [
     },
     {
         'name': 'cs2',
-        'authentication-type': constants.AUTHENTICATION_PROVIDERS['CLOUD_SERVICES'],
+        'authentication-type': constants.AUTHENTICATION_PROVIDERS['CS'],
         'default': False
     },
     {
@@ -92,13 +92,13 @@ class TestAuthConfigurationClient(object):
         client = AuthConfigurationClient()
         yaml_load_fixture_auth.return_value = [
             {'username': 'me@home.com',
-             'authentication-type': 'cloud-services',
+             'authentication-type': 'cs',
              'password': 'pass123',
              'default': True
              }]
 
         with mocker.patch('f5cli.config.auth.open', new_callable=mocker.mock_open()):
-            result = client.read_auth('cloud-services')
+            result = client.read_auth('cs')
         assert result == yaml_load_fixture_auth.return_value[0]
         yaml_load_fixture_auth.assert_called_once()
 
@@ -142,7 +142,7 @@ class TestAuthConfigurationClient(object):
         """
         client = AuthConfigurationClient()
 
-        group_name = 'CLOUD_SERVICES'
+        group_name = 'CS'
         yaml_load_fixture_auth.return_value = [
             {'name': 'temp', 'username': 'me@home.com', 'type': 'BIGIP', 'password': 'pass123'}
         ]
@@ -203,19 +203,19 @@ class TestAuthConfigurationClient(object):
             'default': 'true'
         }
         client = AuthConfigurationClient(auth=bigip_auth)
-        cloud_services_auth = {'name': 'cloud_services_auth',
-                               'username': 'me@home.com',
-                               'password': '123',
-                               'type': 'CLOUD_SERVICES',
-                               'default': 'true'}
-        yaml_load_fixture_auth.return_value = [cloud_services_auth]
+        cs_auth = {'name': 'cs_auth',
+                   'username': 'me@home.com',
+                   'password': '123',
+                   'type': 'CS',
+                   'default': 'true'}
+        yaml_load_fixture_auth.return_value = [cs_auth]
 
         mock_yaml_safe_dump = mocker.patch("f5cli.config.core.yaml.safe_dump")
         with mocker.patch('f5cli.config.core.open', new_callable=mocker.mock_open()):
             client.store_auth('create')
         mock_yaml_safe_dump.assert_called_once()
         mock_yaml_dump_wrote = mock_yaml_safe_dump.call_args_list[0][0][0]
-        assert mock_yaml_dump_wrote[0] == cloud_services_auth
+        assert mock_yaml_dump_wrote[0] == cs_auth
         assert mock_yaml_dump_wrote[1] == bigip_auth
 
     @staticmethod

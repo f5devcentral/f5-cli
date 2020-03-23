@@ -99,7 +99,7 @@ Response:
     Commands:
     login           Login to BIG-IP, F5 Cloud Services, etc.
     bigip           Manage BIG-IP
-    cloud-services  Manage F5 Cloud Services
+    cs              Manage F5 Cloud Services
     config          Configure CLI authentication and configuration
 
 

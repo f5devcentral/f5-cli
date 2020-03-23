@@ -24,7 +24,7 @@ Below are examples of interacting with various F5 products and services by using
 .. toctree::
    :maxdepth: 4
 
-   cloud-services.rst
+   cs.rst
 
 |
 

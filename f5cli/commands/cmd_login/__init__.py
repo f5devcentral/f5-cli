@@ -6,7 +6,7 @@
 import click_repl
 import click
 from f5sdk.exceptions import DeviceReadyError, HTTPError, InvalidAuthError
-from f5sdk.cloud_services import ManagementClient as CSManagementClient
+from f5sdk.cs import ManagementClient as CSManagementClient
 from f5sdk.bigip import ManagementClient as BigipManagementClient
 
 from f5cli import docs, constants
@@ -15,7 +15,7 @@ from f5cli.cli import PASS_CONTEXT, AliasedGroup
 
 HELP = docs.get_docs()
 BIGIP_AUTH_ACCOUNT_NAME = "login_bigip"
-CS_AUTH_ACCOUNT_NAME = "login_cloud_services"
+CS_AUTH_ACCOUNT_NAME = "login_cs"
 
 
 # group: login
@@ -36,7 +36,7 @@ CS_AUTH_ACCOUNT_NAME = "login_cloud_services"
               metavar='<PORT>')
 @click.option('--api-endpoint',
               required=False,
-              metavar='<CLOUD_SERVICES_API_ENDPOINT>')
+              metavar='<CS_API_ENDPOINT>')
 @click.option('--user',
               required=False,
               metavar='<USERNAME>')

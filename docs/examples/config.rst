@@ -19,7 +19,7 @@ The following are examples of how to create an authentication config for an auth
 
 ::
 
-    f5 config auth create --authentication-provider cloud-services
+    f5 config auth create --authentication-provider cs
         --name cs-1 --user myuser@f5.com --password blah
 
 

@@ -14,7 +14,7 @@ Log into F5 Cloud services provider
 -----------------------------------
 The following is an example of configuring a quick default auth account for Cloud Services. ::
 
-    $ f5 login --authentication-provider cloud-services --user admin@f5.com --password admin
+    $ f5 login --authentication-provider cs --user admin@f5.com --password admin
 
 |
 

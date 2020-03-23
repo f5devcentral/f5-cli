@@ -89,7 +89,7 @@ def auth():
               metavar='<SET_DEFAULT>')
 @click.option('--api-endpoint',
               required=False,
-              metavar='<CLOUD_SERVICES_API_ENDPOINT>')
+              metavar='<CS_API_ENDPOINT>')
 @click.option('--user',
               required=False,
               metavar='<USERNAME>')
@@ -120,7 +120,7 @@ def auth_create(ctx,  # pylint: disable=too-many-arguments
             'password': password})
 
     if authentication_provider == \
-            constants.AUTHENTICATION_PROVIDERS.get(constants.CLOUD_SERVICES_GROUP_NAME):
+            constants.AUTHENTICATION_PROVIDERS.get(constants.CS_GROUP_NAME):
         if api_endpoint is not None:
             auth_info['api_endpoint'] = api_endpoint
     else:
@@ -155,7 +155,7 @@ def auth_create(ctx,  # pylint: disable=too-many-arguments
               metavar='<SET_DEFAULT>')
 @click.option('--api-endpoint',
               required=False,
-              metavar='<CLOUD_SERVICES_API_ENDPOINT>')
+              metavar='<CS_API_ENDPOINT>')
 @click.option('--user',
               required=False,
               metavar='<USERNAME>')
