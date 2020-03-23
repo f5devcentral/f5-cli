@@ -13,10 +13,10 @@ BIGIP_DISCOVER_HELP: Discover BIG-IP's with a specific key/value tag
 BIGIP_EXTENSION_HELP: Configure extension packages and services
 BIGIP_EXTENSION_PACKAGE_HELP: Install, uninstall, upgrade and verify extension packages
 BIGIP_EXTENSION_SERVICE_HELP: Create, delete and verify extension services
-### f5 cloud-services ###
-CLOUD_SERVICES_HELP: Manage F5 Cloud Services
-CLOUD_SERVICES_ACCOUNT_HELP: Manage accounts, such as getting current user information
-CLOUD_SERVICES_SUBSCRIPTION_HELP: Manage subscriptions, such as updating a subscription
+### f5 cs ###
+CS_HELP: Manage F5 Cloud Services
+CS_ACCOUNT_HELP: Manage accounts, such as getting current user information
+CS_SUBSCRIPTION_HELP: Manage subscriptions, such as updating a subscription
 ### f5 account auth ###
 CONFIG_HELP: Configure CLI authentication and configuration
 AUTH_HELP: Manage F5 BIG-IP or F5 Cloud Services authentication

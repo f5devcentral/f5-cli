@@ -2,9 +2,9 @@
 
 import click_repl
 import click
-from f5sdk.cloud_services import ManagementClient
-from f5sdk.cloud_services.accounts import AccountClient
-from f5sdk.cloud_services.subscriptions import SubscriptionClient
+from f5sdk.cs import ManagementClient
+from f5sdk.cs.accounts import AccountClient
+from f5sdk.cs.subscriptions import SubscriptionClient
 
 from f5cli import docs
 from f5cli.cli import PASS_CONTEXT, AliasedGroup
@@ -15,16 +15,16 @@ from f5cli import constants
 HELP = docs.get_docs()
 
 
-# group: cloud-services
-@click.group('cloud-services',
-             help=HELP['CLOUD_SERVICES_HELP'],
+# group: cs
+@click.group('cs',
+             help=HELP['CS_HELP'],
              cls=AliasedGroup)
 @PASS_CONTEXT
 def cli(ctx):
     """ group """
 
     auth = AuthConfigurationClient().read_auth(
-        constants.AUTHENTICATION_PROVIDERS[constants.CLOUD_SERVICES_GROUP_NAME]
+        constants.AUTHENTICATION_PROVIDERS[constants.CS_GROUP_NAME]
     )
     ctx.mgmt_client = ManagementClient(
         user=auth['user'],
@@ -34,7 +34,7 @@ def cli(ctx):
 
 
 @cli.command('account',
-             help=HELP['CLOUD_SERVICES_ACCOUNT_HELP'])
+             help=HELP['CS_ACCOUNT_HELP'])
 @click.argument('action',
                 required=True,
                 type=click.Choice(['show-user']))
@@ -60,7 +60,7 @@ def account(ctx, action):
 
 
 @cli.command('subscription',
-             help=HELP['CLOUD_SERVICES_SUBSCRIPTION_HELP'])
+             help=HELP['CS_SUBSCRIPTION_HELP'])
 @click.argument('action',
                 required=True,
                 type=click.Choice(['list', 'show', 'update']))

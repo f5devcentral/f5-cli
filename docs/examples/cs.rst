@@ -9,7 +9,7 @@ The following is an example of how to list information for the currently authent
 
 ::
 
-    f5 cloud-services account show-user
+    f5 cs account show-user
 
 Response:
 ::
@@ -25,7 +25,7 @@ The following is an example of how to list subscriptions with an account id filt
 
 ::
 
-    f5 cloud-services subscription list --account-id-filter a-123
+    f5 cs subscription list --account-id-filter a-123
 
 Response:
 ::
@@ -44,7 +44,7 @@ The following is an example of how to update an F5 Cloud Services subscription, 
 
 ::
 
-    f5 cloud-services subscription update --subscription-id s-123 --declaration decl.json
+    f5 cs subscription update --subscription-id s-123 --declaration decl.json
 
 Response:
 ::
@@ -60,7 +60,7 @@ The following is an example of how to display or show the configuration of an ex
 
 ::
 
-    f5 cloud-services subscription show --subscription-id s-123
+    f5 cs subscription show --subscription-id s-123
 
 Response:
 ::
