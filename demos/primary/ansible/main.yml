@@ -89,7 +89,7 @@
     wait_for:
       timeout: 180
   - name: Configure BIG-IP Auth
-    command: f5 login --authentication-provider bigip --host {{ output_public_ip_address.state.ip_address }} --user {{ admin_username }} --password {{ admin_password }}
+    command: f5 login --authentication-provider bigip --host {{ output_public_ip_address.state.ip_address }} --port 8443 --user {{ admin_username }} --password {{ admin_password }}
   - name: Configure BIG-IP (onboarding)
     command: f5 bigip extension service create --install-component --component do --declaration {{ playbook_dir }}/../declarations/do_decl.json
   - name: Configure Application Services on BIG-IP
