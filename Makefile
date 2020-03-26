@@ -21,7 +21,7 @@ ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) ./d
 build:
 	echo "Creating package artifacts"
 	python3 setup.py sdist bdist_wheel
-unit_test:
+test:
 	echo "Running unit tests (incl code coverage)";
 	pytest --cov=${PACKAGE_DIR} -vv ${UNIT_TEST_DIR}/;
 lint:
@@ -29,7 +29,7 @@ lint:
 	flake8 ${PACKAGE_DIR}/ ${TEST_DIR}/;
 	pylint -j 0 ${PACKAGE_DIR}/ ${TEST_DIR}/;
 	hadolint ${DOCKER_FILE}
-coverage: unit_test
+coverage: test
 	echo "Generating code coverage documentation"
 	coverage html
 html:

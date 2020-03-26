@@ -6,11 +6,9 @@ import click_repl
 import click
 
 from f5sdk.bigip import ManagementClient
-from f5sdk.bigip.extension import ExtensionClient
 
 from f5cli import docs, constants
-from f5cli.utils import core as utils_core
-from f5cli.commands.cmd_bigip import extension_operations
+from f5cli.commands.cmd_bigip.extension_operations import ExtensionOperationsClient, COMPONENTS
 from f5cli.config import AuthConfigurationClient
 from f5cli.cli import PASS_CONTEXT, AliasedGroup
 
@@ -25,115 +23,199 @@ def cli():
     """ group """
 
 
-# group: extension - package, service
-EXTENSION_COMPONENTS = ['do', 'as3', 'ts', 'cf']
-
+# group: extension - as3, do, ts, cf
 @cli.group('extension',
-           help=HELP['BIGIP_EXTENSION_HELP'])
+           help=HELP['BIGIP_EXTENSION_HELP']
+           )
 def extension():
     """ group """
 
 
-@extension.command('package',
-                   help=HELP['BIGIP_EXTENSION_PACKAGE_HELP'])
+@extension.command('as3',
+                   help=HELP['BIGIP_EXTENSION_AS3_HELP']
+                   )
 @click.argument('action',
                 required=True,
-                type=click.Choice(['install', 'uninstall', 'upgrade', 'verify']))
-@click.option('--component',
-              required=True,
-              type=click.Choice(EXTENSION_COMPONENTS))
+                type=click.Choice(COMPONENTS['as3']['actions']))
 @click.option('--version',
-              required=False)
-@click.option('--use-latest-metadata', is_flag=True)
-@PASS_CONTEXT
-def package(ctx, action, component, version, use_latest_metadata):
-    """ command """
-    auth = AuthConfigurationClient().read_auth(constants.AUTHENTICATION_PROVIDERS['BIGIP'])
-    management_kwargs = dict(port=auth['port'], user=auth['user'], password=auth['password'])
-    client = ManagementClient(auth['host'], **management_kwargs)
-
-    kwargs = {}
-    if version:
-        kwargs['version'] = version
-    if use_latest_metadata:
-        kwargs['use_latest_metadata'] = use_latest_metadata
-
-    if action == 'verify':
-        ctx.log(extension_operations.verify_package(client, component, **kwargs))
-    elif action == 'install':
-        ctx.log(extension_operations.install_package(client, component, **kwargs))
-    elif action == 'uninstall':
-        ctx.log(extension_operations.uninstall_package(client, component, **kwargs))
-    elif action == 'upgrade':
-        ctx.log(extension_operations.upgrade_package(client, component, version))
-    else:
-        raise click.ClickException('Action {} not implemented'.format(action))
-
-
-@extension.command('service',
-                   help=HELP['BIGIP_EXTENSION_SERVICE_HELP'])
-@click.argument('action',
-                required=True,
-                type=click.Choice(['create', 'delete', 'show', 'show-info',
-                                   'show-failover', 'show-inspect', 'reset', 'trigger-failover']))
-@click.option('--component',
-              required=True,
-              type=click.Choice(EXTENSION_COMPONENTS))
-@click.option('--version',
-              required=False)
+              required=False
+              )
 @click.option('--declaration',
-              required=False)
+              required=False
+              )
 @click.option('--install-component',
               required=False,
-              is_flag=True)
+              is_flag=True
+              )
 @PASS_CONTEXT
-def service(ctx, action, component, version, declaration, install_component):
+def command_as3(ctx, action, version, declaration, install_component):
     """ command """
-    auth = AuthConfigurationClient().read_auth(constants.AUTHENTICATION_PROVIDERS['BIGIP'])
-    management_kwargs = dict(port=auth['port'], user=auth['user'], password=auth['password'])
-    client = ManagementClient(auth['host'], **management_kwargs)
-    kwargs = {}
-    if version:
-        kwargs['version'] = version
-    extension_client = ExtensionClient(client, component, **kwargs)
 
-    # intent based - support install in 'service' sub-command
-    # install extension component if requested (and not installed)
-    if install_component and not extension_client.package.is_installed()['installed']:
-        extension_client.package.install()
-        extension_client.service.is_available()
+    extension_operations_client = ExtensionOperationsClient(
+        get_mgmt_client(),
+        'as3',
+        version
+    )
+    extension_operations_client.install_component_if_required(install_component)
+    output = process_extension_component_command(
+        extension_operations_client,
+        COMPONENTS['as3']['actions'],
+        action,
+        declaration=declaration
+    )
+    ctx.log(output)
+
+
+@extension.command('do',
+                   help=HELP['BIGIP_EXTENSION_DO_HELP']
+                   )
+@click.argument('action',
+                required=True,
+                type=click.Choice(COMPONENTS['do']['actions']))
+@click.option('--version',
+              required=False
+              )
+@click.option('--declaration',
+              required=False
+              )
+@click.option('--install-component',
+              required=False,
+              is_flag=True
+              )
+@PASS_CONTEXT
+def command_do(ctx, action, version, declaration, install_component):
+    """ command """
+
+    extension_operations_client = ExtensionOperationsClient(
+        get_mgmt_client(),
+        'do',
+        version
+    )
+    extension_operations_client.install_component_if_required(install_component)
+    output = process_extension_component_command(
+        extension_operations_client,
+        COMPONENTS['do']['actions'],
+        action,
+        declaration=declaration
+    )
+    ctx.log(output)
+
+
+@extension.command('ts',
+                   help=HELP['BIGIP_EXTENSION_TS_HELP']
+                   )
+@click.argument('action',
+                required=True,
+                type=click.Choice(COMPONENTS['ts']['actions']))
+@click.option('--version',
+              required=False
+              )
+@click.option('--declaration',
+              required=False
+              )
+@click.option('--install-component',
+              required=False,
+              is_flag=True
+              )
+@PASS_CONTEXT
+def command_ts(ctx, action, version, declaration, install_component):
+    """ command """
+
+    extension_operations_client = ExtensionOperationsClient(
+        get_mgmt_client(),
+        'ts',
+        version
+    )
+    extension_operations_client.install_component_if_required(install_component)
+    output = process_extension_component_command(
+        extension_operations_client,
+        COMPONENTS['ts']['actions'],
+        action,
+        declaration=declaration
+    )
+    ctx.log(output)
+
+
+@extension.command('cf',
+                   help=HELP['BIGIP_EXTENSION_CF_HELP']
+                   )
+@click.argument('action',
+                required=True,
+                type=click.Choice(COMPONENTS['cf']['actions']))
+@click.option('--version',
+              required=False
+              )
+@click.option('--declaration',
+              required=False
+              )
+@click.option('--install-component',
+              required=False,
+              is_flag=True
+              )
+@PASS_CONTEXT
+def command_cf(ctx, action, version, declaration, install_component):
+    """ command """
+
+    extension_operations_client = ExtensionOperationsClient(
+        get_mgmt_client(),
+        'cf',
+        version
+    )
+    extension_operations_client.install_component_if_required(install_component)
+    output = process_extension_component_command(
+        extension_operations_client,
+        COMPONENTS['cf']['actions'],
+        action,
+        declaration=declaration
+    )
+    ctx.log(output)
+
+
+def get_mgmt_client():
+    """ Get Management Client """
+
+    auth_client = AuthConfigurationClient()
+    auth = auth_client.read_auth(constants.AUTHENTICATION_PROVIDERS['BIGIP'])
+
+    management_kwargs = dict(
+        port=auth['port'],
+        user=auth['user'],
+        password=auth['password']
+    )
+    return ManagementClient(auth['host'], **management_kwargs)
+
+
+def process_extension_component_command(client, allowed_actions, action, **kwargs):
+    """ Process extension component actions """
+
+    declaration = kwargs.pop('declaration', None)
+
+    if action not in allowed_actions:
+        raise click.ClickException('Action \'{}\' not implemented'.format(action))
 
     try:
-        if action == 'show':
-            ctx.log(extension_client.service.show())
-        elif action == 'create':
-            ctx.log(_process_create(component, extension_client, declaration))
-        elif action == 'delete':
-            ctx.log(extension_client.service.delete())
-        elif action == 'show-info':
-            ctx.log(extension_client.service.show_info())
-        elif action == 'show-failover':
-            ctx.log(extension_client.service.show_trigger())
-        elif action == 'trigger-failover':
-            ctx.log(extension_client.service.trigger(
-                config_file=utils_core.convert_to_absolute(declaration)))
-        elif action == 'show-inspect':
-            ctx.log(extension_client.service.show_inspect())
-        elif action == 'reset':
-            ctx.log(extension_client.service.reset(
-                config_file=utils_core.convert_to_absolute(declaration)))
-        else:
-            raise click.ClickException('Action not implemented')
+        actions_switch = {
+            'verify': client.verify_package,
+            'install': client.install_package,
+            'uninstall': client.uninstall_package,
+            'upgrade': client.upgrade_package,
+            'show': client.show_service,
+            'create': client.create_service,
+            'delete': client.delete_service,
+            'show-info': client.show_info_service,
+            'show-failover': client.show_failover_service,
+            'trigger-failover': client.trigger_failover_service,
+            'show-inspect': client.show_inspect_service,
+            'reset': client.reset_service,
+        }
+        action_to_perform = actions_switch.get(action, lambda: None)
+        # process any optional function arguments
+        args = []
+        if action in ['create', 'trigger-failover', 'reset']:
+            args.append(declaration)
+        return action_to_perform(*args)
     except Exception as error:
         raise click.ClickException(error)
-
-
-def _process_create(component, extension_client, declaration):
-    if not extension_client.package.is_installed()['installed']:
-        return ("Package is not installed, run command "
-                "'f5 bigip extension package install --component %s'" % component)
-    return extension_client.service.create(
-        config_file=utils_core.convert_to_absolute(declaration))
 
 
 click_repl.register_repl(cli)

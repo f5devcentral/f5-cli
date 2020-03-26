@@ -5,7 +5,7 @@ import json
 from f5sdk.bigip import ManagementClient
 
 from f5cli.config import AuthConfigurationClient
-from f5cli.commands.cmd_bigip import extension
+from f5cli.commands.cmd_bigip import cli
 
 from ...global_test_imports import MagicMock, call, PropertyMock, pytest, CliRunner
 
@@ -39,10 +39,22 @@ class TestCommandBigIp(object):
 
     @staticmethod
     @pytest.fixture
-    def extension_client_fixture(mocker):
+    def do_extension_client_fixture(mocker):
         """Test fixture """
         mock_extension_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.ExtensionClient")
+            "f5sdk.bigip.extension.DOClient")
+
+        mock = MagicMock()
+        mock.is_installed.return_value = MOCK_IS_INSTALLED_RETURN_VALUE
+        type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
+        return mock_extension_client
+
+    @staticmethod
+    @pytest.fixture
+    def cf_extension_client_fixture(mocker):
+        """Test fixture """
+        mock_extension_client = mocker.patch(
+            "f5sdk.bigip.extension.CFClient")
 
         mock = MagicMock()
         mock.is_installed.return_value = MOCK_IS_INSTALLED_RETURN_VALUE
@@ -88,12 +100,12 @@ class TestCommandBigIp(object):
         - Installed version information 'do' extension component is logged
         """
         mock_extension_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
+            "f5sdk.bigip.extension.DOClient")
         mock = MagicMock()
         mock.is_installed.return_value = MOCK_IS_INSTALLED_RETURN_VALUE
         type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
         result = self.runner.invoke(
-            extension, ['package', 'verify', '--component', 'do', '--version', '1.10.0'])
+            cli, ['extension', 'do', 'verify', '--version', '1.10.0'])
         assert result.output == json.dumps(
             MOCK_IS_INSTALLED_RETURN_VALUE,
             indent=4,
@@ -115,7 +127,7 @@ class TestCommandBigIp(object):
         - Installed version information 'do' extension component is logged
         """
         mock_extension_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
+            "f5sdk.bigip.extension.DOClient")
 
         mock_is_installed_return_value = {
             'installed': False,
@@ -128,7 +140,7 @@ class TestCommandBigIp(object):
         type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
 
         result = self.runner.invoke(
-            extension, ['package', 'verify', '--component', 'do', '--version', '1.10.0'])
+            cli, ['extension', 'do', 'verify', '--version', '1.10.0'])
         assert result.output == json.dumps(
             mock_is_installed_return_value, indent=4, sort_keys=True
         ) + '\n'
@@ -148,7 +160,7 @@ class TestCommandBigIp(object):
         - Already installed 'do' component message is logged
         """
         mock_extension_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
+            "f5sdk.bigip.extension.DOClient")
         mock = MagicMock()
         mock.is_installed.return_value = {
             'installed': True,
@@ -157,7 +169,7 @@ class TestCommandBigIp(object):
         }
         type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
         result = self.runner.invoke(
-            extension, ['package', 'install', '--component', 'do', '--version', '1.10.0'])
+            cli, ['extension', 'do', 'install', '--version', '1.10.0'])
         assert result.output == json.dumps(
             {"message": "Extension component package 'do' version '1.10.0' is already installed"},
             indent=4,
@@ -179,7 +191,7 @@ class TestCommandBigIp(object):
         -  Successfully installed 'do' component message is logged
         """
         mock_extension_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
+            "f5sdk.bigip.extension.DOClient")
         mock = MagicMock()
         mock.is_installed.return_value = {
             'installed': False,
@@ -190,7 +202,7 @@ class TestCommandBigIp(object):
         type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
 
         result = self.runner.invoke(
-            extension, ['package', 'install', '--component', 'do', '--version', '1.10.0'])
+            cli, ['extension', 'do', 'install', '--version', '1.10.0'])
         assert result.output == json.dumps(
             {"message": "Extension component package 'do' successfully installed version '1.10.0'"},
             indent=4,
@@ -212,7 +224,7 @@ class TestCommandBigIp(object):
         - Uninstalled 'do' component message is logged
         """
         mock_extension_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
+            "f5sdk.bigip.extension.DOClient")
         mock = MagicMock()
         mock.is_installed.return_value = {
             'installed': True,
@@ -224,10 +236,11 @@ class TestCommandBigIp(object):
         )
 
         result = self.runner.invoke(
-            extension, ['package', 'uninstall', '--component', 'do', '--version', '1.10.0'])
+            cli, ['extension', 'do', 'uninstall', '--version', '1.10.0'])
         assert result.output == json.dumps(
-            {"message": "Successfully uninstalled extension component package 'do' "
-                        "version '1.10.0'"},
+            {
+                "message": "Extension component package 'do' successfully uninstalled"
+            },
             indent=4,
             sort_keys=True
         ) + '\n'
@@ -247,7 +260,7 @@ class TestCommandBigIp(object):
         -  Already uninstalled 'do' component message is logged
         """
         mock_extension_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
+            "f5sdk.bigip.extension.DOClient")
         mock = MagicMock()
         mock.is_installed.return_value = {
             'installed': False,
@@ -256,7 +269,7 @@ class TestCommandBigIp(object):
         type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
 
         result = self.runner.invoke(
-            extension, ['package', 'uninstall', '--component', 'do', '--version', '1.10.0'])
+            cli, ['extension', 'do', 'uninstall', '--version', '1.10.0'])
         assert result.output == json.dumps(
             {"message": "Extension component package 'do' is already uninstalled"},
             indent=4,
@@ -278,7 +291,7 @@ class TestCommandBigIp(object):
         - Upgraded 'do' component message is logged
         """
         mock_extension_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
+            "f5sdk.bigip.extension.DOClient")
         mock = MagicMock()
         mock.is_installed.return_value = {
             'installed': True,
@@ -288,7 +301,7 @@ class TestCommandBigIp(object):
         type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
 
         mock_extension_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
+            "f5sdk.bigip.extension.DOClient")
         mock = MagicMock()
         mock.is_installed.return_value = {
             'installed': False,
@@ -298,7 +311,7 @@ class TestCommandBigIp(object):
         type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
 
         mock_extension_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
+            "f5sdk.bigip.extension.DOClient")
         mock = MagicMock()
         mock.is_installed.return_value = {
             'installed': True,
@@ -309,7 +322,7 @@ class TestCommandBigIp(object):
         type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
 
         result = self.runner.invoke(
-            extension, ['package', 'upgrade', '--component', 'do'])
+            cli, ['extension', 'do', 'upgrade'])
         assert result.output == json.dumps(
             {"message": "Successfully upgraded extension component package 'do' to "
                         "version '1.10.0'"},
@@ -332,7 +345,7 @@ class TestCommandBigIp(object):
         - Upgraded 'do' component message is logged
         """
         mock_extension_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
+            "f5sdk.bigip.extension.DOClient")
         mock = MagicMock()
         mock.is_installed.return_value = {
             'installed': True,
@@ -342,7 +355,7 @@ class TestCommandBigIp(object):
         type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
 
         mock_extension_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
+            "f5sdk.bigip.extension.DOClient")
         mock = MagicMock()
         mock.is_installed.return_value = {
             'installed': False,
@@ -352,7 +365,7 @@ class TestCommandBigIp(object):
         type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
 
         mock_extension_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
+            "f5sdk.bigip.extension.DOClient")
         mock = MagicMock()
         mock.is_installed.return_value = {
             'installed': True,
@@ -363,7 +376,9 @@ class TestCommandBigIp(object):
         type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
 
         result = self.runner.invoke(
-            extension, ['package', 'upgrade', '--version', '1.9.0', '--component', 'do'])
+            cli, ['extension', 'do', 'upgrade', '--version', '1.9.0'])
+
+        assert result.exit_code == 0, result.exception
         assert result.output == json.dumps(
             {"message": "Successfully upgraded extension component package 'do' to "
                         "version '1.9.0'"},
@@ -386,7 +401,7 @@ class TestCommandBigIp(object):
         - Upgraded 'do' component message is logged
         """
         mock_extension_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
+            "f5sdk.bigip.extension.DOClient")
 
         mock = MagicMock()
         mock.is_installed.return_value = {
@@ -399,7 +414,7 @@ class TestCommandBigIp(object):
         )
 
         result = self.runner.invoke(
-            extension, ['package', 'upgrade', '--component', 'do'])
+            cli, ['extension', 'do', 'upgrade'])
         assert result.output == json.dumps(
             {"message": "Extension component package 'do' version '1.10.0' "
                         "is already installed"},
@@ -422,7 +437,7 @@ class TestCommandBigIp(object):
         - Already uninstalled 'do', re-run install message is logged
         """
         mock_extension_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.extension_operations.ExtensionClient")
+            "f5sdk.bigip.extension.DOClient")
         mock = MagicMock()
         mock.is_installed.return_value = {
             'installed': False,
@@ -432,7 +447,7 @@ class TestCommandBigIp(object):
         type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
 
         result = self.runner.invoke(
-            extension, ['package', 'upgrade', '--component', 'do'])
+            cli, ['extension', 'do', 'upgrade'])
         assert result.output == json.dumps(
             {"message": "Extension component package 'do' is uninstalled, re-run install command"},
             indent=4,
@@ -444,7 +459,7 @@ class TestCommandBigIp(object):
                                                   mocker,
                                                   config_client_read_auth_fixture,
                                                   mgmt_client_fixture,
-                                                  extension_client_fixture):
+                                                  do_extension_client_fixture):
         """ Command service show an already installed component
         Given
         - BIG-IP is up
@@ -456,7 +471,7 @@ class TestCommandBigIp(object):
         """
 
         mock_extension_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.ExtensionClient")
+            "f5sdk.bigip.extension.DOClient")
 
         show_response = {
             'foo': 'bar'
@@ -468,7 +483,7 @@ class TestCommandBigIp(object):
             return_value=mock_service)
 
         result = self.runner.invoke(
-            extension, ['service', 'show', '--component', 'do', '--version', '1.3.0'])
+            cli, ['extension', 'do', 'show', '--version', '1.3.0'])
         assert result.output == json.dumps(show_response, indent=4, sort_keys=True) + '\n'
 
     # pylint: disable=unused-argument
@@ -488,7 +503,8 @@ class TestCommandBigIp(object):
         -  Current status message of 'do' component is logged
         """
         mock_extension_client = mocker.patch(
-            "f5cli.commands.cmd_bigip.ExtensionClient")
+            "f5sdk.bigip.extension.DOClient"
+        )
 
         is_installed_response = {
             'installed': False
@@ -509,9 +525,10 @@ class TestCommandBigIp(object):
             return_value=mock_service)
 
         result = self.runner.invoke(
-            extension,
-            ['service', 'show', '--component', 'do', '--version', '1.3.0', '--install-component']
+            cli,
+            ['extension', 'do', 'show', '--version', '1.3.0', '--install-component']
         )
+        assert result.exit_code == 0, result.exception
         assert result.output == json.dumps(show_response, indent=4, sort_keys=True) + '\n'
 
     # pylint: disable=unused-argument
@@ -519,7 +536,7 @@ class TestCommandBigIp(object):
                                                                 mocker,
                                                                 config_client_read_auth_fixture,
                                                                 mgmt_client_fixture,
-                                                                extension_client_fixture):
+                                                                do_extension_client_fixture):
         """ Command service create declaration of an installed component
         Given
         - BIG-IP is up
@@ -536,57 +553,27 @@ class TestCommandBigIp(object):
         }
 
         mock_service.create.return_value = create_response
-        mock_extension_client = extension_client_fixture
+        mock_extension_client = do_extension_client_fixture
         type(mock_extension_client.return_value).service = PropertyMock(
             return_value=mock_service)
 
         mock_utils_core_convert = mocker.patch(
-            "f5cli.commands.cmd_bigip.utils_core.convert_to_absolute")
+            "f5cli.utils.core.convert_to_absolute")
         mock_utils_core_convert.return_value = "fake location"
 
-        result = self.runner.invoke(extension, ['service', 'create', '--component', 'do',
-                                                '--declaration', './test/fake_declaration.json'])
+        result = self.runner.invoke(cli, ['extension', 'do', 'create',
+                                          '--declaration', './test/fake_declaration.json'])
 
         assert result.output == json.dumps(create_response, indent=4, sort_keys=True) + '\n'
         mock_utils_core_convert.assert_has_calls(
             [call('./test/fake_declaration.json')])
 
     # pylint: disable=unused-argument
-    def test_cmd_service_delete_installed_component(self,
-                                                    mocker,
-                                                    config_client_read_auth_fixture,
-                                                    mgmt_client_fixture,
-                                                    extension_client_fixture):
-        """ Command service delete of an already installed component
-        Given
-        - BIG-IP is up
-        - 'do' component is installed
-        When
-        - User attempts to delete a 'do' service
-        Then
-        -  deleted status of 'do' service is logged
-        """
-        mock_extension_client = extension_client_fixture
-
-        delete_response = {
-            'foo': 'bar'
-        }
-
-        mock_service = MagicMock()
-        mock_service.delete.return_value = delete_response
-        type(mock_extension_client.return_value).service = PropertyMock(
-            return_value=mock_service)
-
-        result = self.runner.invoke(
-            extension, ['service', 'delete', '--component', 'do'])
-        assert result.output == json.dumps(delete_response, indent=4, sort_keys=True) + '\n'
-
-    # pylint: disable=unused-argument
     def test_cmd_service_show_failover_cf_component(self,
                                                     mocker,
                                                     config_client_read_auth_fixture,
                                                     mgmt_client_fixture,
-                                                    extension_client_fixture):
+                                                    cf_extension_client_fixture):
         """ Command service show failover (/GET trigger) from CF extension
         Given
         - 'cf' component is installed
@@ -602,11 +589,11 @@ class TestCommandBigIp(object):
         }
 
         mock_service.show_trigger.return_value = show_failover_response
-        mock_extension_client = extension_client_fixture
+        mock_extension_client = cf_extension_client_fixture
         type(mock_extension_client.return_value).service = PropertyMock(
             return_value=mock_service)
 
-        result = self.runner.invoke(extension, ['service', 'show-failover', '--component', 'cf'])
+        result = self.runner.invoke(cli, ['extension', 'cf', 'show-failover'])
 
         assert result.output == json.dumps(show_failover_response, indent=4, sort_keys=True) + '\n'
 
@@ -615,7 +602,7 @@ class TestCommandBigIp(object):
                                                 mocker,
                                                 config_client_read_auth_fixture,
                                                 mgmt_client_fixture,
-                                                extension_client_fixture):
+                                                cf_extension_client_fixture):
         """ Command service show-info of CF extension component
         Given
         - BIG-IP is up
@@ -632,11 +619,11 @@ class TestCommandBigIp(object):
         }
 
         mock_service.show_info.return_value = show_info_response
-        mock_extension_client = extension_client_fixture
+        mock_extension_client = cf_extension_client_fixture
         type(mock_extension_client.return_value).service = PropertyMock(
             return_value=mock_service)
 
-        result = self.runner.invoke(extension, ['service', 'show-info', '--component', 'cf'])
+        result = self.runner.invoke(cli, ['extension', 'cf', 'show-info'])
 
         assert result.output == json.dumps(show_info_response, indent=4, sort_keys=True) + '\n'
 
@@ -645,7 +632,7 @@ class TestCommandBigIp(object):
                                                    mocker,
                                                    config_client_read_auth_fixture,
                                                    mgmt_client_fixture,
-                                                   extension_client_fixture):
+                                                   cf_extension_client_fixture):
         """ Command service show-inspect of CF extension component
         Given
         - BIG-IP is up
@@ -662,11 +649,11 @@ class TestCommandBigIp(object):
         }
 
         mock_service.show_inspect.return_value = show_inspect_response
-        mock_extension_client = extension_client_fixture
+        mock_extension_client = cf_extension_client_fixture
         type(mock_extension_client.return_value).service = PropertyMock(
             return_value=mock_service)
 
-        result = self.runner.invoke(extension, ['service', 'show-inspect', '--component', 'cf'])
+        result = self.runner.invoke(cli, ['extension', 'cf', 'show-inspect'])
 
         assert result.output == json.dumps(show_inspect_response, indent=4, sort_keys=True) + '\n'
 
@@ -675,7 +662,7 @@ class TestCommandBigIp(object):
                                             mocker,
                                             config_client_read_auth_fixture,
                                             mgmt_client_fixture,
-                                            extension_client_fixture):
+                                            cf_extension_client_fixture):
         """ Command service reset of CF extension component
         Given
         - BIG-IP is up
@@ -692,11 +679,11 @@ class TestCommandBigIp(object):
         }
 
         mock_service.reset.return_value = reset_response
-        mock_extension_client = extension_client_fixture
+        mock_extension_client = cf_extension_client_fixture
         type(mock_extension_client.return_value).service = PropertyMock(
             return_value=mock_service)
 
-        result = self.runner.invoke(extension, ['service', 'reset', '--component', 'cf'])
+        result = self.runner.invoke(cli, ['extension', 'cf', 'reset'])
 
         assert result.output == json.dumps(reset_response, indent=4, sort_keys=True) + '\n'
 
@@ -705,7 +692,7 @@ class TestCommandBigIp(object):
                                               mocker,
                                               config_client_read_auth_fixture,
                                               mgmt_client_fixture,
-                                              extension_client_fixture):
+                                              cf_extension_client_fixture):
         """ Command service trigger failover of CF extension component
         Given
         - BIG-IP is up
@@ -722,11 +709,11 @@ class TestCommandBigIp(object):
         }
 
         mock_service.trigger.return_value = trigger_response
-        mock_extension_client = extension_client_fixture
+        mock_extension_client = cf_extension_client_fixture
         type(mock_extension_client.return_value).service = PropertyMock(
             return_value=mock_service)
 
-        result = self.runner.invoke(extension, ['service', 'trigger-failover', '--component', 'cf'])
+        result = self.runner.invoke(cli, ['extension', 'cf', 'trigger-failover'])
 
         assert result.output == json.dumps(trigger_response, indent=4, sort_keys=True) + '\n'
 
@@ -742,6 +729,6 @@ class TestCommandBigIp(object):
         """
 
         result = self.runner.invoke(
-            extension, ['service', 'remove', '--component', 'do'])
+            cli, ['extension', 'as3', 'remove'])
         assert "invalid choice: remove" in result.output
         assert result.exception

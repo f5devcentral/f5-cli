@@ -43,7 +43,7 @@ Verify command:
 
 ::
 
-    f5 bigip extension package verify --component as3
+    f5 bigip extension as3 verify
 
 Response:
 
@@ -60,7 +60,7 @@ If you have an AS3 declaration in a local file (as3.json), install the AS3 exten
 
 ::
 
-    f5 bigip extension service create --component as3 --install-component --declaration as3.json
+    f5 bigip extension as3 create --install-component --declaration as3.json
 
 Response:
 
@@ -103,26 +103,28 @@ Response:
     config          Configure CLI authentication and configuration
 
 
-The CLI will also provide help information for any commands, for example, how to use the ``bigip extension service|package`` command:
+The CLI will also provide help information for any commands, for example, how to use the ``f5 bigip extension`` command:
 
 ::
 
-    f5 bigip extension service --help 
+    f5 bigip extension --help 
 
 Response:
 
 ::
 
-    Usage: f5 bigip extension service [OPTIONS] [create|delete|show|show-info|show-failover|show-inspect|reset|trigger-failover] 
+    Usage: f5 bigip extension [OPTIONS] COMMAND [ARGS]...
 
-    Create, delete and verify extension services 
+    Manage extensions, such as AS3, DO, TS and CF
 
-    Options: 
-      --component [do|as3|ts|cf]  [required] 
-      --version TEXT 
-      --declaration TEXT 
-      --install-component 
-      --help                      Show this message and exit. 
+    Options:
+    --help  Show this message and exit.
+
+    Commands:
+    as3  Manage AS3, perform installation and service operations
+    cf   Manage CF, perform installation and service operations
+    do   Manage DO, perform installation and service operations
+    ts   Manage TS, perform installation and service operations
 
 |
 
