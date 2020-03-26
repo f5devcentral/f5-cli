@@ -36,9 +36,10 @@ The F5 CLI stores configuration settings and credentials in the user's home dire
 
     output: json
 
-|
 
 .. NOTE:: Typically changing configuration settings in these files is done using the F5 CLI directly, however for advanced use cases it may be a requirement to change the settings directly in these files.
 
+
+|
 
 .. include:: /_static/reuse/feedback.rst
