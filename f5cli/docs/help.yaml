@@ -10,9 +10,11 @@ SSL_WARNINGS: 'Disable SSL warnings'
 ### f5 bigip ###
 BIGIP_HELP: Manage BIG-IP
 BIGIP_DISCOVER_HELP: Discover BIG-IP's with a specific key/value tag
-BIGIP_EXTENSION_HELP: Configure extension packages and services
-BIGIP_EXTENSION_PACKAGE_HELP: Install, uninstall, upgrade and verify extension packages
-BIGIP_EXTENSION_SERVICE_HELP: Create, delete and verify extension services
+BIGIP_EXTENSION_HELP: Manage extensions, such as AS3, DO, TS and CF
+BIGIP_EXTENSION_AS3_HELP: Manage AS3, perform package and service operations
+BIGIP_EXTENSION_DO_HELP: Manage DO, perform package and service operations
+BIGIP_EXTENSION_TS_HELP: Manage TS, perform package and service operations
+BIGIP_EXTENSION_CF_HELP: Manage CF, perform package and service operations
 ### f5 cs ###
 CS_HELP: Manage F5 Cloud Services
 CS_ACCOUNT_HELP: Manage accounts, such as getting current user information
