@@ -26,10 +26,21 @@ Benefits:
 
 ## Quick Start
 
+Install using pip:
+
 ```bash
 pip install f5-cli
 f5 --help
 ```
+
+You can also run F5 CLI as a Docker image. For example, you can run the F5 CLI interactively from inside the docker container:
+
+```bash
+docker run -it -v "$HOME/.f5_cli:/root/.f5_cli" -v "$(pwd):/f5-cli" f5devcentral/f5-cli:latest /bin/bash 
+f5 --help
+```
+
+For more information, see our Docker Hub at https://hub.docker.com/r/f5devcentral/f5-cli
 
 ## User Documentation
 
