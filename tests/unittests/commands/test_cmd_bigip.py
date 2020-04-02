@@ -51,6 +51,20 @@ class TestCommandBigIp(object):
 
     @staticmethod
     @pytest.fixture
+    def as3_extension_client_fixture(mocker):
+        """Test fixture """
+        mock_extension_client = mocker.patch(
+            "f5sdk.bigip.extension.AS3Client")
+
+        mock = MagicMock()
+        mock.is_installed.return_value = {
+            'installed': True
+        }
+        type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
+        return mock_extension_client
+
+    @staticmethod
+    @pytest.fixture
     def cf_extension_client_fixture(mocker):
         """Test fixture """
         mock_extension_client = mocker.patch(
@@ -518,6 +532,7 @@ class TestCommandBigIp(object):
         mock_package.install.return_value = None
         type(mock_extension_client.return_value).package = PropertyMock(
             return_value=mock_package)
+
         mock_service = MagicMock()
         mock_service.show.return_value = show_response
         mock_service.is_available.return_value = None
@@ -526,10 +541,50 @@ class TestCommandBigIp(object):
 
         result = self.runner.invoke(
             cli,
-            ['extension', 'do', 'show', '--version', '1.3.0', '--install-component']
+            ['extension', 'do', 'show', '--version', '1.3.0']
         )
         assert result.exit_code == 0, result.exception
         assert result.output == json.dumps(show_response, indent=4, sort_keys=True) + '\n'
+
+    # pylint: disable=unused-argument
+    def test_cmd_service_create_declaration_non_installed_component(self,
+                                                                    mocker,
+                                                                    config_client_read_auth_fixture,
+                                                                    mgmt_client_fixture,
+                                                                    as3_extension_client_fixture):
+        """ Command service create declaration of an installed component
+        Given
+        - BIG-IP is up
+        - 'as3' component is not installed
+        When
+        - User attempts to create a 'as3' declaration
+        Then
+        -  result status of create action is logged
+        """
+        mock_package = MagicMock()
+        mock_package.is_installed.return_value = {
+            'installed': False
+        }
+
+        mock_service = MagicMock()
+        create_response = {
+            'foo': 'bar'
+        }
+        mock_service.create.return_value = create_response
+        mock_extension_client = as3_extension_client_fixture
+        type(mock_extension_client.return_value).service = PropertyMock(
+            return_value=mock_service)
+
+        mock_utils_core_convert = mocker.patch(
+            "f5cli.utils.core.convert_to_absolute")
+        mock_utils_core_convert.return_value = "fake location"
+
+        result = self.runner.invoke(cli, ['extension', 'as3', 'create',
+                                          '--declaration', './test/fake_declaration.json'])
+
+        assert result.output == json.dumps(create_response, indent=4, sort_keys=True) + '\n'
+        mock_utils_core_convert.assert_has_calls(
+            [call('./test/fake_declaration.json')])
 
     # pylint: disable=unused-argument
     def test_cmd_service_create_declaration_installed_component(self,

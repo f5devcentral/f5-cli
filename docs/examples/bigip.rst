@@ -10,7 +10,7 @@ This example will send a declaration to AS3 and install the package if it is not
 
 ::
 
-    f5 bigip extension as3 create --declaration as3.json --install-component 
+    f5 bigip extension as3 create --declaration as3.json
 
 Response:
 ::
@@ -58,22 +58,6 @@ Response:
 
 
 |
-
-This example installs the latest version available online:
-
-::
-
-    f5 bigip extension as3 install --use-latest-metadata
-
-Response:
-
-::
-
-    {
-        "message": "Extension component package 'as3' successfully installed version 'x.x.x"
-    }
-
-By default, the F5 CLI uses a local metadata file to query package components (AS3, DO, TS, etc.) information to perform an action. This local metadata file can become out of date with the latest version published. The example above checks for the latest version of a published component by using the flag ``--use-latest-metadata`` to fetch the latest metadata online.
 
 
 Verify

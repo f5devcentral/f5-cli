@@ -11,7 +11,7 @@ from f5cli import docs, constants
 from f5cli.commands.cmd_bigip.extension_operations import ExtensionOperationsClient, COMPONENTS
 from f5cli.config import AuthConfigurationClient
 from f5cli.cli import PASS_CONTEXT, AliasedGroup
-
+from f5cli.commands.cmd_bigip.extension_operations import check_install
 HELP = docs.get_docs()
 
 
@@ -43,12 +43,8 @@ def extension():
 @click.option('--declaration',
               required=False
               )
-@click.option('--install-component',
-              required=False,
-              is_flag=True
-              )
 @PASS_CONTEXT
-def command_as3(ctx, action, version, declaration, install_component):
+def command_as3(ctx, action, version, declaration):
     """ command """
 
     extension_operations_client = ExtensionOperationsClient(
@@ -56,7 +52,7 @@ def command_as3(ctx, action, version, declaration, install_component):
         'as3',
         version
     )
-    extension_operations_client.install_component_if_required(install_component)
+    extension_operations_client.install_component_if_required(check_install(action))
     output = process_extension_component_command(
         extension_operations_client,
         COMPONENTS['as3']['actions'],
@@ -78,12 +74,8 @@ def command_as3(ctx, action, version, declaration, install_component):
 @click.option('--declaration',
               required=False
               )
-@click.option('--install-component',
-              required=False,
-              is_flag=True
-              )
 @PASS_CONTEXT
-def command_do(ctx, action, version, declaration, install_component):
+def command_do(ctx, action, version, declaration):
     """ command """
 
     extension_operations_client = ExtensionOperationsClient(
@@ -91,7 +83,7 @@ def command_do(ctx, action, version, declaration, install_component):
         'do',
         version
     )
-    extension_operations_client.install_component_if_required(install_component)
+    extension_operations_client.install_component_if_required(check_install(action))
     output = process_extension_component_command(
         extension_operations_client,
         COMPONENTS['do']['actions'],
@@ -113,12 +105,8 @@ def command_do(ctx, action, version, declaration, install_component):
 @click.option('--declaration',
               required=False
               )
-@click.option('--install-component',
-              required=False,
-              is_flag=True
-              )
 @PASS_CONTEXT
-def command_ts(ctx, action, version, declaration, install_component):
+def command_ts(ctx, action, version, declaration):
     """ command """
 
     extension_operations_client = ExtensionOperationsClient(
@@ -126,7 +114,7 @@ def command_ts(ctx, action, version, declaration, install_component):
         'ts',
         version
     )
-    extension_operations_client.install_component_if_required(install_component)
+    extension_operations_client.install_component_if_required(check_install(action))
     output = process_extension_component_command(
         extension_operations_client,
         COMPONENTS['ts']['actions'],
@@ -148,12 +136,8 @@ def command_ts(ctx, action, version, declaration, install_component):
 @click.option('--declaration',
               required=False
               )
-@click.option('--install-component',
-              required=False,
-              is_flag=True
-              )
 @PASS_CONTEXT
-def command_cf(ctx, action, version, declaration, install_component):
+def command_cf(ctx, action, version, declaration):
     """ command """
 
     extension_operations_client = ExtensionOperationsClient(
@@ -161,7 +145,7 @@ def command_cf(ctx, action, version, declaration, install_component):
         'cf',
         version
     )
-    extension_operations_client.install_component_if_required(install_component)
+    extension_operations_client.install_component_if_required(check_install(action))
     output = process_extension_component_command(
         extension_operations_client,
         COMPONENTS['cf']['actions'],

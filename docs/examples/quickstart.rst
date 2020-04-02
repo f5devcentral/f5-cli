@@ -60,7 +60,7 @@ If you have an AS3 declaration in a local file (as3.json), install the AS3 exten
 
 ::
 
-    f5 bigip extension as3 create --install-component --declaration as3.json
+    f5 bigip extension as3 create --declaration as3.json
 
 Response:
 
