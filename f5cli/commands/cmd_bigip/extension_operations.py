@@ -88,6 +88,11 @@ class ExtensionOperationsClient(object):
         self._extension_client_attr = self._get_extension_client_attr(self._component)
 
         component_kwargs = {}
+        component_kwargs = {
+            # the CLI should always attempt to download latest metadata file
+            'use_latest_metadata': True
+        }
+
         if self._version:
             component_kwargs['version'] = self._version
 
@@ -368,3 +373,18 @@ class ExtensionOperationsClient(object):
         return self._extension_client.service.reset(
             config_file=utils_core.convert_to_absolute(declaration_file)
         )
+
+
+def check_install(action):
+    """Skip install check action
+
+    Parameters
+    ----------
+    action : list
+
+    Returns
+    -------
+    bool
+    """
+
+    return action not in ['install', 'upgrade', 'uninstall', 'verify']
