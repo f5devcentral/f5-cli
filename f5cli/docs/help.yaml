@@ -19,6 +19,13 @@ BIGIP_EXTENSION_CF_HELP: Manage CF, perform package and service operations
 CS_HELP: Manage F5 Cloud Services
 CS_ACCOUNT_HELP: Manage accounts, such as getting current user information
 CS_SUBSCRIPTION_HELP: Manage subscriptions, such as updating a subscription
+CS_BEACON_HELP: Manage beacon services
+CS_BEACON_INSIGHTS_HELP: Manage beacon insights
+CS_BEACON_INSIGHTS_LIST_HELP: List beacon insights
+CS_BEACON_INSIGHTS_CREATE_HELP: Create a beacon insight
+CS_BEACON_INSIGHTS_UPDATE_HELP: Update a beacon insight
+CS_BEACON_INSIGHTS_SHOW_HELP: Show a beacon insight
+CS_BEACON_INSIGHTS_DELETE_HELP: Delete a beacon insight
 ### f5 account auth ###
 CONFIG_HELP: Configure CLI authentication and configuration
 AUTH_HELP: Manage F5 BIG-IP or F5 Cloud Services authentication
