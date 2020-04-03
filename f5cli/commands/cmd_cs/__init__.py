@@ -5,6 +5,7 @@ import click
 from f5sdk.cs import ManagementClient
 from f5sdk.cs.accounts import AccountClient
 from f5sdk.cs.subscriptions import SubscriptionClient
+from f5sdk.cs.beacon.insights import InsightsClient
 
 from f5cli import docs
 from f5cli.cli import PASS_CONTEXT, AliasedGroup
@@ -115,6 +116,80 @@ def subscription(ctx, action, subscription_id, declaration, account_id_filter):
         ))
     else:
         raise click.ClickException(f"Action {action} not implemented for 'subscription' command")
+
+
+@cli.group('beacon',
+           help=HELP['CS_BEACON_HELP'])
+def beacon():
+    """ group """
+
+
+@beacon.group('insights',
+              help=HELP['CS_BEACON_INSIGHTS_HELP'])
+def insights():
+    """ group """
+
+
+@insights.command('list',
+                  help=HELP['CS_BEACON_INSIGHTS_LIST_HELP'])
+@PASS_CONTEXT
+def insights_list(ctx):
+    """ command """
+    insights_client = InsightsClient(ctx.mgmt_client)
+    ctx.log(insights_client.list())
+
+
+@insights.command('create',
+                  help=HELP['CS_BEACON_INSIGHTS_CREATE_HELP'])
+@click.option('--declaration',
+              required=True,
+              metavar='<DECLARATION>')
+@PASS_CONTEXT
+def insights_create(ctx, declaration):
+    """ command """
+
+    insights_client = InsightsClient(ctx.mgmt_client)
+    ctx.log(insights_client.create(config=declaration))
+
+
+@insights.command('update',
+                  help=HELP['CS_BEACON_INSIGHTS_UPDATE_HELP'])
+@click.option('--declaration',
+              required=True,
+              metavar='<DECLARATION>')
+@PASS_CONTEXT
+def insights_update(ctx, declaration):
+    """ command """
+
+    insights_client = InsightsClient(ctx.mgmt_client)
+    ctx.log(insights_client.create(config=declaration))
+
+
+@insights.command('show',
+                  help=HELP['CS_BEACON_INSIGHTS_SHOW_HELP'])
+@click.option('--title',
+              required=True,
+              metavar='<TITLE>')
+@PASS_CONTEXT
+def insight_show(ctx, title):
+    """ command """
+
+    insights_client = InsightsClient(ctx.mgmt_client)
+    ctx.log(insights_client.show(name=title))
+
+
+@insights.command('delete',
+                  help=HELP['CS_BEACON_INSIGHTS_DELETE_HELP'])
+@click.option('--title',
+              required=True,
+              metavar='<TITLE>')
+@PASS_CONTEXT
+def insight_delete(ctx, title):
+    """ command """
+
+    insights_client = InsightsClient(ctx.mgmt_client)
+    insights_client.delete(name=title, config={})
+    ctx.log('Insight deleted successfully')
 
 
 click_repl.register_repl(cli)
