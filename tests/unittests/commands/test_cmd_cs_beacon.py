@@ -4,6 +4,7 @@ import json
 
 from f5sdk.cs import ManagementClient
 from f5sdk.cs.beacon.insights import InsightsClient
+from f5sdk.cs.beacon.declare import DeclareClient
 
 from f5cli.config import AuthConfigurationClient
 from f5cli.commands.cmd_cs import cli
@@ -170,4 +171,52 @@ class TestCommandBeacon(object):
             InsightsClient, "show", return_value=mock_response)
 
         result = self.runner.invoke(cli, ['beacon', 'insights', 'show', '--title', 'foo'])
+        assert result.output == json.dumps(mock_response, indent=4, sort_keys=True) + '\n'
+
+    @pytest.mark.usefixtures("config_client_read_auth_fixture")
+    @pytest.mark.usefixtures("mgmt_client_fixture")
+    def test_cmd_beacon_declare_show(self, mocker):
+        """ Show a beacon declaration
+
+        Given
+        - The Declare Client returns a mocked response
+
+        When
+        - User executes a 'show'
+
+        Then
+        - The 'show' command returns the mocked response
+        """
+
+        mock_response = {'foo': 'bar'}
+        mocker.patch.object(
+            DeclareClient, "create", return_value=mock_response
+        )
+
+        result = self.runner.invoke(cli, ['beacon', 'declare', 'show'])
+        assert result.output == json.dumps(mock_response, indent=4, sort_keys=True) + '\n'
+
+    @pytest.mark.usefixtures("config_client_read_auth_fixture")
+    @pytest.mark.usefixtures("mgmt_client_fixture")
+    def test_cmd_beacon_declare_create(self, mocker):
+        """ Create/update a beacon declaration
+
+        Given
+        - The Declare Client returns a mocked response
+
+        When
+        - User executes a 'create'
+
+        Then
+        - The 'create' command returns the mocked response
+        """
+
+        mock_response = {'foo': 'bar'}
+        mocker.patch.object(
+            DeclareClient, "create", return_value=mock_response
+        )
+
+        result = self.runner.invoke(
+            cli, ['beacon', 'declare', 'create', '--declaration', './foo.json']
+        )
         assert result.output == json.dumps(mock_response, indent=4, sort_keys=True) + '\n'
