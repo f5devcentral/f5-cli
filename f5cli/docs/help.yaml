@@ -26,6 +26,9 @@ CS_BEACON_INSIGHTS_CREATE_HELP: Create a beacon insight
 CS_BEACON_INSIGHTS_UPDATE_HELP: Update a beacon insight
 CS_BEACON_INSIGHTS_SHOW_HELP: Show a beacon insight
 CS_BEACON_INSIGHTS_DELETE_HELP: Delete a beacon insight
+CS_BEACON_DECLARE_HELP: Manage beacon declaration (applications, etc.)
+CS_BEACON_DECLARE_SHOW_HELP: Show beacon declaration
+CS_BEACON_DECLARE_CREATE_HELP: Create or update beacon declaration
 ### f5 account auth ###
 CONFIG_HELP: Configure CLI authentication and configuration
 AUTH_HELP: Manage F5 BIG-IP or F5 Cloud Services authentication

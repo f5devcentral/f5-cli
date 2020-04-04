@@ -70,8 +70,40 @@ Response:
         ...
     }
 
+Show the F5 Cloud Services Declaration
+--------------------------------------
+The following is an example of how to display or show the existing F5 Cloud Services Beacon Declaration, which contains things such as applications:
+
+::
+
+    f5 cs beacon declare show
+
+Response:
+::
+
+    {
+        "action": "get",
+        "declaration": []
+    }
+
+Create or Update the F5 Cloud Services Declaration
+--------------------------------------------------
+The following is an example of how to create or update an application using the F5 Cloud Services Beacon Declarative API:
+
+::
+
+    f5 cs beacon declare create --declaration decl.json
+
+Response:
+::
+
+    {
+        "action": "deploy",
+        "declaration": []
+    }
+
 Create a F5 Cloud Services Beacon insight
-------------------------------------------------------
+-----------------------------------------
 The following is an example of how to create a F5 Cloud Services Beacon Insight:
 
 ::
@@ -88,7 +120,7 @@ Response:
     }
 
 Update a F5 Cloud Services Beacon insight
-------------------------------------------------------
+-----------------------------------------
 The following is an example of how to update a F5 Cloud Services Beacon Insight:
 
 ::
@@ -105,7 +137,7 @@ Response:
     }
 
 Show a F5 Cloud Services Beacon insight
-------------------------------------------------------
+---------------------------------------
 The following is an example of how to show a F5 Cloud Services Beacon Insight:
 
 ::
@@ -120,8 +152,9 @@ Response:
         "description": "example-description-2",
         ...
     }
+
 Delete a F5 Cloud Services Beacon insight
-------------------------------------------------------
+-----------------------------------------
 The following is an example of how to delete a F5 Cloud Services Beacon Insight:
 
 ::
@@ -136,7 +169,7 @@ Response:
     }
 
 List F5 Cloud Services Beacon insights
-------------------------------------------------------
+--------------------------------------
 The following is an example of how to list F5 Cloud Services Beacon Insights:
 
 ::

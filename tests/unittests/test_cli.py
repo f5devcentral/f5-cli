@@ -453,7 +453,7 @@ class TestAliasedGroup(object):
             ctx.log("Test aliased group")
         result = self.runner.invoke(mockcli, 'bar')
         assert result.exception
-        assert "Error: No such command \"bar\"" in result.output
+        assert "Error: No such command" in result.output
 
     def test_get_single_matched_command(self):
         """

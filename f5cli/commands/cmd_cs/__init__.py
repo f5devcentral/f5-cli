@@ -2,10 +2,12 @@
 
 import click_repl
 import click
+
 from f5sdk.cs import ManagementClient
 from f5sdk.cs.accounts import AccountClient
 from f5sdk.cs.subscriptions import SubscriptionClient
 from f5sdk.cs.beacon.insights import InsightsClient
+from f5sdk.cs.beacon.declare import DeclareClient
 
 from f5cli import docs
 from f5cli.cli import PASS_CONTEXT, AliasedGroup
@@ -16,22 +18,26 @@ from f5cli import constants
 HELP = docs.get_docs()
 
 
-# group: cs
-@click.group('cs',
-             help=HELP['CS_HELP'],
-             cls=AliasedGroup)
-@PASS_CONTEXT
-def cli(ctx):
-    """ group """
+def get_mgmt_client():
+    """ Get Management Client """
 
-    auth = AuthConfigurationClient().read_auth(
-        constants.AUTHENTICATION_PROVIDERS[constants.CS_GROUP_NAME]
-    )
-    ctx.mgmt_client = ManagementClient(
+    auth_client = AuthConfigurationClient()
+    auth = auth_client.read_auth(constants.AUTHENTICATION_PROVIDERS['CS'])
+
+    management_kwargs = dict(
         user=auth['user'],
         password=auth['password'],
         api_endpoint=auth.pop('api_endpoint', None)
     )
+    return ManagementClient(**management_kwargs)
+
+
+# group: cs
+@click.group('cs',
+             help=HELP['CS_HELP'],
+             cls=AliasedGroup)
+def cli():
+    """ group """
 
 
 @cli.command('account',
@@ -41,19 +47,9 @@ def cli(ctx):
                 type=click.Choice(['show-user']))
 @PASS_CONTEXT
 def account(ctx, action):
-    """ Performs actions against F5 Cloud Services account(s)
+    """ command """
 
-    Parameters
-    ----------
-    action : str
-        which action to perform
-
-    Returns
-    -------
-    None
-    """
-
-    account_client = AccountClient(ctx.mgmt_client)
+    account_client = AccountClient(get_mgmt_client())
     if action == 'show-user':
         ctx.log(account_client.show_user())
     else:
@@ -70,23 +66,7 @@ def account(ctx, action):
 @click.option('--account-id-filter')
 @PASS_CONTEXT
 def subscription(ctx, action, subscription_id, declaration, account_id_filter):
-    """ Performs actions against F5 Cloud Services subscription
-
-    Parameters
-    ----------
-    action : str
-        which action to perform
-    subscription_id : str
-        which subscription to perform the requested action on
-    declaration : str
-        file name or path to file of declaration to send to F5 Cloud Services
-    account_id_filter : str
-        account ID to use as a filter, typically during a list call
-
-    Returns
-    -------
-    None
-    """
+    """ command """
 
     # 'update' requires declaration
     if action == 'update' and declaration is None:
@@ -99,7 +79,7 @@ def subscription(ctx, action, subscription_id, declaration, account_id_filter):
             'The --subscription-id option is required'
         )
 
-    subscription_client = SubscriptionClient(ctx.mgmt_client)
+    subscription_client = SubscriptionClient(get_mgmt_client())
     if action == 'list':
         kwargs = {}
         if account_id_filter:
@@ -135,7 +115,7 @@ def insights():
 @PASS_CONTEXT
 def insights_list(ctx):
     """ command """
-    insights_client = InsightsClient(ctx.mgmt_client)
+    insights_client = InsightsClient(get_mgmt_client())
     ctx.log(insights_client.list())
 
 
@@ -148,8 +128,8 @@ def insights_list(ctx):
 def insights_create(ctx, declaration):
     """ command """
 
-    insights_client = InsightsClient(ctx.mgmt_client)
-    ctx.log(insights_client.create(config=declaration))
+    insights_client = InsightsClient(get_mgmt_client())
+    ctx.log(insights_client.create(config_file=utils_core.convert_to_absolute(declaration)))
 
 
 @insights.command('update',
@@ -161,8 +141,8 @@ def insights_create(ctx, declaration):
 def insights_update(ctx, declaration):
     """ command """
 
-    insights_client = InsightsClient(ctx.mgmt_client)
-    ctx.log(insights_client.create(config=declaration))
+    insights_client = InsightsClient(get_mgmt_client())
+    ctx.log(insights_client.create(config_file=utils_core.convert_to_absolute(declaration)))
 
 
 @insights.command('show',
@@ -174,7 +154,7 @@ def insights_update(ctx, declaration):
 def insight_show(ctx, title):
     """ command """
 
-    insights_client = InsightsClient(ctx.mgmt_client)
+    insights_client = InsightsClient(get_mgmt_client())
     ctx.log(insights_client.show(name=title))
 
 
@@ -187,9 +167,38 @@ def insight_show(ctx, title):
 def insight_delete(ctx, title):
     """ command """
 
-    insights_client = InsightsClient(ctx.mgmt_client)
+    insights_client = InsightsClient(get_mgmt_client())
     insights_client.delete(name=title, config={})
     ctx.log('Insight deleted successfully')
+
+
+@beacon.group('declare',
+              help=HELP['CS_BEACON_DECLARE_HELP'])
+def declare():
+    """ group """
+
+
+@declare.command('show',
+                 help=HELP['CS_BEACON_DECLARE_SHOW_HELP'])
+@PASS_CONTEXT
+def declare_show(ctx):
+    """ command """
+
+    client = DeclareClient(get_mgmt_client())
+    ctx.log(client.create(config={'action': 'get'}))
+
+
+@declare.command('create',
+                 help=HELP['CS_BEACON_DECLARE_CREATE_HELP'])
+@click.option('--declaration',
+              required=True,
+              metavar='<DECLARATION>')
+@PASS_CONTEXT
+def declare_create(ctx, declaration):
+    """ command """
+
+    client = DeclareClient(get_mgmt_client())
+    ctx.log(client.create(config_file=utils_core.convert_to_absolute(declaration)))
 
 
 click_repl.register_repl(cli)
