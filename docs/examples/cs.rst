@@ -190,6 +190,74 @@ Response:
         }
     ]
 
+Create a F5 Cloud Services Beacon token
+---------------------------------------
+The following is an example of how to create a F5 Cloud Services Beacon Token:
+
+::
+
+    f5 cs beacon token create --declaration example-token.json
+
+Response:
+::
+
+    {
+        "name": "example-name",
+        ...
+    }
+
+Show a F5 Cloud Services Beacon token
+-------------------------------------
+The following is an example of how to show a F5 Cloud Services Beacon Token:
+
+::
+
+    f5 cs beacon token show --name example-name
+
+Response:
+::
+
+    {
+        "name": "example-name"
+        ...
+    }
+Delete a F5 Cloud Services Beacon token
+---------------------------------------
+The following is an example of how to delete a F5 Cloud Services Beacon Token:
+
+::
+
+    f5 cs beacon token delete --name example-name
+
+Response:
+::
+
+    {
+        "message": "Token deleted successfully"
+    }
+
+List F5 Cloud Services Beacon tokens
+------------------------------------
+The following is an example of how to list F5 Cloud Services Beacon tokens:
+
+::
+
+    f5 cs beacon token list
+
+Response:
+::
+
+    "tokens": [
+        {
+            "name": "token-1",
+            ...
+        },
+        {
+            "name": "token-2",
+            ...
+        }
+    ]
+
 |
 
 .. include:: /_static/reuse/feedback.rst

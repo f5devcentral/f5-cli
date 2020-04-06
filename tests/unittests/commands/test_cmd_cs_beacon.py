@@ -5,6 +5,7 @@ import json
 from f5sdk.cs import ManagementClient
 from f5sdk.cs.beacon.insights import InsightsClient
 from f5sdk.cs.beacon.declare import DeclareClient
+from f5sdk.cs.beacon.token import TokenClient
 
 from f5cli.config import AuthConfigurationClient
 from f5cli.commands.cmd_cs import cli
@@ -219,4 +220,104 @@ class TestCommandBeacon(object):
         result = self.runner.invoke(
             cli, ['beacon', 'declare', 'create', '--declaration', './foo.json']
         )
+        assert result.output == json.dumps(mock_response, indent=4, sort_keys=True) + '\n'
+
+    @pytest.mark.usefixtures("config_client_read_auth_fixture")
+    @pytest.mark.usefixtures("mgmt_client_fixture")
+    def test_cmd_beacon_token_create(self, mocker):
+        """ Creating a beacon token
+
+        Given
+        - The Token Client returns a successful response
+
+        When
+        - User executes a 'create' with a declaration
+
+        Then
+        - The 'create' command returns a successful response
+          and creates an token
+        """
+
+        mock_response = {
+            'title': 'foo',
+            'description': 'blah'
+        }
+        mocker.patch.object(
+            TokenClient, "create", return_value=mock_response)
+
+        result = self.runner.invoke(cli, ['beacon', 'token', 'create',
+                                          '--declaration', './test/fake_declaration.json'])
+        assert result.output == json.dumps(mock_response, indent=4, sort_keys=True) + '\n'
+
+    @pytest.mark.usefixtures("config_client_read_auth_fixture")
+    @pytest.mark.usefixtures("mgmt_client_fixture")
+    def test_cmd_beacon_token_delete(self, mocker):
+        """ Deleting a beacon token
+
+        Given
+        - The Token Client returns a successful response
+
+        When
+        - User executes a 'delete' with the name of the token to be deleted
+
+        Then
+        - The 'delete' command returns a successful response
+          and delete the specified token
+        """
+
+        mocker.patch.object(
+            TokenClient, "delete", return_value={})
+
+        result = self.runner.invoke(cli, ['beacon', 'token', 'delete', '--name', 'foo'])
+        assert result.output == json.dumps(
+            {'message': 'Token deleted successfully'},
+            indent=4, sort_keys=True) + '\n'
+
+    @pytest.mark.usefixtures("config_client_read_auth_fixture")
+    @pytest.mark.usefixtures("mgmt_client_fixture")
+    def test_cmd_beacon_token_show(self, mocker):
+        """ Show a beacon token
+
+        Given
+        - The Token Client returns a successful response
+
+        When
+        - User executes a 'show' with a name of the token
+
+        Then
+        - The 'show' command returns requested token
+        """
+
+        mock_response = {
+            'title': 'foo',
+            'description': 'blah'
+        }
+        mocker.patch.object(
+            TokenClient, "show", return_value=mock_response)
+
+        result = self.runner.invoke(cli, ['beacon', 'token', 'show', '--name', 'foo'])
+        assert result.output == json.dumps(mock_response, indent=4, sort_keys=True) + '\n'
+
+    @pytest.mark.usefixtures("config_client_read_auth_fixture")
+    @pytest.mark.usefixtures("mgmt_client_fixture")
+    def test_cmd_beacon_token_list(self, mocker):
+        """ List all configured beacon token
+
+        Given
+        - The Token Client returns a successful response
+
+        When
+        - User executes a 'list'
+
+        Then
+        - The 'list' command returns a successful response
+        """
+
+        mock_response = {
+            'foo': 'bar'
+        }
+        mocker.patch.object(
+            TokenClient, "list", return_value=mock_response)
+
+        result = self.runner.invoke(cli, ['beacon', 'token', 'list'])
         assert result.output == json.dumps(mock_response, indent=4, sort_keys=True) + '\n'

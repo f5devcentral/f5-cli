@@ -8,6 +8,7 @@ from f5sdk.cs.accounts import AccountClient
 from f5sdk.cs.subscriptions import SubscriptionClient
 from f5sdk.cs.beacon.insights import InsightsClient
 from f5sdk.cs.beacon.declare import DeclareClient
+from f5sdk.cs.beacon.token import TokenClient
 
 from f5cli import docs
 from f5cli.cli import PASS_CONTEXT, AliasedGroup
@@ -199,6 +200,61 @@ def declare_create(ctx, declaration):
 
     client = DeclareClient(get_mgmt_client())
     ctx.log(client.create(config_file=utils_core.convert_to_absolute(declaration)))
+
+
+@beacon.group('token',
+              help=HELP['CS_BEACON_TOKEN_HELP'])
+def token():
+    """ group """
+
+
+@token.command('list',
+               help=HELP['CS_BEACON_TOKEN_LIST_HELP'])
+@PASS_CONTEXT
+def token_list(ctx):
+    """ command """
+    token_client = TokenClient(get_mgmt_client())
+    ctx.log(token_client.list())
+
+
+@token.command('create',
+               help=HELP['CS_BEACON_TOKEN_CREATE_HELP'])
+@click.option('--declaration',
+              required=True,
+              metavar='<DECLARATION>')
+@PASS_CONTEXT
+def token_create(ctx, declaration):
+    """ command """
+
+    token_client = TokenClient(get_mgmt_client())
+    ctx.log(token_client.create(config_file=utils_core.convert_to_absolute(declaration)))
+
+
+@token.command('show',
+               help=HELP['CS_BEACON_TOKEN_SHOW_HELP'])
+@click.option('--name',
+              required=True,
+              metavar='<NAME>')
+@PASS_CONTEXT
+def token_show(ctx, name):
+    """ command """
+
+    token_client = TokenClient(get_mgmt_client())
+    ctx.log(token_client.show(name=name))
+
+
+@token.command('delete',
+               help=HELP['CS_BEACON_TOKEN_DELETE_HELP'])
+@click.option('--name',
+              required=True,
+              metavar='<NAME>')
+@PASS_CONTEXT
+def token_delete(ctx, name):
+    """ command """
+
+    token_client = TokenClient(get_mgmt_client())
+    token_client.delete(name=name, config={})
+    ctx.log('Token deleted successfully')
 
 
 click_repl.register_repl(cli)
