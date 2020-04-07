@@ -291,6 +291,74 @@ class TestCommandBigIp(object):
         ) + '\n'
 
     # pylint: disable=unused-argument
+    def test_cmd_package_install_optional_package_url_https(self,
+                                                            mocker,
+                                                            config_client_read_auth_fixture,
+                                                            mgmt_client_fixture,
+                                                            as3_extension_client_fixture):
+        """ Command package install optional package-url https
+        Given
+        - BIG-IP is up
+        - 'as3' component is not installed
+        When
+        - User attempts to install package 'as3' --package-url with https:// specify
+        Then
+        - Successfully installed 'as3' component message is logged
+        """
+        mock_package = MagicMock()
+        mock_package.is_installed.return_value = {
+            'installed': False
+        }
+        mock_response = {
+            "message": "Extension component package 'as3' successfully installed version '3.17.1'"
+        }
+        remote_rpm = 'https://myhost/f5-appsvcs-3.17.1-1.noarch.rpm'
+        mock_package.install(package_url=remote_rpm)
+        mock_package.install.return_value = {'version': '3.17.1'}
+        mock_extension_client = as3_extension_client_fixture
+        type(mock_extension_client.return_value).package = PropertyMock(
+            return_value=mock_package)
+
+        result = self.runner.invoke(cli, ['extension', 'as3', 'install', '--package-url',
+                                          remote_rpm])
+
+        assert result.output == json.dumps(mock_response, indent=4, sort_keys=True) + '\n'
+
+    # pylint: disable=unused-argument
+    def test_cmd_package_install_optional_package_url_file(self,
+                                                           mocker,
+                                                           config_client_read_auth_fixture,
+                                                           mgmt_client_fixture,
+                                                           as3_extension_client_fixture):
+        """ Command package install optional package-url file
+        Given
+        - BIG-IP is up
+        - 'as3' component is not installed
+        When
+        - User attempts to install package 'as3' --package-url with file:// specify
+        Then
+        - Successfully installed 'as3' component message is logged
+        """
+        mock_package = MagicMock()
+        mock_package.is_installed.return_value = {
+            'installed': False
+        }
+        mock_response = {
+            "message": "Extension component package 'as3' successfully installed version '3.17.1'"
+        }
+        local_rpm = 'file:///downloads/f5-appsvcs-3.17.1-1.noarch.rpm'
+        mock_package.install(package_url=local_rpm)
+        mock_package.install.return_value = {'version': '3.17.1'}
+        mock_extension_client = as3_extension_client_fixture
+        type(mock_extension_client.return_value).package = PropertyMock(
+            return_value=mock_package)
+
+        result = self.runner.invoke(cli, ['extension', 'as3', 'install', '--package-url',
+                                          local_rpm])
+
+        assert result.output == json.dumps(mock_response, indent=4, sort_keys=True) + '\n'
+
+    # pylint: disable=unused-argument
     def test_cmd_package_upgrade_existing_extension_component(self,
                                                               mocker,
                                                               config_client_read_auth_fixture,

@@ -43,14 +43,19 @@ def extension():
 @click.option('--declaration',
               required=False
               )
+@click.option('--package-url',
+              required=False,
+              type=click.STRING
+              )
 @PASS_CONTEXT
-def command_as3(ctx, action, version, declaration):
+def command_as3(ctx, action, version, declaration, package_url):
     """ command """
 
     extension_operations_client = ExtensionOperationsClient(
         get_mgmt_client(),
         'as3',
-        version
+        version,
+        package_url
     )
     extension_operations_client.install_component_if_required(check_install(action))
     output = process_extension_component_command(
@@ -74,14 +79,19 @@ def command_as3(ctx, action, version, declaration):
 @click.option('--declaration',
               required=False
               )
+@click.option('--package-url',
+              required=False,
+              type=click.STRING
+              )
 @PASS_CONTEXT
-def command_do(ctx, action, version, declaration):
+def command_do(ctx, action, version, declaration, package_url):
     """ command """
 
     extension_operations_client = ExtensionOperationsClient(
         get_mgmt_client(),
         'do',
-        version
+        version,
+        package_url
     )
     extension_operations_client.install_component_if_required(check_install(action))
     output = process_extension_component_command(
@@ -105,14 +115,19 @@ def command_do(ctx, action, version, declaration):
 @click.option('--declaration',
               required=False
               )
+@click.option('--package-url',
+              required=False,
+              type=click.STRING
+              )
 @PASS_CONTEXT
-def command_ts(ctx, action, version, declaration):
+def command_ts(ctx, action, version, declaration, package_url):
     """ command """
 
     extension_operations_client = ExtensionOperationsClient(
         get_mgmt_client(),
         'ts',
-        version
+        version,
+        package_url
     )
     extension_operations_client.install_component_if_required(check_install(action))
     output = process_extension_component_command(
@@ -136,14 +151,19 @@ def command_ts(ctx, action, version, declaration):
 @click.option('--declaration',
               required=False
               )
+@click.option('--package-url',
+              required=False,
+              type=click.STRING
+              )
 @PASS_CONTEXT
-def command_cf(ctx, action, version, declaration):
+def command_cf(ctx, action, version, declaration, package_url):
     """ command """
 
     extension_operations_client = ExtensionOperationsClient(
         get_mgmt_client(),
         'cf',
-        version
+        version,
+        package_url
     )
     extension_operations_client.install_component_if_required(check_install(action))
     output = process_extension_component_command(

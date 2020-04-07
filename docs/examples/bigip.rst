@@ -137,4 +137,24 @@ Response:
 
 |
 
+Install an extension using a custom package location
+----------------------------------------------------
+The following are examples of how to install a package with an option --package-url.
+
+Install
+```````
+::
+
+    f5 bigip extension as3 install --package-url https://my_host/downloads/as3.rpm
+    f5 bigip extension as3 install --package-url file:///path/downloads/as3.rpm
+
+Response:
+::
+
+    { 
+        "message": "Extension component package 'as3' successfully installed version '3.17.0'" 
+    } 
+
+
+|
 .. include:: /_static/reuse/feedback.rst
