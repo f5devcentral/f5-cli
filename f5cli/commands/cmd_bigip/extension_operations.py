@@ -65,7 +65,7 @@ COMPONENTS = {
 class ExtensionOperationsClient(object):
     """Extension Operations Client"""
 
-    def __init__(self, mgmt_client, component, version):
+    def __init__(self, mgmt_client, component, version, package_url):
         """Class initialization
 
         Parameters
@@ -76,7 +76,8 @@ class ExtensionOperationsClient(object):
             the component name
         version : str
             the component version
-
+        package_url : str
+            the package url
         Returns
         -------
         None
@@ -85,6 +86,7 @@ class ExtensionOperationsClient(object):
         self._mgmt_client = mgmt_client
         self._component = component
         self._version = version or None
+        self._package_url = package_url or None
         self._extension_client_attr = self._get_extension_client_attr(self._component)
 
         component_kwargs = {}
@@ -165,7 +167,10 @@ class ExtensionOperationsClient(object):
 
         component_info = self._extension_client.package.is_installed()
         if not component_info['installed']:
-            installed = self._extension_client.package.install()
+            component_kwargs = {}
+            if self._package_url:
+                component_kwargs['package_url'] = self._package_url
+            installed = self._extension_client.package.install(**component_kwargs)
             message = (
                 "Extension component package '%s' successfully installed "
                 "version '%s'" % (self._component, installed['version'])
