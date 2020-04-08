@@ -15,10 +15,10 @@ This example will send a declaration to AS3 and install the package if it is not
 Response:
 ::
 
-    { 
-        "declaration":  
-      {        ...    } 
-    } 
+    {
+        "declaration":
+      {        ...    }
+    }
 
 
 
@@ -35,9 +35,9 @@ Install
 Response:
 ::
 
-    { 
-        "message": "Extension component package 'as3' successfully installed version '3.17.0'" 
-    } 
+    {
+        "message": "Extension component package 'as3' successfully installed version '3.17.0'"
+    }
 
 
 |
@@ -52,9 +52,9 @@ Response:
 
 ::
 
-    { 
-        "message": "Extension component package 'as3' successfully installed version '3.17.0'" 
-    } 
+    {
+        "message": "Extension component package 'as3' successfully installed version '3.17.0'"
+    }
 
 
 |
@@ -77,7 +77,26 @@ Response:
         "installed_version": "3.17.0",
         "latest_version": "3.17.1"
     }
+|
 
+List Available Package Versions
+``````
+This example list all the available package versions that can be installed on the BIG-IP
+
+::
+
+    f5 bigip extension as3 list-versions
+
+Response:
+
+::
+
+    [
+        "3.17.0",
+        "3.17.1"
+    ]
+
+|
 
 Upgrade
 ```````
@@ -151,9 +170,9 @@ Install
 Response:
 ::
 
-    { 
-        "message": "Extension component package 'as3' successfully installed version '3.17.0'" 
-    } 
+    {
+        "message": "Extension component package 'as3' successfully installed version '3.17.0'"
+    }
 
 
 |

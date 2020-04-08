@@ -203,6 +203,7 @@ def process_extension_component_command(client, allowed_actions, action, **kwarg
             'install': client.install_package,
             'uninstall': client.uninstall_package,
             'upgrade': client.upgrade_package,
+            'list-versions': client.list_package_versions,
             'show': client.show_service,
             'create': client.create_service,
             'delete': client.delete_service,
