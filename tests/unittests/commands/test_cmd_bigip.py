@@ -615,6 +615,39 @@ class TestCommandBigIp(object):
         assert result.output == json.dumps(show_response, indent=4, sort_keys=True) + '\n'
 
     # pylint: disable=unused-argument
+    def test_cmd_list_versions_component(self,
+                                         mocker,
+                                         config_client_read_auth_fixture,
+                                         mgmt_client_fixture):
+        """ Command package list-versions
+        Given
+        - BIG-IP is up
+        When
+        - User attempts to list available package versions of 'do'
+        Then
+        - all available packages will be listed
+        """
+        mock_extension_client = mocker.patch(
+            "f5sdk.bigip.extension.DOClient"
+        )
+
+        list_response = [
+            'foo',
+            'bar'
+        ]
+
+        mock_package = MagicMock()
+        mock_package.list_versions.return_value = list_response
+        type(mock_extension_client.return_value).package = PropertyMock(
+            return_value=mock_package)
+
+        result = self.runner.invoke(
+            cli,
+            ['extension', 'do', 'list-versions']
+        )
+        assert result.output == json.dumps(list_response, indent=4, sort_keys=True) + '\n'
+
+    # pylint: disable=unused-argument
     def test_cmd_service_create_declaration_non_installed_component(self,
                                                                     mocker,
                                                                     config_client_read_auth_fixture,

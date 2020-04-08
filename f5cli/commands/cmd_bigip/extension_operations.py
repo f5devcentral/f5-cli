@@ -15,7 +15,8 @@ COMPONENTS = {
             'create',
             'delete',
             'show',
-            'show-info'
+            'show-info',
+            'list-versions'
         ]
     },
     'do': {
@@ -28,7 +29,8 @@ COMPONENTS = {
             'create',
             'show',
             'show-info',
-            'show-inspect'
+            'show-inspect',
+            'list-versions'
         ]
     },
     'ts': {
@@ -40,7 +42,8 @@ COMPONENTS = {
             'upgrade',
             'create',
             'show',
-            'show-info'
+            'show-info',
+            'list-versions'
         ]
     },
     'cf': {
@@ -56,7 +59,8 @@ COMPONENTS = {
             'show-failover',
             'show-inspect',
             'reset',
-            'trigger-failover'
+            'trigger-failover',
+            'list-versions'
         ]
     }
 }
@@ -252,6 +256,20 @@ class ExtensionOperationsClient(object):
                 "command" % self._component
             )
         return message
+
+    def list_package_versions(self):
+        """List package versions
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        list
+            a list containing available extension versions
+        """
+        return self._extension_client.package.list_versions()
 
     def show_service(self):
         """Show service
