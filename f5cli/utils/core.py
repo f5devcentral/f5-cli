@@ -135,3 +135,11 @@ def format_output(data):
         raise click.ClickException("Unsupported format {}".format(output_format))
 
     return formatted_data
+
+
+def verify_approval(action, approval_confirmation_map, auto_approve):
+    """ Verify approval for action in approval_confirmation_map """
+    if action in approval_confirmation_map.keys() and not auto_approve:
+        click.confirm('%s. Do you want to continue?' %
+                      approval_confirmation_map[action],
+                      abort=True)

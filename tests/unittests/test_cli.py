@@ -162,7 +162,7 @@ class TestBaseCli(object):
 
         result = self.runner.invoke(
             basecli,
-            ['config', 'set-defaults', '--allow-telemetry', 'false']
+            ['config', 'set-defaults', '--allow-telemetry', 'false', '--auto-approve']
         )
 
         # validate successful exit code

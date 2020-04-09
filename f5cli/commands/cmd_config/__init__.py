@@ -8,6 +8,7 @@ import click
 from f5cli import docs, constants
 from f5cli.cli import PASS_CONTEXT, AliasedGroup
 from f5cli.config import ConfigurationClient, AuthConfigurationClient
+from f5cli.utils.core import verify_approval
 
 HELP = docs.get_docs()
 
@@ -31,18 +32,22 @@ def cli(ctx):
               help=HELP['ALLOW_TELEMETRY_HELP'])
 @click.option('--disable-ssl-warnings',
               help=HELP['SSL_WARNINGS'])
+@click.option('--auto-approve',
+              default=False,
+              is_flag=True,
+              metavar='<AUTO-APPROVE>')
 @PASS_CONTEXT
-def set_defaults(ctx, output, allow_telemetry, disable_ssl_warnings):
+def set_defaults(ctx, output, allow_telemetry, disable_ssl_warnings, auto_approve):
     """ command """
     # Process any changed defaults
     new_defaults = {}
-    for i in [
-            {'key': 'output', 'inputValue': output},
-            {'key': 'allowTelemetry', 'inputValue': allow_telemetry},
-            {'key': 'disableSSLWarnings', 'inputValue': disable_ssl_warnings}
-    ]:
+    for i in [{'key': 'output', 'inputValue': output},
+              {'key': 'allowTelemetry', 'inputValue': allow_telemetry},
+              {'key': 'disableSSLWarnings', 'inputValue': disable_ssl_warnings}]:
         if i['inputValue'] is not None:
             new_defaults[i['key']] = i['inputValue']
+    approval_confirmation_map = {'set-defaults': 'Defaults will be edited.'}
+    verify_approval('set-defaults', approval_confirmation_map, auto_approve)
     # Create/update configuration file
     ctx.config_client.create_or_update(new_defaults)
     message = 'CLI defaults updated successfully.'
@@ -59,6 +64,7 @@ def set_defaults(ctx, output, allow_telemetry, disable_ssl_warnings):
 def list_defaults(ctx):
     """ command """
     ctx.log(ctx.config_client.list())
+
 
 @cli.group('auth',
            help=HELP['AUTH_HELP'])
@@ -200,13 +206,19 @@ def auth_update(ctx,  # pylint: disable=too-many-arguments
 @click.option('--name',
               required=True,
               metavar='<NAME>')
+@click.option('--auto-approve',
+              default=False,
+              is_flag=True,
+              metavar='<AUTO-APPROVE>')
 @PASS_CONTEXT
-def auth_delete(ctx, name):
+def auth_delete(ctx, name, auto_approve):
     """ command """
-
+    approval_confirmation_map = {
+        'delete': 'Auth contents named %s will be deleted.' % name
+    }
+    verify_approval('delete', approval_confirmation_map, auto_approve)
     auth_client = AuthConfigurationClient()
     auth_client.delete_auth(name)
-
     ctx.log(f"Successfully deleted auth: {name} contents")
 
 

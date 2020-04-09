@@ -144,7 +144,8 @@ class TestCommandBeacon(object):
         mocker.patch.object(
             InsightsClient, "delete", return_value={})
 
-        result = self.runner.invoke(cli, ['beacon', 'insights', 'delete', '--title', 'foo'])
+        result = self.runner.invoke(cli, [
+            'beacon', 'insights', 'delete', '--title', 'foo', '--auto-approve'])
         assert result.output == json.dumps(
             {'message': 'Insight deleted successfully'},
             indent=4, sort_keys=True) + '\n'
@@ -268,7 +269,8 @@ class TestCommandBeacon(object):
         mocker.patch.object(
             TokenClient, "delete", return_value={})
 
-        result = self.runner.invoke(cli, ['beacon', 'token', 'delete', '--name', 'foo'])
+        result = self.runner.invoke(cli, [
+            'beacon', 'token', 'delete', '--name', 'foo', '--auto-approve'])
         assert result.output == json.dumps(
             {'message': 'Token deleted successfully'},
             indent=4, sort_keys=True) + '\n'
