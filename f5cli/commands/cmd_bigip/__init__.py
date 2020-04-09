@@ -12,6 +12,8 @@ from f5cli.commands.cmd_bigip.extension_operations import ExtensionOperationsCli
 from f5cli.config import AuthConfigurationClient
 from f5cli.cli import PASS_CONTEXT, AliasedGroup
 from f5cli.commands.cmd_bigip.extension_operations import check_install
+from f5cli.utils.core import verify_approval
+
 HELP = docs.get_docs()
 
 
@@ -47,16 +49,24 @@ def extension():
               required=False,
               type=click.STRING
               )
+@click.option('--auto-approve',
+              default=False,
+              is_flag=True,
+              metavar='<AUTO-APPROVE>')
 @PASS_CONTEXT
-def command_as3(ctx, action, version, declaration, package_url):
+def command_as3(ctx, action, version, declaration, package_url, auto_approve):
     """ command """
 
+    approval_confirmation_map = {
+        'delete': 'AS3 declaration will be removed',
+        'uninstall': 'AS3 package will be uninstalled'
+    }
+    verify_approval(action, approval_confirmation_map, auto_approve)
     extension_operations_client = ExtensionOperationsClient(
         get_mgmt_client(),
         'as3',
         version,
-        package_url
-    )
+        package_url)
     extension_operations_client.install_component_if_required(check_install(action))
     output = process_extension_component_command(
         extension_operations_client,
@@ -74,19 +84,23 @@ def command_as3(ctx, action, version, declaration, package_url):
                 required=True,
                 type=click.Choice(COMPONENTS['do']['actions']))
 @click.option('--version',
-              required=False
-              )
+              required=False)
 @click.option('--declaration',
-              required=False
-              )
+              required=False)
 @click.option('--package-url',
               required=False,
-              type=click.STRING
-              )
+              type=click.STRING)
+@click.option('--auto-approve',
+              default=False,
+              is_flag=True,
+              metavar='<AUTO-APPROVE>')
 @PASS_CONTEXT
-def command_do(ctx, action, version, declaration, package_url):
+def command_do(ctx, action, version, declaration, package_url, auto_approve):
     """ command """
-
+    approval_confirmation_map = {
+        'uninstall': 'DO package will be uninstalled'
+    }
+    verify_approval(action, approval_confirmation_map, auto_approve)
     extension_operations_client = ExtensionOperationsClient(
         get_mgmt_client(),
         'do',
@@ -110,19 +124,23 @@ def command_do(ctx, action, version, declaration, package_url):
                 required=True,
                 type=click.Choice(COMPONENTS['ts']['actions']))
 @click.option('--version',
-              required=False
-              )
+              required=False)
 @click.option('--declaration',
-              required=False
-              )
+              required=False)
 @click.option('--package-url',
               required=False,
-              type=click.STRING
-              )
+              type=click.STRING)
+@click.option('--auto-approve',
+              default=False,
+              is_flag=True,
+              metavar='<AUTO-APPROVE>')
 @PASS_CONTEXT
-def command_ts(ctx, action, version, declaration, package_url):
+def command_ts(ctx, action, version, declaration, package_url, auto_approve):
     """ command """
-
+    approval_confirmation_map = {
+        'uninstall': 'TS package will be uninstalled'
+    }
+    verify_approval(action, approval_confirmation_map, auto_approve)
     extension_operations_client = ExtensionOperationsClient(
         get_mgmt_client(),
         'ts',
@@ -146,19 +164,24 @@ def command_ts(ctx, action, version, declaration, package_url):
                 required=True,
                 type=click.Choice(COMPONENTS['cf']['actions']))
 @click.option('--version',
-              required=False
-              )
+              required=False)
 @click.option('--declaration',
-              required=False
-              )
+              required=False)
 @click.option('--package-url',
               required=False,
-              type=click.STRING
-              )
+              type=click.STRING)
+@click.option('--auto-approve',
+              default=False,
+              is_flag=True,
+              metavar='<AUTO-APPROVE>')
 @PASS_CONTEXT
-def command_cf(ctx, action, version, declaration, package_url):
+def command_cf(ctx, action, version, declaration, package_url, auto_approve):
     """ command """
-
+    approval_confirmation_map = {
+        'uninstall': 'CF package will be uninstalled',
+        'reset': 'CF service will be reset'
+    }
+    verify_approval(action, approval_confirmation_map, auto_approve)
     extension_operations_client = ExtensionOperationsClient(
         get_mgmt_client(),
         'cf',

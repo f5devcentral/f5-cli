@@ -123,7 +123,7 @@ Uninstall
 
 ::
 
-    f5 bigip extension as3 uninstall
+    f5 bigip extension as3 uninstall --auto-approve
 
 Response:
 

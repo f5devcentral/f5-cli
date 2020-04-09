@@ -227,7 +227,7 @@ The following is an example of how to delete a F5 Cloud Services Beacon Token:
 
 ::
 
-    f5 cs beacon token delete --name example-name
+    f5 cs beacon token delete --name example-name --auto-approve
 
 Response:
 ::

@@ -325,7 +325,9 @@ class TestCommandConfig(object):
         result = self.runner.invoke(cli, [
             'auth',
             'delete',
-            '--name', 'test1'])
+            '--name',
+            'test1',
+            '--auto-approve'])
 
         mock_config_client_delete_auth.assert_called_with('test1')
         assert json.dumps(
@@ -371,7 +373,7 @@ class TestCommandConfig(object):
         mocker.patch('f5cli.config.core.open', mocker.mock_open())
         mock_yaml_dump = mocker.patch("yaml.safe_dump")
 
-        result = self.runner.invoke(cli, ['set-defaults', '--output', 'json'])
+        result = self.runner.invoke(cli, ['set-defaults', '--output', 'json', '--auto-approve'])
 
         assert result.exit_code == 0, result.exception
         assert mock_make_dir.called
@@ -394,7 +396,7 @@ class TestCommandConfig(object):
         mocker.patch('f5cli.commands.cmd_config.open', mocker.mock_open())
         mock_yaml_dump = mocker.patch("yaml.safe_dump")
 
-        result = self.runner.invoke(cli, ['set-defaults', '--output', 'json'])
+        result = self.runner.invoke(cli, ['set-defaults', '--output', 'json', '--auto-approve'])
 
         assert result.exit_code == 0, result.exception
         assert mock_yaml_dump.call_args_list[0][0][0] == ({'output': 'json'})
@@ -416,7 +418,8 @@ class TestCommandConfig(object):
         mocker.patch('f5cli.commands.cmd_config.open', mocker.mock_open())
         mock_yaml_dump = mocker.patch("yaml.safe_dump")
 
-        result = self.runner.invoke(cli, ['set-defaults', '--disable-ssl-warnings', 'true'])
+        result = self.runner.invoke(cli, [
+            'set-defaults', '--disable-ssl-warnings', 'true', '--auto-approve'])
 
         assert result.exit_code == 0, result.exception
         assert mock_yaml_dump.call_args_list[0][0][0] == ({'disableSSLWarnings': 'true'})

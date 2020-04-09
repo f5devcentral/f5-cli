@@ -164,10 +164,17 @@ def insight_show(ctx, title):
 @click.option('--title',
               required=True,
               metavar='<TITLE>')
+@click.option('--auto-approve',
+              default=False,
+              is_flag=True,
+              metavar='<AUTO-APPROVE>')
 @PASS_CONTEXT
-def insight_delete(ctx, title):
+def insight_delete(ctx, title, auto_approve):
     """ command """
-
+    approval_confirmation_map = {
+        'delete': 'Insight titled %s will be deleted' % title
+    }
+    utils_core.verify_approval('delete', approval_confirmation_map, auto_approve)
     insights_client = InsightsClient(get_mgmt_client())
     insights_client.delete(name=title, config={})
     ctx.log('Insight deleted successfully')
@@ -248,10 +255,17 @@ def token_show(ctx, name):
 @click.option('--name',
               required=True,
               metavar='<NAME>')
+@click.option('--auto-approve',
+              default=False,
+              is_flag=True,
+              metavar='<AUTO-APPROVE>')
 @PASS_CONTEXT
-def token_delete(ctx, name):
+def token_delete(ctx, name, auto_approve):
     """ command """
-
+    approval_confirmation_map = {
+        'delete': 'Token named %s will be deleted' % name
+    }
+    utils_core.verify_approval('delete', approval_confirmation_map, auto_approve)
     token_client = TokenClient(get_mgmt_client())
     token_client.delete(name=name, config={})
     ctx.log('Token deleted successfully')

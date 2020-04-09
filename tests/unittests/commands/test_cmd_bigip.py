@@ -250,7 +250,7 @@ class TestCommandBigIp(object):
         )
 
         result = self.runner.invoke(
-            cli, ['extension', 'do', 'uninstall', '--version', '1.10.0'])
+            cli, ['extension', 'do', 'uninstall', '--version', '1.10.0', '--auto-approve'])
         assert result.output == json.dumps(
             {
                 "message": "Extension component package 'do' successfully uninstalled"
@@ -283,7 +283,7 @@ class TestCommandBigIp(object):
         type(mock_extension_client.return_value).package = PropertyMock(return_value=mock)
 
         result = self.runner.invoke(
-            cli, ['extension', 'do', 'uninstall', '--version', '1.10.0'])
+            cli, ['extension', 'do', 'uninstall', '--version', '1.10.0', '--auto-approve'])
         assert result.output == json.dumps(
             {"message": "Extension component package 'do' is already uninstalled"},
             indent=4,
@@ -839,7 +839,7 @@ class TestCommandBigIp(object):
         type(mock_extension_client.return_value).service = PropertyMock(
             return_value=mock_service)
 
-        result = self.runner.invoke(cli, ['extension', 'cf', 'reset'])
+        result = self.runner.invoke(cli, ['extension', 'cf', 'reset', '--auto-approve'])
 
         assert result.output == json.dumps(reset_response, indent=4, sort_keys=True) + '\n'
 
