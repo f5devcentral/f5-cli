@@ -108,7 +108,7 @@ class TestCommandBeacon(object):
         - The Insights Client returns a successful response
 
         When
-        - User executes a 'update' with a declaration with the same title
+        - User executes a 'update' with a declaration with the same name
 
         Then
         - The 'update' command returns a successful response
@@ -134,7 +134,7 @@ class TestCommandBeacon(object):
         - The Insights Client returns a successful response
 
         When
-        - User executes a 'delete' with the title of the insight to be deleted
+        - User executes a 'delete' with the name of the insight to be deleted
 
         Then
         - The 'delete' command returns a successful response
@@ -145,7 +145,7 @@ class TestCommandBeacon(object):
             InsightsClient, "delete", return_value={})
 
         result = self.runner.invoke(cli, [
-            'beacon', 'insights', 'delete', '--title', 'foo', '--auto-approve'])
+            'beacon', 'insights', 'delete', '--name', 'foo', '--auto-approve'])
         assert result.output == json.dumps(
             {'message': 'Insight deleted successfully'},
             indent=4, sort_keys=True) + '\n'
@@ -159,7 +159,7 @@ class TestCommandBeacon(object):
         - The Insights Client returns a successful response
 
         When
-        - User executes a 'show' with a title of the insight
+        - User executes a 'show' with a name of the insight
 
         Then
         - The 'show' command returns requested insight
@@ -172,7 +172,7 @@ class TestCommandBeacon(object):
         mocker.patch.object(
             InsightsClient, "show", return_value=mock_response)
 
-        result = self.runner.invoke(cli, ['beacon', 'insights', 'show', '--title', 'foo'])
+        result = self.runner.invoke(cli, ['beacon', 'insights', 'show', '--name', 'foo'])
         assert result.output == json.dumps(mock_response, indent=4, sort_keys=True) + '\n'
 
     @pytest.mark.usefixtures("config_client_read_auth_fixture")

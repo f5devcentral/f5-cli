@@ -148,36 +148,39 @@ def insights_update(ctx, declaration):
 
 @insights.command('show',
                   help=HELP['CS_BEACON_INSIGHTS_SHOW_HELP'])
-@click.option('--title',
+@click.option('--name',
               required=True,
-              metavar='<TITLE>')
+              metavar='<NAME>')
 @PASS_CONTEXT
-def insight_show(ctx, title):
+def insight_show(ctx, name):
     """ command """
 
     insights_client = InsightsClient(get_mgmt_client())
-    ctx.log(insights_client.show(name=title))
+    ctx.log(insights_client.show(name=name))
 
 
 @insights.command('delete',
                   help=HELP['CS_BEACON_INSIGHTS_DELETE_HELP'])
-@click.option('--title',
+@click.option('--name',
               required=True,
-              metavar='<TITLE>')
+              metavar='<NAME>')
 @click.option('--auto-approve',
               default=False,
               is_flag=True,
               metavar='<AUTO-APPROVE>')
 @PASS_CONTEXT
-def insight_delete(ctx, title, auto_approve):
+def insight_delete(ctx, name, auto_approve):
     """ command """
     approval_confirmation_map = {
-        'delete': 'Insight titled %s will be deleted' % title
+        'delete': 'Insight named %s will be deleted' % name
     }
     utils_core.verify_approval('delete', approval_confirmation_map, auto_approve)
     insights_client = InsightsClient(get_mgmt_client())
-    insights_client.delete(name=title, config={})
-    ctx.log('Insight deleted successfully')
+    result = insights_client.delete(name=name, config={})
+    if result == {}:
+        ctx.log('Insight deleted successfully')
+    else:
+        ctx.log(result)
 
 
 @beacon.group('declare',
@@ -267,8 +270,11 @@ def token_delete(ctx, name, auto_approve):
     }
     utils_core.verify_approval('delete', approval_confirmation_map, auto_approve)
     token_client = TokenClient(get_mgmt_client())
-    token_client.delete(name=name, config={})
-    ctx.log('Token deleted successfully')
+    result = token_client.delete(name=name, config={})
+    if result == {}:
+        ctx.log('Token deleted successfully')
+    else:
+        ctx.log(result)
 
 
 click_repl.register_repl(cli)
