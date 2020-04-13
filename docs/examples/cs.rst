@@ -102,7 +102,7 @@ Response:
         "declaration": []
     }
 
-Create a F5 Cloud Services Beacon insight
+Create a F5 Cloud Services Beacon Insight
 -----------------------------------------
 The following is an example of how to create a F5 Cloud Services Beacon Insight:
 
@@ -119,7 +119,7 @@ Response:
         ...
     }
 
-Update a F5 Cloud Services Beacon insight
+Update a F5 Cloud Services Beacon Insight
 -----------------------------------------
 The following is an example of how to update a F5 Cloud Services Beacon Insight:
 
@@ -136,13 +136,13 @@ Response:
         ...
     }
 
-Show a F5 Cloud Services Beacon insight
+Show a F5 Cloud Services Beacon Insight
 ---------------------------------------
 The following is an example of how to show a F5 Cloud Services Beacon Insight:
 
 ::
 
-    f5 cs beacon insight show --title example-title
+    f5 cs beacon insight show --name example-title
 
 Response:
 ::
@@ -153,13 +153,13 @@ Response:
         ...
     }
 
-Delete a F5 Cloud Services Beacon insight
+Delete a F5 Cloud Services Beacon Insight
 -----------------------------------------
 The following is an example of how to delete a F5 Cloud Services Beacon Insight:
 
 ::
 
-    f5 cs beacon insight delete --title example-title
+    f5 cs beacon insight delete --name example-title
 
 Response:
 ::
@@ -168,7 +168,7 @@ Response:
         "message": "Insight deleted successfully"
     }
 
-List F5 Cloud Services Beacon insights
+List F5 Cloud Services Beacon Insights
 --------------------------------------
 The following is an example of how to list F5 Cloud Services Beacon Insights:
 
@@ -190,7 +190,7 @@ Response:
         }
     ]
 
-Create a F5 Cloud Services Beacon token
+Create a F5 Cloud Services Beacon Token
 ---------------------------------------
 The following is an example of how to create a F5 Cloud Services Beacon Token:
 
@@ -206,7 +206,7 @@ Response:
         ...
     }
 
-Show a F5 Cloud Services Beacon token
+Show a F5 Cloud Services Beacon Token
 -------------------------------------
 The following is an example of how to show a F5 Cloud Services Beacon Token:
 
@@ -221,7 +221,7 @@ Response:
         "name": "example-name"
         ...
     }
-Delete a F5 Cloud Services Beacon token
+Delete a F5 Cloud Services Beacon Token
 ---------------------------------------
 The following is an example of how to delete a F5 Cloud Services Beacon Token:
 
@@ -236,7 +236,7 @@ Response:
         "message": "Token deleted successfully"
     }
 
-List F5 Cloud Services Beacon tokens
+List F5 Cloud Services Beacon Tokens
 ------------------------------------
 The following is an example of how to list F5 Cloud Services Beacon tokens:
 
