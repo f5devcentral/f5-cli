@@ -172,9 +172,9 @@ class TestCommandConfig(object):
             sort_keys=True
         ) + '\n'
 
-    def test_cmd_configure_auth_cloud_services(self,
-                                               config_client_fixture,
-                                               config_client_store_auth_fixture):
+    def test_cmd_configure_auth_cs(self,
+                                   config_client_fixture,
+                                   config_client_store_auth_fixture):
         """ Configure authentication to F5 Cloud Services
 
         Given
@@ -193,7 +193,7 @@ class TestCommandConfig(object):
         result = self.runner.invoke(cli, [
             'auth',
             'create',
-            '--authentication-provider', 'cloud-services',
+            '--authentication-provider', 'cs',
             '--name', 'test1',
             '--user', TEST_USER,
             '--password', TEST_PASSWORD])
@@ -201,7 +201,7 @@ class TestCommandConfig(object):
         mock_config_client_store_auth.assert_called_once()
         mock_config_client_args = mock_config_client.call_args_list[0][1]
         expected_result = {
-            'authentication-type': 'cloud-services',
+            'authentication-type': 'cs',
             'default': False,
             'name': 'test1',
             'user': TEST_USER,
@@ -237,7 +237,7 @@ class TestCommandConfig(object):
         result = self.runner.invoke(cli, [
             'auth',
             'create',
-            '--authentication-provider', 'cloud-services',
+            '--authentication-provider', 'cs',
             '--name', 'test1',
             '--user', TEST_USER,
             '--password', TEST_PASSWORD,
@@ -247,7 +247,7 @@ class TestCommandConfig(object):
         mock_config_client_store_auth.assert_called_once()
         mock_config_client_args = mock_config_client.call_args_list[0][1]
         expected_result = {
-            'authentication-type': 'cloud-services',
+            'authentication-type': 'cs',
             'name': 'test1',
             'default': True,
             'user': TEST_USER,
@@ -283,7 +283,7 @@ class TestCommandConfig(object):
         result = self.runner.invoke(cli, [
             'auth',
             'update',
-            '--authentication-provider', 'cloud-services',
+            '--authentication-provider', 'cs',
             '--name', 'test1',
             '--user', TEST_USER,
             '--set-default'], input='blah')
@@ -291,7 +291,7 @@ class TestCommandConfig(object):
         mock_config_client_store_auth.assert_called_once()
         mock_config_client_args = mock_config_client.call_args_list[0][1]
         expected_result = {
-            'authentication-type': 'cloud-services',
+            'authentication-type': 'cs',
             'name': 'test1',
             'default': True,
             'host': None,
@@ -325,7 +325,9 @@ class TestCommandConfig(object):
         result = self.runner.invoke(cli, [
             'auth',
             'delete',
-            '--name', 'test1'])
+            '--name',
+            'test1',
+            '--auto-approve'])
 
         mock_config_client_delete_auth.assert_called_with('test1')
         assert json.dumps(
@@ -371,7 +373,7 @@ class TestCommandConfig(object):
         mocker.patch('f5cli.config.core.open', mocker.mock_open())
         mock_yaml_dump = mocker.patch("yaml.safe_dump")
 
-        result = self.runner.invoke(cli, ['set-defaults', '--output', 'json'])
+        result = self.runner.invoke(cli, ['set-defaults', '--output', 'json', '--auto-approve'])
 
         assert result.exit_code == 0, result.exception
         assert mock_make_dir.called
@@ -394,7 +396,7 @@ class TestCommandConfig(object):
         mocker.patch('f5cli.commands.cmd_config.open', mocker.mock_open())
         mock_yaml_dump = mocker.patch("yaml.safe_dump")
 
-        result = self.runner.invoke(cli, ['set-defaults', '--output', 'json'])
+        result = self.runner.invoke(cli, ['set-defaults', '--output', 'json', '--auto-approve'])
 
         assert result.exit_code == 0, result.exception
         assert mock_yaml_dump.call_args_list[0][0][0] == ({'output': 'json'})
@@ -416,7 +418,8 @@ class TestCommandConfig(object):
         mocker.patch('f5cli.commands.cmd_config.open', mocker.mock_open())
         mock_yaml_dump = mocker.patch("yaml.safe_dump")
 
-        result = self.runner.invoke(cli, ['set-defaults', '--disable-ssl-warnings', 'true'])
+        result = self.runner.invoke(cli, [
+            'set-defaults', '--disable-ssl-warnings', 'true', '--auto-approve'])
 
         assert result.exit_code == 0, result.exception
         assert mock_yaml_dump.call_args_list[0][0][0] == ({'disableSSLWarnings': 'true'})

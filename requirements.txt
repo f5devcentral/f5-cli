@@ -1,6 +1,8 @@
+--extra-index-url https://${ARTIFACTORY_SERVER}/artifactory/api/pypi/f5-cloud-solutions-pypi/simple
+
 # production packages
 click==7.0
-pyyaml==5.3
+pyyaml==5.3.*
 click-repl==0.1.*
 f5-sdk-python==0.9.*
 f5-teem==1.0.*

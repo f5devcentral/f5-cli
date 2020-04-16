@@ -10,6 +10,10 @@ stages:
 
 variables:
     DOCS_BUILD_DIR: "code_docs/html"
+    CONTAINER_NAME: "f5-cli"
+    DOCKERHUB_REPO: "f5devcentral"
+    DOCKERHUB_USER: "$DOCKERHUB_USER"
+    DOCKERHUB_PASSWORD: "$DOCKERHUB_PASSWORD"
     FUNCTIONAL_TEST_PREFIX: 'f5clitest'
     GIT_SECRETS_VERSION: '1.3.0'
     GIT_SECRETS_PKG_URL: "https://github.com/awslabs/git-secrets/archive/${GIT_SECRETS_VERSION}.tar.gz"
@@ -38,7 +42,10 @@ test_unit:
         # install packages
         - pip3 install -r requirements.txt && pip3 install .
         # run unit tests
-        - make unit_test
+        - make test
+        # fetch hadolint to lint dockerfile
+        - wget -qO- https://github.com/hadolint/hadolint/releases/download/v1.17.5/hadolint-Linux-x86_64 > hadolint
+        - chmod +x hadolint && mv hadolint /usr/bin
         # run linter
         - make lint
     tags:
@@ -213,6 +220,7 @@ publish_egg_to_artifactory:
     stage: publish
     only:
         - tags
+        - develop
     tags:
         - docker-executor
     script:
@@ -331,3 +339,21 @@ publish_test_public_install:
         - pip install f5-cli
     tags:
         - cm-official-docker-executor
+
+# publish container on commit from master or by tag
+publish_container:
+    image: docker:stable
+    stage: publish
+    script:
+        - CONTAINER_TAG=$CI_COMMIT_REF_NAME
+        - if [ $CI_COMMIT_REF_NAME == "master" ]; then
+        -    CONTAINER_TAG="latest"
+        - fi
+        - docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASSWORD}
+        - docker build -t ${DOCKERHUB_REPO}/${CONTAINER_NAME}:${CONTAINER_TAG} .
+        - docker push ${DOCKERHUB_REPO}/${CONTAINER_NAME}:${CONTAINER_TAG}
+    tags:
+        - docker-executor
+    only:
+        - master
+        - tags

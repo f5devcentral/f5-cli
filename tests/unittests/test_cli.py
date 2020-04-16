@@ -2,7 +2,6 @@
 
 import sys
 import json
-
 import click
 
 import f5cli
@@ -46,13 +45,13 @@ class TestBaseCli(object):
             'f5cli.config.core.open',
             mocker.mock_open(read_data='')
         )
+        mocker.patch("os.open")
         mock_yaml_dump = mocker.patch("yaml.safe_dump")
         mock_request = mocker.patch('requests.request')
         mock_request.return_value.json = Mock(return_value={})
         type(mock_request.return_value).status_code = PropertyMock(return_value=200)
 
         result = self.runner.invoke(basecli, ['config', 'list-defaults'])
-
         # validate successful exit code
         assert result.exit_code == 0, result.exc_info
         # validate telemetry data was sent
@@ -163,7 +162,7 @@ class TestBaseCli(object):
 
         result = self.runner.invoke(
             basecli,
-            ['config', 'set-defaults', '--allow-telemetry', 'false']
+            ['config', 'set-defaults', '--allow-telemetry', 'false', '--auto-approve']
         )
 
         # validate successful exit code
@@ -204,6 +203,39 @@ class TestBaseCli(object):
         assert result.exit_code == 0, result.exception
         # validate telemetry data was NOT sent
         assert not mock_request.called
+
+    def test_cli_file_permission(self, mocker):
+        """ Test CLI to ensure that the written credential files has the correct file permission
+
+        Given
+        - CLI has not been run before
+
+        When
+        - User attempts to use the CLI
+
+        Then
+        - CLI should write file with correct permission
+        """
+
+        mock_open = mocker.patch("os.open")
+        mocker.patch("os.path.exists").return_value = True
+        mocker.patch("os.path.isfile").return_value = True
+
+        mocker.patch(
+            'f5cli.config.core.open',
+            mocker.mock_open(read_data='')
+        )
+        mocker.patch("yaml.safe_dump")
+        mock_request = mocker.patch('requests.request')
+        mock_request.return_value.json = Mock(return_value={})
+        type(mock_request.return_value).status_code = PropertyMock(return_value=200)
+
+        self.runner.invoke(basecli, ['config', 'list-defaults'])
+
+        assert mock_open.call_count == 1
+        # verify if the permission is correct from os.open argument.
+        # need to convert permission 600 from octet to int for assertion
+        assert mock_open.call_args_list[0][0][2] == int('0o600', 8)
 
 
 class TestContext(object):
@@ -421,7 +453,7 @@ class TestAliasedGroup(object):
             ctx.log("Test aliased group")
         result = self.runner.invoke(mockcli, 'bar')
         assert result.exception
-        assert "Error: No such command \"bar\"" in result.output
+        assert "Error: No such command" in result.output
 
     def test_get_single_matched_command(self):
         """

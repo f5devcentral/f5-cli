@@ -1,3 +1,7 @@
+provider "azurerm" {
+  version = "~> 1.44"
+}
+
 resource "azurerm_resource_group" "deployment" {
   name     = "${var.env_prefix}"
   location = "${var.location}"
@@ -121,7 +125,7 @@ resource "null_resource" "delay_three_minutes" {
 
 resource "null_resource" "configure_auth" {
   provisioner "local-exec" {
-    command = "f5 login --authentication-provider bigip --host ${azurerm_public_ip.deployment.ip_address} --user ${var.admin_username} --password ${var.admin_password}"
+    command = "f5 login --authentication-provider bigip --host ${azurerm_public_ip.deployment.ip_address} --port 8443 --user ${var.admin_username} --password ${var.admin_password}"
   }
   triggers = {
     # prefer fileexists + file here, when available (TF v0.12): https://www.terraform.io/docs/configuration/functions/fileexists.html
@@ -132,7 +136,7 @@ resource "null_resource" "configure_auth" {
 
 resource "null_resource" "onboarding" {
   provisioner "local-exec" {
-    command = "f5 bigip extension service create --install-component --component do --declaration ${path.module}/../declarations/do_decl.json"
+    command = "f5 bigip extension do create --declaration ${path.module}/../declarations/do_decl.json"
   }
   triggers = {
     declaration_hash = "${sha1(file("${path.module}/../declarations/do_decl.json"))}"
@@ -142,7 +146,7 @@ resource "null_resource" "onboarding" {
 
 resource "null_resource" "as3" {
   provisioner "local-exec" {
-    command = "f5 bigip extension service create --install-component --component as3 --declaration ${path.module}/../declarations/as3_decl.json"
+    command = "f5 bigip extension as3 create --declaration ${path.module}/../declarations/as3_decl.json"
   }
   triggers = {
     declaration_hash = "${sha1(file("${path.module}/../declarations/as3_decl.json"))}"

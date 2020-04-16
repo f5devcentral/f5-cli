@@ -1,11 +1,12 @@
 """ Login command """
 
 # pylint: disable=too-many-arguments
+# pylint: disable=too-many-branches
 
 import click_repl
 import click
-from f5sdk.exceptions import DeviceReadyError, HTTPError
-from f5sdk.cloud_services import ManagementClient as CSManagementClient
+from f5sdk.exceptions import DeviceReadyError, HTTPError, InvalidAuthError
+from f5sdk.cs import ManagementClient as CSManagementClient
 from f5sdk.bigip import ManagementClient as BigipManagementClient
 
 from f5cli import docs, constants
@@ -14,7 +15,7 @@ from f5cli.cli import PASS_CONTEXT, AliasedGroup
 
 HELP = docs.get_docs()
 BIGIP_AUTH_ACCOUNT_NAME = "login_bigip"
-CS_AUTH_ACCOUNT_NAME = "login_cloud_services"
+CS_AUTH_ACCOUNT_NAME = "login_cs"
 
 
 # group: login
@@ -35,7 +36,7 @@ CS_AUTH_ACCOUNT_NAME = "login_cloud_services"
               metavar='<PORT>')
 @click.option('--api-endpoint',
               required=False,
-              metavar='<CLOUD_SERVICES_API_ENDPOINT>')
+              metavar='<CS_API_ENDPOINT>')
 @click.option('--user',
               required=False,
               metavar='<USERNAME>')
@@ -89,16 +90,23 @@ def cli(ctx,
                 password=auth_info['password']
             )
             BigipManagementClient(auth_info['host'], **management_kwargs)
-        except (DeviceReadyError, HTTPError) as error:
-            raise click.ClickException(f"Failed to login to BIG-IP: {error}")
+        except DeviceReadyError:
+            raise click.ClickException(f"Device is not ready.") from None
+        except InvalidAuthError:
+            raise click.ClickException(f"Failed to login to BIG-IP, please provide valid"
+                                       " credentials.") from None
+        except HTTPError as error:
+            raise click.ClickException(f"HTTP Error: {error}") from None
     else:
         try:
             CSManagementClient(user=auth_info['user'],
                                password=auth_info['password'],
                                api_endpoint=auth_info.pop('api_endpoint', None))
+        except InvalidAuthError:
+            raise click.ClickException(f"Failed to login to Cloud Services, please provide valid"
+                                       " credentials.") from None
         except HTTPError as error:
-            raise click.ClickException(f"Failed to login to Cloud Services: {error}")
-
+            raise click.ClickException(f"HTTP Error: {error}") from None
     # Store credentials in auth file
     auth_client = AuthConfigurationClient(auth=auth_info)
     try:

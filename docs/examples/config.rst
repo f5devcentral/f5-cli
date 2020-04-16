@@ -19,9 +19,8 @@ The following are examples of how to create an authentication config for an auth
 
 ::
 
-    f5 config auth create --authentication-provider cloud-services
+    f5 config auth create --authentication-provider cs
         --name cs-1 --user myuser@f5.com --password blah
-
 
 
 Update an authentication account
@@ -35,7 +34,6 @@ The following are examples of how to update authentication accounts:
 ::
 
     f5 config auth update --name cs-1 --user myuserr@f5.com --password mypassword
-
 
 
 Delete an authentication account
@@ -91,7 +89,6 @@ The following is an example of how to disable SSL warnings:
 ::
 
     f5 config set-defaults --disable-ssl-warnings true
-
 
 
 

@@ -2,6 +2,7 @@
 
 import os
 import json
+import yaml
 
 import click
 
@@ -14,6 +15,13 @@ def convert_to_absolute(file):
     if file is not None:
         return os.path.abspath(os.path.join(os.getcwd(), file))
     return None
+
+
+def write_file(filename, content):
+    """Write content to a file and set the correct file permission """
+    with open(os.open(filename,
+                      os.O_CREAT | os.O_WRONLY, 0o600), 'w') as file:
+        yaml.safe_dump(content, file, default_flow_style=False, sort_keys=False)
 
 
 def _get_output_format():
@@ -52,7 +60,7 @@ def _format_data_as_table(data):
 
     title = row_format.format(*column_width.keys())
 
-    separator_column_width = ['-'*width for _, width in column_width.items()]
+    separator_column_width = ['-' * width for _, width in column_width.items()]
     separator = row_format.format(*separator_column_width)
     formatted_data = title + '\n' + separator
 
@@ -127,3 +135,11 @@ def format_output(data):
         raise click.ClickException("Unsupported format {}".format(output_format))
 
     return formatted_data
+
+
+def verify_approval(action, approval_confirmation_map, auto_approve):
+    """ Verify approval for action in approval_confirmation_map """
+    if action in approval_confirmation_map.keys() and not auto_approve:
+        click.confirm('%s. Do you want to continue?' %
+                      approval_confirmation_map[action],
+                      abort=True)

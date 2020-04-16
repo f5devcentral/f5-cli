@@ -10,13 +10,30 @@ SSL_WARNINGS: 'Disable SSL warnings'
 ### f5 bigip ###
 BIGIP_HELP: Manage BIG-IP
 BIGIP_DISCOVER_HELP: Discover BIG-IP's with a specific key/value tag
-BIGIP_EXTENSION_HELP: Configure extension packages and services
-BIGIP_EXTENSION_PACKAGE_HELP: Install, uninstall, upgrade and verify extension packages
-BIGIP_EXTENSION_SERVICE_HELP: Create, delete and verify extension services
-### f5 cloud-services ###
-CLOUD_SERVICES_HELP: Manage F5 Cloud Services
-CLOUD_SERVICES_DNS_HELP: Create, update, and delete DNS records
-CLOUD_SERVICES_SUBSCRIPTION_HELP: Update or show F5 Cloud Services subscription information
+BIGIP_EXTENSION_HELP: Manage extensions, such as AS3, DO, TS and CF
+BIGIP_EXTENSION_AS3_HELP: Manage AS3, perform package and service operations
+BIGIP_EXTENSION_DO_HELP: Manage DO, perform package and service operations
+BIGIP_EXTENSION_TS_HELP: Manage TS, perform package and service operations
+BIGIP_EXTENSION_CF_HELP: Manage CF, perform package and service operations
+### f5 cs ###
+CS_HELP: Manage F5 Cloud Services
+CS_ACCOUNT_HELP: Manage accounts, such as getting current user information
+CS_SUBSCRIPTION_HELP: Manage subscriptions, such as updating a subscription
+CS_BEACON_HELP: Manage beacon services
+CS_BEACON_INSIGHTS_HELP: Manage beacon insights
+CS_BEACON_INSIGHTS_LIST_HELP: List beacon insights
+CS_BEACON_INSIGHTS_CREATE_HELP: Create a beacon insight
+CS_BEACON_INSIGHTS_UPDATE_HELP: Update a beacon insight
+CS_BEACON_INSIGHTS_SHOW_HELP: Show a beacon insight
+CS_BEACON_INSIGHTS_DELETE_HELP: Delete a beacon insight
+CS_BEACON_DECLARE_HELP: Manage beacon declaration (applications, etc.)
+CS_BEACON_DECLARE_SHOW_HELP: Show beacon declaration
+CS_BEACON_DECLARE_CREATE_HELP: Create or update beacon declaration
+CS_BEACON_TOKEN_HELP: Manage beacon tokens
+CS_BEACON_TOKEN_LIST_HELP: List beacon tokens
+CS_BEACON_TOKEN_CREATE_HELP: Create a beacon token
+CS_BEACON_TOKEN_SHOW_HELP: Show a beacon token
+CS_BEACON_TOKEN_DELETE_HELP: Delete a beacon token
 ### f5 account auth ###
 CONFIG_HELP: Configure CLI authentication and configuration
 AUTH_HELP: Manage F5 BIG-IP or F5 Cloud Services authentication

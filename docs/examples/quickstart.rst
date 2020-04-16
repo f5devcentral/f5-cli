@@ -13,21 +13,10 @@ The following are prerequisites for using the F5 CLI:
 Installation
 ------------
 
-There are multiple methods for installing F5 CLI. You can install using pip:
-
 ::
 
     pip install f5-cli
 
-|
-
-You can also run F5 CLI as a Docker image. For example, you can run the F5 CLI interactively from inside the docker container:
-
-::
-
-    docker run -it -v "$HOME/.f5_cli:/root/.f5_cli" -v "$(pwd):/f5-cli" f5devcentral/f5-cli:latest /bin/bash 
-
-For more information, see our Docker Hub at https://hub.docker.com/r/f5devcentral/f5-cli.
 
 Quick Start
 -----------
@@ -54,7 +43,7 @@ Verify command:
 
 ::
 
-    f5 bigip extension package verify --component as3
+    f5 bigip extension as3 verify
 
 Response:
 
@@ -66,13 +55,12 @@ Response:
         "latest_version": "3.17.1" 
     } 
 
-|
 
 If you have an AS3 declaration in a local file (as3.json), install the AS3 extension and post a declaration to it all at once:  
 
 ::
 
-    f5 bigip extension service create --component as3 --install-component --declaration as3.json
+    f5 bigip extension as3 create --declaration as3.json
 
 Response:
 
@@ -111,31 +99,32 @@ Response:
     Commands:
     login           Login to BIG-IP, F5 Cloud Services, etc.
     bigip           Manage BIG-IP
-    cloud-services  Manage F5 Cloud Services
+    cs              Manage F5 Cloud Services
     config          Configure CLI authentication and configuration
 
-|
 
-The CLI will also provide help information for any commands, for example, how to use the ``bigip extension service|package`` command:
+The CLI will also provide help information for any commands, for example, how to use the ``f5 bigip extension`` command:
 
 ::
 
-    f5 bigip extension service --help 
+    f5 bigip extension --help 
 
 Response:
 
 ::
 
-    Usage: f5 bigip extension service [OPTIONS] [create|delete|show|show-info|show-failover|show-inspect|reset|trigger-failover] 
+    Usage: f5 bigip extension [OPTIONS] COMMAND [ARGS]...
 
-    Create, delete and verify extension services 
+    Manage extensions, such as AS3, DO, TS and CF
 
-    Options: 
-      --component [do|as3|ts|cf]  [required] 
-      --version TEXT 
-      --declaration TEXT 
-      --install-component 
-      --help                      Show this message and exit. 
+    Options:
+    --help  Show this message and exit.
+
+    Commands:
+    as3  Manage AS3, perform installation and service operations
+    cf   Manage CF, perform installation and service operations
+    do   Manage DO, perform installation and service operations
+    ts   Manage TS, perform installation and service operations
 
 |
 

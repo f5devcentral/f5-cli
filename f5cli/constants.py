@@ -4,7 +4,7 @@ import tempfile
 from os.path import expanduser, join
 
 NAME = 'f5-cli'
-VERSION = '0.9.1'
+VERSION = '0.9.2'
 USER_AGENT = 'f5cli/%s' % (VERSION)
 TMP_DIR = tempfile.gettempdir()
 TELEMETRY_TYPE = 'Installation Usage'
@@ -33,10 +33,10 @@ FORMATS = {
 FORMATS_ENV_VAR = 'F5_OUTPUT_FORMAT_ENV'
 
 # Command group names
-CLOUD_SERVICES_GROUP_NAME = 'CLOUD_SERVICES'
+CS_GROUP_NAME = 'CS'
 BIGIP_GROUP_NAME = 'BIGIP'
 
 AUTHENTICATION_PROVIDERS = {
     'BIGIP': 'bigip',
-    'CLOUD_SERVICES': 'cloud-services'
+    'CS': 'cs'
 }

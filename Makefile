@@ -2,6 +2,7 @@ BUILD_DIR := build
 CODE_DOCS_DIR := ./code_docs
 COVERAGE_DIR := ./code_coverage
 COVERAGE_FILE := .coverage
+DOCKER_FILE := ./Dockerfile
 DIST_DIR := dist
 EGG_DIR := f5_cli.egg-info
 PACKAGE_DIR := f5cli
@@ -20,14 +21,15 @@ ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) ./d
 build:
 	echo "Creating package artifacts"
 	python3 setup.py sdist bdist_wheel
-unit_test:
+test:
 	echo "Running unit tests (incl code coverage)";
 	pytest --cov=${PACKAGE_DIR} -vv ${UNIT_TEST_DIR}/;
 lint:
 	echo "Running linter (any error will result in non-zero exit code)";
 	flake8 ${PACKAGE_DIR}/ ${TEST_DIR}/;
 	pylint -j 0 ${PACKAGE_DIR}/ ${TEST_DIR}/;
-coverage: unit_test
+	hadolint ${DOCKER_FILE}
+coverage: test
 	echo "Generating code coverage documentation"
 	coverage html
 html:
