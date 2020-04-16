@@ -136,7 +136,7 @@ resource "null_resource" "configure_auth" {
 
 resource "null_resource" "onboarding" {
   provisioner "local-exec" {
-    command = "f5 bigip extension do create --install-component --declaration ${path.module}/../declarations/do_decl.json"
+    command = "f5 bigip extension do create --declaration ${path.module}/../declarations/do_decl.json"
   }
   triggers = {
     declaration_hash = "${sha1(file("${path.module}/../declarations/do_decl.json"))}"
@@ -146,7 +146,7 @@ resource "null_resource" "onboarding" {
 
 resource "null_resource" "as3" {
   provisioner "local-exec" {
-    command = "f5 bigip extension as3 create --install-component --declaration ${path.module}/../declarations/as3_decl.json"
+    command = "f5 bigip extension as3 create --declaration ${path.module}/../declarations/as3_decl.json"
   }
   triggers = {
     declaration_hash = "${sha1(file("${path.module}/../declarations/as3_decl.json"))}"
