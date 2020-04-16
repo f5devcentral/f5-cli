@@ -42,4 +42,6 @@ User Guide Index
    examples/troubleshooting
 
 
+|
+
 .. include:: /_static/reuse/feedback.rst
