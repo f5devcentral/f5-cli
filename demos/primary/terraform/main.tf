@@ -1,3 +1,7 @@
+provider "azurerm" {
+  version = "~> 1.44"
+}
+
 resource "azurerm_resource_group" "deployment" {
   name     = "${var.env_prefix}"
   location = "${var.location}"
