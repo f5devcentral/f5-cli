@@ -4,7 +4,7 @@
 click==7.0
 pyyaml==5.3.*
 click-repl==0.1.*
-f5-sdk-python==0.9.2a1
+f5-sdk-python==0.9.*
 f5-teem==1.0.*
 # doc packages
 f5-sphinx-theme==2.0.5
