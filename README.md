@@ -1,6 +1,12 @@
 [![Releases](https://img.shields.io/github/release/f5devcentral/f5-cli.svg)](https://github.com/f5devcentral/f5-cli/releases)
 [![Issues](https://img.shields.io/github/issues/f5devcentral/f5-cli.svg)](https://github.com/f5devcentral/f5-cli/issues)
 
+**The f5-cli repository has been archived.**
+
+If you are looking for alternative ways to leverage F5 Automation Toolchain, please refer to our Ansible (https://galaxy.ansible.com/f5networks/f5_bigip ) or Terraform (https://registry.terraform.io/providers/F5Networks/bigip/latest/docs).
+
+Solutions documentation is available on (https://clouddocs.f5.com/)
+
 # Introduction
 
 The F5 CLI provides a command-line interface (CLI) to various F5 products and services. It focuses primarily on facilitating consuming our most popular APIs and services, currently including BIG-IP (via Automation Tool Chain) and F5 Cloud Services. 
